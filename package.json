@@ -4,17 +4,20 @@
   "private": true,
   "description": "FPGod — AI-powered financial planning application (monorepo root)",
   "scripts": {
-    "install:all": "npm --prefix server install && npm --prefix client install",
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install",
     "db:migrate": "npm --prefix server run db:migrate",
     "db:seed": "npm --prefix server run db:seed",
     "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
     "build": "npm --prefix client run build",
     "build:client": "npm --prefix client run build",
-    "start": "NODE_ENV=production npm --prefix server start",
+    "start": "cross-env NODE_ENV=production npm --prefix server start",
     "start:server": "npm --prefix server start",
     "lint": "npm --prefix server run lint && npm --prefix client run lint",
     "test": "npm --prefix server run test && npm --prefix client run test"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   },
   "engines": {
     "node": ">=20"
