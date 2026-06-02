@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    container_name: fpgod-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fpgod
+      POSTGRES_PASSWORD: fpgod
+      POSTGRES_DB: fpgod
+    ports:
+      - "5432:5432"
+    volumes:
+      - fpgod_pgdata:/var/lib/postgresql/data
+
+volumes:
+  fpgod_pgdata:
