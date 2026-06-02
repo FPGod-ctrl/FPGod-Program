@@ -94,3 +94,26 @@ describe('client lifecycle + AI plan generation (stub mode)', () => {
     expect(after.status).toBe(404);
   });
 });
+
+describe('training data bulk import', () => {
+  it('imports text files as training examples', async () => {
+    const before = await request(app).get('/api/training-data/stats');
+    const res = await request(app)
+      .post('/api/training-data/import')
+      .field('kind', 'plan')
+      .attach('files', Buffer.from('Plan A: bond tent glide path.'), 'plan-a.txt')
+      .attach('files', Buffer.from('Plan B: Roth conversion ladder.'), 'plan-b.txt');
+    expect(res.status).toBe(201);
+    expect(res.body.importedCount).toBe(2);
+    expect(res.body.failedCount).toBe(0);
+    expect(res.body.imported[0].title).toBe('plan-a');
+
+    const after = await request(app).get('/api/training-data/stats');
+    expect(after.body.plan).toBe(before.body.plan + 2);
+  });
+
+  it('rejects an import with no files', async () => {
+    const res = await request(app).post('/api/training-data/import').field('kind', 'plan');
+    expect(res.status).toBe(400);
+  });
+});

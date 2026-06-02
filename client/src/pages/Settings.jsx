@@ -8,6 +8,7 @@ import Modal from '../components/ui/Modal.jsx';
 import { Loading, Empty } from '../components/ui/Loading.jsx';
 import { Select, TextInput, TextArea } from '../components/ui/Field.jsx';
 import { useToast } from '../components/ui/Toast.jsx';
+import BulkImportTraining from '../components/BulkImportTraining.jsx';
 
 export default function Settings() {
   const [meta, setMeta] = useState(null);
@@ -64,6 +65,8 @@ export default function Settings() {
           <div className="stat accent"><div className="stat-label">Total Examples</div>
             <div className="stat-value">{stats?.total ?? '—'}</div></div>
         </div>
+
+        <BulkImportTraining onDone={load} />
 
         <div className="card">
           <div className="card-head"><h3>Training Data</h3>
