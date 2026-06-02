@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../api/client.js';
-import { currency, pct, date, initials, titleCase } from '../lib/format.js';
+import { currency, pct, date, titleCase } from '../lib/format.js';
 import PageHeader from '../components/PageHeader.jsx';
 import DataTable from '../components/ui/DataTable.jsx';
 import Badge from '../components/ui/Badge.jsx';

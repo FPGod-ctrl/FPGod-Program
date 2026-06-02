@@ -20,7 +20,6 @@ const poolConfig = env.db.connectionString
 export const pool = new pg.Pool(poolConfig);
 
 pool.on('error', (err) => {
-  // eslint-disable-next-line no-console
   console.error('[db] unexpected idle client error', err);
 });
 

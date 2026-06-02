@@ -1,11 +1,9 @@
 import { HttpError } from '../utils/httpError.js';
 
-// eslint-disable-next-line no-unused-vars
 export function errorHandler(err, req, res, _next) {
   const status = err instanceof HttpError ? err.status : err.status || 500;
 
   if (status >= 500) {
-    // eslint-disable-next-line no-console
     console.error('[error]', err.stack || err.message);
   }
 

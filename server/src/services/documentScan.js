@@ -49,7 +49,7 @@ function heuristicScan(text) {
   if (phone) out.client.phone = phone[0].trim();
 
   // Lines that look like "Fund Name .... $123,456"
-  const fundLine = /([A-Z][A-Za-z0-9 &.'-]{3,})\s*[:\-]?\s*\$?([\d,]+(?:\.\d{2})?)/g;
+  const fundLine = /([A-Z][A-Za-z0-9 &.'-]{3,})\s*[:-]?\s*\$?([\d,]+(?:\.\d{2})?)/g;
   let m;
   let count = 0;
   while ((m = fundLine.exec(text)) && count < 10) {

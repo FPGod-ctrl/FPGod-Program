@@ -18,6 +18,10 @@ jobs:
           cache-dependency-path: client/package-lock.json
       - name: Install client dependencies
         run: npm --prefix client ci
+      - name: Lint client
+        run: npm --prefix client run lint
+      - name: Test client
+        run: npm --prefix client run test
       - name: Build client
         run: npm --prefix client run build
 
@@ -52,8 +56,12 @@ jobs:
           cache-dependency-path: server/package-lock.json
       - name: Install server dependencies
         run: npm --prefix server ci
+      - name: Lint server
+        run: npm --prefix server run lint
       - name: Run migration
         run: npm --prefix server run db:migrate
+      - name: Test server
+        run: npm --prefix server run test
       - name: Run seed
         run: npm --prefix server run db:seed
       - name: Smoke-test the API

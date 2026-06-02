@@ -152,7 +152,6 @@ async function seed() {
       params
     );
 
-    // eslint-disable-next-line no-console
     console.log('[seed] inserted: 1 group, 3 clients, investments, 1 plan, 1 transcript, 1 email, 80 training rows');
   });
 }
@@ -160,7 +159,6 @@ async function seed() {
 seed()
   .then(() => pool.end())
   .catch((err) => {
-    // eslint-disable-next-line no-console
     console.error('[seed] failed:', err.message);
     pool.end();
     process.exit(1);

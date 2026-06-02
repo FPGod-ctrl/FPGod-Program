@@ -65,7 +65,6 @@ router.post(
     try {
       extracted = await extractText(req.file.buffer, req.file.mimetype, req.file.originalname);
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.warn('[documents] text extraction failed:', err.message);
     }
 

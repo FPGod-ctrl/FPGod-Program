@@ -41,7 +41,6 @@ export async function completeOrStub(opts, stub) {
     const text = await complete(opts);
     return { text, ai: true };
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.warn('[openai] falling back to stub:', err.message);
     return { text: stub(), ai: false };
   }

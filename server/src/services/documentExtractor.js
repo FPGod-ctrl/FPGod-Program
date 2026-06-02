@@ -33,7 +33,9 @@ export async function extractText(buffer, mimeType, originalName = '') {
     return buffer.toString('utf8').trim();
   }
 
-  // Legacy .doc and unknown types: best-effort UTF-8 decode.
+  // Legacy .doc and unknown types: best-effort UTF-8 decode, stripping control
+  // bytes while preserving tab/newline/carriage-return and printable ASCII.
+  // eslint-disable-next-line no-control-regex
   return buffer.toString('utf8').replace(/[^\x09\x0A\x0D\x20-\x7E]/g, ' ').trim();
 }
 
