@@ -9,8 +9,12 @@
     "db:seed": "npm --prefix server run db:seed",
     "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
     "build:client": "npm --prefix client run build",
-    "start:server": "npm --prefix server start"
+    "start": "NODE_ENV=production npm --prefix server start",
+    "start:server": "npm --prefix server start",
+    "lint": "npm --prefix server run lint && npm --prefix client run lint",
+    "test": "npm --prefix server run test && npm --prefix client run test"
   },
   "engines": {
     "node": ">=20"

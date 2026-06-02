@@ -74,6 +74,23 @@ See `server/.env.example` and `client/.env.example`. The app runs in a
 **degraded but functional mode without an OpenAI key** — AI endpoints return
 clearly-labelled stub content so you can develop the UI offline.
 
+## Run as a single program (production)
+
+In development you run two servers (API on 4000, Vite on 5173). For a single
+deployable program, build the frontend and let the API serve it:
+
+```bash
+npm run install:all          # install both workspaces
+npm --prefix server run db:migrate
+npm run build                # builds client/dist
+npm start                    # NODE_ENV=production — API serves the SPA on :4000
+```
+
+Then open http://localhost:4000 — one process serves both the React app and the
+`/api` endpoints (same origin, so no CORS or proxy needed). The API auto-detects
+`client/dist`: if it's present it serves the SPA with a deep-link fallback;
+if not, it runs as a pure JSON API.
+
 ## Deployment notes
 
 - Storage is abstracted behind `server/src/services/storage.js`. The local
