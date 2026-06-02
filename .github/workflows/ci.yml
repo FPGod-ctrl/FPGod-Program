@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - name: Install client dependencies
+        run: npm --prefix client ci
+      - name: Lint client
+        run: npm --prefix client run lint
+      - name: Test client
+        run: npm --prefix client run test
+      - name: Build client
+        run: npm --prefix client run build
+
+  backend:
+    name: Backend (migrate + seed + smoke)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: fpgod
+          POSTGRES_PASSWORD: fpgod
+          POSTGRES_DB: fpgod
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgres://fpgod:fpgod@localhost:5432/fpgod
+      PORT: 4000
+      # No OPENAI_API_KEY — the API runs in stub mode, which is what we smoke-test.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - name: Install server dependencies
+        run: npm --prefix server ci
+      - name: Lint server
+        run: npm --prefix server run lint
+      - name: Run migration
+        run: npm --prefix server run db:migrate
+      - name: Test server
+        run: npm --prefix server run test
+      - name: Run seed
+        run: npm --prefix server run db:seed
+      - name: Smoke-test the API
+        run: |
+          ok=0
+          npm --prefix server start &
+          SERVER_PID=$!
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:4000/health > /dev/null; then ok=1; break; fi
+            sleep 1
+          done
+          if [ "$ok" = "1" ]; then
+            echo "Health check passed:"
+            curl -s http://localhost:4000/health
+            echo
+            echo "Dashboard responds:"
+            curl -sf http://localhost:4000/api/dashboard > /dev/null && echo "  /api/dashboard OK"
+          fi
+          kill "$SERVER_PID" 2>/dev/null || true
+          test "$ok" = "1"
