@@ -24,7 +24,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <PageHeader title="Dashboard" sub="Practice overview & recent activity" />
+      <PageHeader title="Dashboard" sub="✅ LIVE — this line was just changed by Claude!" />
       <div className="content">
         {!data ? (
           <Loading />
