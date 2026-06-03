@@ -125,6 +125,25 @@ describe('plan Word export', () => {
   });
 });
 
+describe('client import from a document', () => {
+  it('parses client fields from an uploaded profile (no save)', async () => {
+    const res = await request(app)
+      .post('/api/clients/import')
+      .attach('file', Buffer.from('Name: Jane Doe\nEmail: jane.doe@example.com\nGrowth Fund: $123,456'), 'profile.txt');
+    expect(res.status).toBe(200);
+    expect(res.body.parsed).toBeTruthy();
+    expect(res.body.parsed.client.email).toBe('jane.doe@example.com');
+    // Nothing should have been persisted by an import.
+    const list = await request(app).get('/api/clients');
+    expect(list.body.find((c) => c.email === 'jane.doe@example.com')).toBeFalsy();
+  });
+
+  it('rejects an import with no file', async () => {
+    const res = await request(app).post('/api/clients/import');
+    expect(res.status).toBe(400);
+  });
+});
+
 describe('training data bulk import', () => {
   it('imports text files as training examples', async () => {
     const before = await request(app).get('/api/training-data/stats');
