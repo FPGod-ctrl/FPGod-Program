@@ -22,7 +22,7 @@ function Sidebar({ meta }) {
         <div className="brand-logo">F</div>
         <div>
           <div className="brand-name">FPGod</div>
-          <div className="brand-sub">Financial Planning</div>
+          <div className="brand-sub">AI Financial Planning</div>
         </div>
       </div>
       <nav className="nav">
