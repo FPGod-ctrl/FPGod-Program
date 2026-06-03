@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client.js';
 import { currency, initials } from '../lib/format.js';
@@ -6,7 +6,7 @@ import PageHeader from '../components/PageHeader.jsx';
 import DataTable from '../components/ui/DataTable.jsx';
 import Badge from '../components/ui/Badge.jsx';
 import Modal from '../components/ui/Modal.jsx';
-import { Loading, Empty } from '../components/ui/Loading.jsx';
+import { Loading, Empty, Spinner } from '../components/ui/Loading.jsx';
 import { TextInput, Select, TextArea } from '../components/ui/Field.jsx';
 import { useToast } from '../components/ui/Toast.jsx';
 
@@ -20,6 +20,9 @@ export default function Clients() {
   const [groups, setGroups] = useState(null);
   const [showClient, setShowClient] = useState(false);
   const [showGroup, setShowGroup] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [importInitial, setImportInitial] = useState(null);   // parsed client fields to prefill
+  const [pendingInv, setPendingInv] = useState([]);           // parsed holdings to add after save
   const nav = useNavigate();
   const toast = useToast();
 
@@ -63,7 +66,12 @@ export default function Clients() {
         sub="Individuals and households"
         actions={
           tab === 'clients'
-            ? <button className="btn primary" onClick={() => setShowClient(true)}>+ New Client</button>
+            ? (
+              <>
+                <button className="btn" onClick={() => setShowImport(true)}>⬆ Import from Document</button>
+                <button className="btn primary" onClick={() => { setImportInitial(null); setPendingInv([]); setShowClient(true); }}>+ New Client</button>
+              </>
+            )
             : <button className="btn primary" onClick={() => setShowGroup(true)}>+ New Household</button>
         }
       />
@@ -90,9 +98,20 @@ export default function Clients() {
         </div>
       </div>
 
+      {showImport && (
+        <ImportClientModal
+          onClose={() => setShowImport(false)}
+          onParsed={(parsed) => {
+            setShowImport(false);
+            setImportInitial(parsed.client || {});
+            setPendingInv(parsed.investments || []);
+            setShowClient(true);
+          }} />
+      )}
       {showClient && (
-        <ClientForm groups={groups || []} onClose={() => setShowClient(false)}
-          onSaved={() => { setShowClient(false); load(); toast('Client created', 'success'); }} />
+        <ClientForm groups={groups || []} initial={importInitial} pendingInvestments={pendingInv}
+          onClose={() => setShowClient(false)}
+          onSaved={() => { setShowClient(false); setImportInitial(null); setPendingInv([]); load(); toast('Client saved', 'success'); }} />
       )}
       {showGroup && (
         <GroupForm onClose={() => setShowGroup(false)}
@@ -102,12 +121,25 @@ export default function Clients() {
   );
 }
 
-function ClientForm({ groups, onClose, onSaved }) {
-  const [f, setF] = useState({ first_name: '', last_name: '', email: '', phone: '', occupation: '',
-    risk_profile: '', status: 'prospect', group_id: '', annual_income: '', net_worth: '', date_of_birth: '', notes: '' });
+function ClientForm({ groups, initial, pendingInvestments = [], onClose, onSaved }) {
+  // Build the starting form values, pre-filling from a scanned document when present.
+  const [f, setF] = useState(() => {
+    const base = { first_name: '', last_name: '', email: '', phone: '', occupation: '',
+      risk_profile: '', status: 'prospect', group_id: '', annual_income: '', net_worth: '', date_of_birth: '', notes: '' };
+    if (initial) {
+      for (const k of Object.keys(base)) {
+        if (initial[k] != null && initial[k] !== '') base[k] = String(initial[k]);
+      }
+      // Normalise enum-ish fields so the dropdowns match.
+      base.risk_profile = base.risk_profile.toLowerCase();
+      base.status = base.status.toLowerCase() || 'prospect';
+    }
+    return base;
+  });
   const [saving, setSaving] = useState(false);
   const toast = useToast();
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
+  const fromDoc = Boolean(initial);
 
   const submit = async () => {
     if (!f.first_name || !f.last_name) { toast('First and last name are required', 'error'); return; }
@@ -116,17 +148,44 @@ function ClientForm({ groups, onClose, onSaved }) {
       const payload = { ...f };
       ['annual_income', 'net_worth'].forEach((k) => { payload[k] = payload[k] === '' ? null : Number(payload[k]); });
       Object.keys(payload).forEach((k) => { if (payload[k] === '') payload[k] = null; });
-      await api.post('/clients', payload);
+      const created = await api.post('/clients', payload);
+
+      // If this client was imported from a document, also add any parsed holdings.
+      if (created?.id && pendingInvestments.length) {
+        for (const inv of pendingInvestments) {
+          if (!inv || !inv.fund_name) continue;
+          const ip = {
+            client_id: created.id,
+            fund_name: inv.fund_name,
+            ticker: inv.ticker ?? null,
+            account_type: inv.account_type ?? null,
+            balance: inv.balance ?? null,
+            allocation_pct: inv.allocation_pct ?? null,
+            asset_class: inv.asset_class ?? null,
+            fee_pct: inv.fee_pct ?? null,
+            provider: inv.provider ?? null,
+          };
+          try { await api.post('/investments/current', ip); } catch { /* skip rows the AI got wrong */ }
+        }
+      }
       onSaved();
     } catch (err) { toast(err.message, 'error'); } finally { setSaving(false); }
   };
 
   return (
-    <Modal title="New Client" wide onClose={onClose}
+    <Modal title={fromDoc ? 'Review Imported Client' : 'New Client'} wide onClose={onClose}
       footer={<>
         <button className="btn" onClick={onClose}>Cancel</button>
-        <button className="btn primary" onClick={submit} disabled={saving}>{saving ? 'Saving…' : 'Create Client'}</button>
+        <button className="btn primary" onClick={submit} disabled={saving}>{saving ? 'Saving…' : (fromDoc ? 'Save Client' : 'Create Client')}</button>
       </>}>
+      {fromDoc && (
+        <div className="md" style={{ marginBottom: 14 }}>
+          <blockquote style={{ borderLeftColor: 'var(--accent)', background: 'var(--accent-soft)' }}>
+            ✨ Pre-filled from your document. <strong>Review and edit anything</strong> before saving.
+            {pendingInvestments.length ? ` ${pendingInvestments.length} holding(s) found will be added too.` : ''}
+          </blockquote>
+        </div>
+      )}
       <div className="form-grid">
         <TextInput label="First name *" value={f.first_name} onChange={set('first_name')} />
         <TextInput label="Last name *" value={f.last_name} onChange={set('last_name')} />
@@ -142,6 +201,52 @@ function ClientForm({ groups, onClose, onSaved }) {
           value={f.group_id} onChange={set('group_id')} />
       </div>
       <TextArea label="Notes" value={f.notes} onChange={set('notes')} />
+    </Modal>
+  );
+}
+
+function ImportClientModal({ onClose, onParsed }) {
+  const [busy, setBusy] = useState(false);
+  const [drag, setDrag] = useState(false);
+  const fileRef = useRef(null);
+  const toast = useToast();
+
+  const handle = async (files) => {
+    const file = files?.[0];
+    if (!file || busy) return;
+    setBusy(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await api.upload('/clients/import', fd);
+      if (!res.ai) toast('Read in offline mode — please double-check every field', 'info');
+      onParsed(res.parsed || {});
+    } catch (err) {
+      toast(err.message, 'error');
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Modal title="Import Client from Document" onClose={onClose}
+      footer={<button className="btn" onClick={onClose}>Cancel</button>}>
+      <p className="muted" style={{ marginTop: 0 }}>
+        Drag in a client profile (PDF or Word). The AI reads it and opens a <strong>pre-filled, editable
+        form</strong> — nothing is saved until you review and confirm it.
+      </p>
+      <div
+        className={`dropzone ${drag ? 'drag' : ''}`}
+        onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+        onDragLeave={() => setDrag(false)}
+        onDrop={(e) => { e.preventDefault(); setDrag(false); handle(e.dataTransfer.files); }}
+        onClick={() => !busy && fileRef.current?.click()}
+      >
+        <div className="dz-ico">{busy ? <Spinner /> : '👤'}</div>
+        <h3 style={{ margin: '10px 0 4px' }}>{busy ? 'Reading document…' : 'Drag & drop a client profile'}</h3>
+        <div className="muted">{busy ? 'Extracting details with AI…' : 'or click to browse · PDF, DOC, DOCX, TXT'}</div>
+        <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.txt" style={{ display: 'none' }}
+          onChange={(e) => handle(e.target.files)} />
+      </div>
     </Modal>
   );
 }

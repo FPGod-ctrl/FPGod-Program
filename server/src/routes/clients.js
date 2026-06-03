@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { query } from '../config/db.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { notFound } from '../utils/httpError.js';
+import { notFound, badRequest } from '../utils/httpError.js';
+import { upload } from '../middleware/upload.js';
+import { extractText } from '../services/documentExtractor.js';
+import { scanDocument } from '../services/documentScan.js';
 import { crudRouter } from './crudFactory.js';
 
 const COLUMNS = [
@@ -63,6 +66,34 @@ router.get(
     ]);
 
     res.json({ client, group, current, recommended, plans, transcripts, emails, documents });
+  })
+);
+
+/**
+ * POST /api/clients/import
+ * multipart/form-data: file=<binary>
+ * Extracts client fields + holdings from an uploaded profile document (PDF /
+ * Word / TXT) using AI, WITHOUT saving. The frontend shows the parsed values in
+ * a pre-filled, editable form for the advisor to review and confirm.
+ */
+router.post(
+  '/import',
+  upload.single('file'),
+  asyncHandler(async (req, res) => {
+    if (!req.file) throw badRequest('No file uploaded (field name must be "file")');
+    const text = await extractText(req.file.buffer, req.file.mimetype, req.file.originalname);
+    if (!text || !text.trim()) throw badRequest('No readable text found in that document');
+
+    const { result, ai } = await scanDocument(text);
+    res.json({
+      ai,
+      source: req.file.originalname,
+      parsed: {
+        client: result?.client || {},
+        investments: Array.isArray(result?.investments) ? result.investments : [],
+        notes: result?.notes || null,
+      },
+    });
   })
 );
 
