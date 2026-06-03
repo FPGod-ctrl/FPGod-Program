@@ -2,8 +2,10 @@ import { Router } from 'express';
 import { query } from '../config/db.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { badRequest, notFound } from '../utils/httpError.js';
+import HTMLtoDOCX from 'html-to-docx';
 import { crudRouter } from './crudFactory.js';
 import { gatherClientContext, generatePlan } from '../services/planGenerator.js';
+import { renderPlanHtml } from '../services/planRender.js';
 
 const crud = crudRouter({
   table: 'financial_plans',
@@ -70,6 +72,38 @@ router.post(
       [text, ai, ai ? 95 : 60, req.params.id]
     );
     res.json({ ...updated, ai });
+  })
+);
+
+/**
+ * POST /api/plans/:id/export/docx
+ * Body: { theme?, accent?, firmName?, tagline? }
+ * Returns a branded Word document of the plan.
+ */
+router.post(
+  '/:id/export/docx',
+  asyncHandler(async (req, res) => {
+    const { rows: [plan] } = await query('SELECT * FROM financial_plans WHERE id = $1', [req.params.id]);
+    if (!plan) throw notFound('Plan not found');
+
+    let client = null;
+    if (plan.client_id) {
+      const { rows } = await query('SELECT * FROM clients WHERE id = $1', [plan.client_id]);
+      client = rows[0] || null;
+    }
+
+    const { theme, accent, firmName, tagline } = req.body || {};
+    const html = renderPlanHtml({ plan, client, theme, accent, firmName, tagline });
+    const docx = await HTMLtoDOCX(html, null, {
+      orientation: 'portrait',
+      margins: { top: 720, right: 720, bottom: 720, left: 720 },
+    });
+    const buffer = Buffer.isBuffer(docx) ? docx : Buffer.from(await docx.arrayBuffer());
+
+    const fname = (plan.title || 'financial-plan').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    res.setHeader('Content-Disposition', `attachment; filename="${fname || 'financial-plan'}.docx"`);
+    res.send(buffer);
   })
 );
 

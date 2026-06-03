@@ -94,3 +94,56 @@ describe('client lifecycle + AI plan generation (stub mode)', () => {
     expect(after.status).toBe(404);
   });
 });
+
+describe('plan Word export', () => {
+  let clientId;
+  let planId;
+
+  it('sets up a client and a saved plan', async () => {
+    const c = await request(app)
+      .post('/api/clients')
+      .send({ first_name: 'Export', last_name: 'Sample', status: 'active' });
+    clientId = c.body.id;
+    const p = await request(app).post('/api/plans/generate').send({ clientId, save: true });
+    expect(p.status).toBe(201);
+    planId = p.body.id;
+    expect(planId).toBeTruthy();
+  });
+
+  it('exports a branded .docx', async () => {
+    const res = await request(app)
+      .post(`/api/plans/${planId}/export/docx`)
+      .send({ theme: 'classic', accent: '#7c3aed', firmName: 'Test Firm', tagline: 'Advisory' });
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toContain('wordprocessingml');
+    expect(res.headers['content-disposition']).toContain('.docx');
+  });
+
+  it('cleans up', async () => {
+    const res = await request(app).delete(`/api/clients/${clientId}`);
+    expect(res.status).toBe(204);
+  });
+});
+
+describe('training data bulk import', () => {
+  it('imports text files as training examples', async () => {
+    const before = await request(app).get('/api/training-data/stats');
+    const res = await request(app)
+      .post('/api/training-data/import')
+      .field('kind', 'plan')
+      .attach('files', Buffer.from('Plan A: bond tent glide path.'), 'plan-a.txt')
+      .attach('files', Buffer.from('Plan B: Roth conversion ladder.'), 'plan-b.txt');
+    expect(res.status).toBe(201);
+    expect(res.body.importedCount).toBe(2);
+    expect(res.body.failedCount).toBe(0);
+    expect(res.body.imported[0].title).toBe('plan-a');
+
+    const after = await request(app).get('/api/training-data/stats');
+    expect(after.body.plan).toBe(before.body.plan + 2);
+  });
+
+  it('rejects an import with no files', async () => {
+    const res = await request(app).post('/api/training-data/import').field('kind', 'plan');
+    expect(res.status).toBe(400);
+  });
+});

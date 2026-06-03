@@ -119,6 +119,7 @@ export default function PlanGenerator() {
                       </>
                     ) : (
                       <>
+                        <button className="btn sm accent" onClick={() => window.open(`/present/${selected.id}`, '_blank')}>Present / Export</button>
                         <button className="btn sm ghost" onClick={regenerate}>Regenerate</button>
                         <button className="btn sm" onClick={() => setEditing(true)}>Edit</button>
                       </>
