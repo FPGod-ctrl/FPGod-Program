@@ -9,6 +9,7 @@ import PlanGenerator from './pages/PlanGenerator.jsx';
 import Investments from './pages/Investments.jsx';
 import Meetings from './pages/Meetings.jsx';
 import Settings from './pages/Settings.jsx';
+import PlanPresent from './pages/PlanPresent.jsx';
 import NotFound from './pages/NotFound.jsx';
 
 export default function App() {
@@ -26,6 +27,8 @@ export default function App() {
           <Route path="settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Route>
+        {/* Standalone client-facing presentation/export (no app chrome). */}
+        <Route path="present/:id" element={<PlanPresent />} />
       </Routes>
     </ToastProvider>
   );

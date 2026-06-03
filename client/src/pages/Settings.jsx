@@ -9,6 +9,7 @@ import { Loading, Empty } from '../components/ui/Loading.jsx';
 import { Select, TextInput, TextArea } from '../components/ui/Field.jsx';
 import { useToast } from '../components/ui/Toast.jsx';
 import BulkImportTraining from '../components/BulkImportTraining.jsx';
+import { THEMES, ACCENT_PRESETS, loadTemplate, saveTemplate } from '../lib/template.js';
 
 export default function Settings() {
   const [meta, setMeta] = useState(null);
@@ -65,6 +66,8 @@ export default function Settings() {
           <div className="stat accent"><div className="stat-label">Total Examples</div>
             <div className="stat-value">{stats?.total ?? '—'}</div></div>
         </div>
+
+        <PlanTemplateSettings />
 
         <BulkImportTraining onDone={load} />
 
@@ -124,5 +127,69 @@ function TrainingForm({ onClose, onSaved }) {
       <TextArea label="Content *" placeholder="Paste a historical plan or email…" value={f.content}
         onChange={set('content')} style={{ minHeight: 240 }} />
     </Modal>
+  );
+}
+
+function PlanTemplateSettings() {
+  const [tpl, setTpl] = useState(loadTemplate());
+  const toast = useToast();
+  const set = (patch) => setTpl((t) => ({ ...t, ...patch }));
+  const save = () => { saveTemplate(tpl); toast('Template style saved', 'success'); };
+
+  return (
+    <div className="card">
+      <div className="card-head"><h3>Plan Template Style</h3>
+        <button className="btn sm primary" onClick={save}>Save Style</button></div>
+      <div className="card-pad">
+        <p className="muted" style={{ marginTop: 0 }}>
+          Controls how finished plans look to clients (on screen, PDF, and Word) — independent of the
+          old plans' formatting. Choose a style and your branding, then use “Present / Export” on any plan.
+        </p>
+        <div className="grid grid-2" style={{ alignItems: 'start' }}>
+          <div>
+            <div className="field">
+              <label>Style</label>
+              <div className="row wrap" style={{ gap: 8 }}>
+                {THEMES.map((t) => (
+                  <button key={t.id} className={`btn sm ${tpl.theme === t.id ? 'primary' : ''}`}
+                    onClick={() => set({ theme: t.id })} title={t.blurb}>{t.name}</button>
+                ))}
+              </div>
+              <span className="hint">{THEMES.find((t) => t.id === tpl.theme)?.blurb}</span>
+            </div>
+            <div className="field">
+              <label>Accent colour</label>
+              <div className="row wrap" style={{ gap: 8 }}>
+                {ACCENT_PRESETS.map((c) => (
+                  <button key={c} onClick={() => set({ accent: c })} title={c}
+                    style={{ width: 26, height: 26, borderRadius: '50%', background: c, cursor: 'pointer',
+                      border: tpl.accent === c ? '2px solid var(--text)' : '2px solid #fff', boxShadow: '0 0 0 1px var(--border)' }} />
+                ))}
+                <input type="color" value={tpl.accent} onChange={(e) => set({ accent: e.target.value })}
+                  style={{ width: 40, height: 30, padding: 2 }} />
+              </div>
+            </div>
+            <TextInput label="Firm name" value={tpl.firmName} onChange={(e) => set({ firmName: e.target.value })} />
+            <TextInput label="Tagline" value={tpl.tagline} onChange={(e) => set({ tagline: e.target.value })} />
+          </div>
+
+          <div>
+            <label className="hint" style={{ display: 'block', marginBottom: 6 }}>Live preview</label>
+            <div className={`template-preview theme-${tpl.theme}`} style={{ '--accent': tpl.accent }}>
+              <div className="tp-cover">
+                {tpl.firmName && <div className="tp-firm">{tpl.firmName}</div>}
+                {tpl.tagline && <div className="hint" style={{ textTransform: 'uppercase', letterSpacing: '0.06em' }}>{tpl.tagline}</div>}
+                <div className="tp-title">Financial Plan</div>
+                <div className="hint">Prepared for Jane Client</div>
+              </div>
+              <div className="tp-h">Executive Summary</div>
+              <div className="tp-line" /><div className="tp-line" /><div className="tp-line short" />
+              <div className="tp-h">Recommendations</div>
+              <div className="tp-line" /><div className="tp-line short" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

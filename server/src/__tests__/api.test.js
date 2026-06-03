@@ -95,6 +95,36 @@ describe('client lifecycle + AI plan generation (stub mode)', () => {
   });
 });
 
+describe('plan Word export', () => {
+  let clientId;
+  let planId;
+
+  it('sets up a client and a saved plan', async () => {
+    const c = await request(app)
+      .post('/api/clients')
+      .send({ first_name: 'Export', last_name: 'Sample', status: 'active' });
+    clientId = c.body.id;
+    const p = await request(app).post('/api/plans/generate').send({ clientId, save: true });
+    expect(p.status).toBe(201);
+    planId = p.body.id;
+    expect(planId).toBeTruthy();
+  });
+
+  it('exports a branded .docx', async () => {
+    const res = await request(app)
+      .post(`/api/plans/${planId}/export/docx`)
+      .send({ theme: 'classic', accent: '#7c3aed', firmName: 'Test Firm', tagline: 'Advisory' });
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toContain('wordprocessingml');
+    expect(res.headers['content-disposition']).toContain('.docx');
+  });
+
+  it('cleans up', async () => {
+    const res = await request(app).delete(`/api/clients/${clientId}`);
+    expect(res.status).toBe(204);
+  });
+});
+
 describe('training data bulk import', () => {
   it('imports text files as training examples', async () => {
     const before = await request(app).get('/api/training-data/stats');

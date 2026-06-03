@@ -29,6 +29,12 @@ React (Vite) frontend  ──►  Express API  ──►  PostgreSQL
 - **Meetings & emails** — upload transcripts, generate follow-up emails from
   transcripts + historical email examples.
 - **Chat refinement** — iterate on any plan or email in real time.
+- **Client-ready output** — present any plan in a polished, branded template
+  (selectable styles + accent colour + firm name) and export to **PDF**
+  (print / save) or **Word (.docx)**. Configure under Settings → Plan Template
+  Style, then use "Present / Export" on a plan.
+- **Bulk training import** — drag in a whole library of historical plans
+  (Word/PDF/TXT) at once under Settings → Bulk Import.
 
 ## Project layout
 

@@ -34,6 +34,20 @@ export const api = {
   upload: (p, formData) => request('POST', p, formData, true),
   // Direct download URL (for links / window.open).
   downloadUrl: (docId) => `${BASE}/api/documents/${docId}/download`,
+  // POST that returns a binary Blob (e.g. a generated .docx) for download.
+  async postForBlob(p, body) {
+    const res = await fetch(`${BASE}/api${p}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {}),
+    });
+    if (!res.ok) {
+      let message = `Request failed (${res.status})`;
+      try { message = (await res.json())?.error?.message || message; } catch { /* non-JSON */ }
+      throw new Error(message);
+    }
+    return res.blob();
+  },
 };
 
 export default api;
