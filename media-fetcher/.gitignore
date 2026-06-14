@@ -1,0 +1,3 @@
+# Downloaded media lives here — never commit movie files.
+library/
+*.part

@@ -1,0 +1,17 @@
+{
+  "name": "media-fetcher",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Tell it a movie title and it downloads a free, public-domain copy from the Internet Archive into a tidy Jellyfin/Plex-ready library.",
+  "bin": {
+    "media-fetcher": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "fetch": "node src/index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
