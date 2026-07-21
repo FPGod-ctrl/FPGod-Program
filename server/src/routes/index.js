@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { aiEnabled } from '../services/openai.js';
+import { aiEnabled } from '../services/ai.js';
 import { env } from '../config/env.js';
 import dashboard from './dashboard.js';
 import clients from './clients.js';
@@ -11,6 +11,8 @@ import transcripts from './transcripts.js';
 import emails from './emails.js';
 import trainingData from './trainingData.js';
 import chat from './chat.js';
+import financials from './financials.js';
+import outlook from './outlook.js';
 
 const router = Router();
 
@@ -20,7 +22,7 @@ router.get('/meta', (req, res) => {
     name: 'FPGod API',
     version: '1.0.0',
     aiEnabled: aiEnabled(),
-    model: env.openai.model,
+    model: env.anthropic.model,
     storageDriver: env.storage.driver,
     maxUploadMb: Math.round(env.storage.maxUploadBytes / (1024 * 1024)),
   });
@@ -36,5 +38,8 @@ router.use('/transcripts', transcripts);
 router.use('/emails', emails);
 router.use('/training-data', trainingData);
 router.use('/chat', chat);
+router.use('/outlook', outlook);
+// Financial breakdown: /api/assets, /liabilities, /income, /expenses, /insurance, /goals
+router.use('/', financials);
 
 export default router;

@@ -1,0 +1,69 @@
+{
+  "adviser": "Tristan Biro",
+  "date": "1st of July 2026",
+  "current": [
+    {
+      "type": "Income Protection",
+      "startDate": "28/02/2019",
+      "product": "NEOS Protection (110034036)",
+      "lifeInsured": "Gautam Bhandari",
+      "sumInsured": "$19,703 / month\nIP Plus · Indemnity · 13-week wait · to age 65",
+      "owner": "Gautam Bhandari (Ordinary)",
+      "premium": "$615.16 / month",
+      "premiumType": "Stepped",
+      "replace": ""
+    },
+    {
+      "type": "Life",
+      "startDate": "28/02/2019",
+      "product": "NEOS Protection (110034036)",
+      "lifeInsured": "Gautam Bhandari",
+      "sumInsured": "$2,886,801",
+      "owner": "Gautam Bhandari (Ordinary)",
+      "premium": "$258.86 / month",
+      "premiumType": "Stepped",
+      "replace": ""
+    },
+    {
+      "type": "TPD (Own)",
+      "startDate": "28/02/2019",
+      "product": "NEOS Protection (110034036)",
+      "lifeInsured": "Gautam Bhandari",
+      "sumInsured": "$2,886,801\n(attached to Life · Own Occupation)",
+      "owner": "Gautam Bhandari (Ordinary)",
+      "premium": "$468.86 / month",
+      "premiumType": "Stepped",
+      "replace": ""
+    },
+    {
+      "type": "Trauma",
+      "startDate": "28/02/2019",
+      "product": "NEOS Protection (110034036)",
+      "lifeInsured": "Gautam Bhandari",
+      "sumInsured": "$721,700\n(Critical Illness · Plus)",
+      "owner": "Gautam Bhandari (Ordinary)",
+      "premium": "$471.40 / month",
+      "premiumType": "Stepped",
+      "replace": ""
+    },
+    {
+      "type": "Child Cover",
+      "startDate": "28/02/2019",
+      "product": "NEOS Protection (110034036)",
+      "lifeInsured": "Dia Bhandari (child)",
+      "sumInsured": "$288,680",
+      "owner": "Gautam Bhandari (Ordinary)",
+      "premium": "$44.17 / month",
+      "premiumType": "",
+      "replace": ""
+    }
+  ],
+  "indicative": [
+    { "type": "Income Protection", "startDate": "", "product": "", "lifeInsured": "", "sumInsured": "", "owner": "", "premium": "", "premiumType": "" },
+    { "type": "Life", "startDate": "", "product": "", "lifeInsured": "", "sumInsured": "", "owner": "", "premium": "", "premiumType": "" },
+    { "type": "TPD", "startDate": "", "product": "", "lifeInsured": "", "sumInsured": "", "owner": "", "premium": "", "premiumType": "" },
+    { "type": "Trauma", "startDate": "", "product": "", "lifeInsured": "", "sumInsured": "", "owner": "", "premium": "", "premiumType": "" },
+    { "type": "Child Cover", "startDate": "", "product": "", "lifeInsured": "", "sumInsured": "", "owner": "", "premium": "", "premiumType": "" }
+  ],
+  "totalPremium": "Total premium of $1,858.45 / month ($22,301.40 p.a.)"
+}

@@ -1,0 +1,58 @@
+{
+  "meta": { "adviser": "Tristan Biro", "date": "" },
+
+  "yourDetails": {
+    "fullName":                    { "client": "Nick", "spouse": "Irine" },
+    "occupation":                  { "client": "Caretaker – Garden & Building works", "spouse": "General Manager (16 years in role)" },
+    "employmentBasis":             { "client": "Full time", "spouse": "Part-time (4 days/week)" },
+    "employer":                    { "client": "The Minders Group", "spouse": "" },
+    "annualIncomeIncBonus":        { "client": "$115,000 + Super", "spouse": "$210,000 (pro rata package)" },
+    "superContributionsPct":       { "client": "SG only (no salary sacrifice)", "spouse": "SG only (no salary sacrifice)" },
+    "childrenDependents": "Simon (21) – vehicle buying role at Cavallo Prestige. Paige (23) – HR Coordinator. Both plan to move out by age 25."
+  },
+
+  "estatePlanning": {
+    "dateLastReviewed": "Recently – Wills redone by Doug (kids now older)",
+    "hasWill": "Yes",
+    "willAllowsTestamentaryTrust": "Yes",
+    "hasPowersOfAttorney": ""
+  },
+
+  "goals": {
+    "shortTerm": "Deploy $400K–$500K (recently settled) across SMSF, managed funds and a cash buffer. Obtain income protection, life & TPD quotes (both, plus children's cover / govt co-contribution). Finalise Greek land title transfer and any deed changes. Review offset accounts and credit limits (possible refinance). Investment proposal – shares (Stake/Netwealth or low-cost index funds) vs property vs first-charge mortgage lending (9.5–11%). Draft POAs for Simon & Paige. Strategy paper (not full SOA) – $3,000 + GST.",
+    "longTerm": "Grow SMSF from ~$420K to $1.2–$1.6m by retirement via concessional and catch-up contributions plus investment returns. Nick to retire or slow down in coming years; Irine to continue 4 days. Maximise borrowing before age restrictions apply. Develop a retirement lifestyle/activities plan. Box Hill South townhouse development on hold – reassess timing."
+  },
+
+  "assets": [
+    { "asset": "Residential Home",       "location": "Forest Hill VIC (PPOR; est. $2.0–2.2m, midpoint used)", "value": "2100000", "owner": "" },
+    { "asset": "Investment Property",     "location": "Box Hill South (held in joint names, 50% each)",        "value": "1500000", "owner": "Joint" },
+    { "asset": "WA Investment Property",  "location": "Western Australia (fully leveraged)",                   "value": "750000",  "owner": "" },
+    { "asset": "Greece Property & Land",  "location": "Greece – approx. €200,000 (EUR); land sale in progress","value": "",        "owner": "" },
+    { "asset": "Superannuation",          "location": "SMSF (ESuper admin/audit, ~$1,200 p.a.)",               "value": "420000",  "owner": "SMSF – Nick & Irine" },
+    { "asset": "Other Assets",            "location": "Testamentary Trust asset – no debt; income distributed tax-effectively", "value": "", "owner": "Trust" }
+  ],
+
+  "debts": [
+    { "debt": "Investment Property Loan",    "location": "Box Hill South", "balance": "700000", "bank": "CBA",     "fixedOrVariable": "", "ratePct": "",     "monthlyPayment": "" },
+    { "debt": "WA Investment Property Loan", "location": "WA",             "balance": "550000", "bank": "Resimac", "fixedOrVariable": "", "ratePct": "6.23", "monthlyPayment": "" }
+  ],
+
+  "familyProtection": {
+    "desiredOngoingIncome": "",
+    "clearInvestmentDebt": "",
+    "privateSchooling": "N/A – children are adults (21 & 23)"
+  },
+
+  "consent": {
+    "fsg": false,
+    "privacy": false,
+    "electronicCommunications": false,
+    "tfn": false,
+    "disclosureInformation": false,
+    "disclosureToSpouse": false,
+    "authorisationToRenew": false,
+    "clientName": "Nick and Irine",
+    "signature": "",
+    "date": ""
+  }
+}

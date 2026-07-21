@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-NetTCPConnection -LocalPort 4000,5173 -State Listen -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 4000 -State Listen -ErrorAction SilentlyContinue)",
+      "PowerShell(\"--- PORT CHECK ---\")",
+      "PowerShell($ports = 5173,4000; foreach \\($p in $ports\\) { $c = Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { \"Port $p : LISTENING\" } else { \"Port $p : not running\" } })"
+    ]
+  }
+}

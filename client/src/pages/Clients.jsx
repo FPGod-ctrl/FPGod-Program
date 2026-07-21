@@ -12,25 +12,40 @@ import { useToast } from '../components/ui/Toast.jsx';
 
 const RISK = ['conservative', 'moderate', 'balanced', 'growth', 'aggressive'];
 const STATUS = ['prospect', 'active', 'inactive', 'archived'];
-const GROUP_TYPES = ['couple', 'family', 'household', 'other'];
 
 export default function Clients() {
-  const [tab, setTab] = useState('clients');
   const [clients, setClients] = useState(null);
-  const [groups, setGroups] = useState(null);
   const [showClient, setShowClient] = useState(false);
-  const [showGroup, setShowGroup] = useState(false);
-  const [showImport, setShowImport] = useState(false);
   const [importInitial, setImportInitial] = useState(null);   // parsed client fields to prefill
   const [pendingInv, setPendingInv] = useState([]);           // parsed holdings to add after save
+  const [drag, setDrag] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const fileRef = useRef(null);
   const nav = useNavigate();
   const toast = useToast();
 
-  const load = () => {
-    api.get('/clients').then(setClients).catch(() => setClients([]));
-    api.get('/client-groups').then(setGroups).catch(() => setGroups([]));
+  const load = () => api.get('/clients').then(setClients).catch(() => setClients([]));
+  useEffect(() => { load(); }, []);
+
+  // Drag a client profile onto the page → extract → open the create form pre-filled.
+  const importFromFile = async (files) => {
+    const file = files?.[0];
+    if (!file || importing) return;
+    setImporting(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await api.upload('/clients/import', fd);
+      if (!res.ai) toast('Read in offline mode — double-check every field', 'info');
+      const parsed = res.parsed || {};
+      setImportInitial(parsed.client || {});
+      setPendingInv(parsed.investments || []);
+      setShowClient(true);
+    } catch (err) { toast(err.message, 'error'); }
+    finally { setImporting(false); if (fileRef.current) fileRef.current.value = ''; }
   };
-  useEffect(load, []);
+
+  const hasPartner = (r) => Boolean(r.partner_first_name || r.partner_last_name);
 
   const clientCols = [
     {
@@ -39,93 +54,69 @@ export default function Clients() {
         <div className="row">
           <div className="avatar">{initials(r.first_name, r.last_name)}</div>
           <div>
-            <div className="t-strong">{r.first_name} {r.last_name}</div>
+            <div className="t-strong">
+              {r.first_name} {r.last_name}
+              {hasPartner(r) && <span className="muted"> &amp; {r.partner_first_name} {r.partner_last_name}</span>}
+            </div>
             <div className="faint" style={{ fontSize: 12 }}>{r.email || 'No email'}</div>
           </div>
         </div>
       ),
     },
-    { key: 'group_name', header: 'Household', render: (r) => r.group_name || <span className="faint">—</span> },
-    { key: 'risk', header: 'Risk', render: (r) => (r.risk_profile ? <Badge value={r.risk_profile} /> : '—') },
+    { key: 'type', header: 'Type', render: (r) => (hasPartner(r)
+      ? <Badge tone="purple" value="Couple" /> : <span className="faint">Individual</span>) },
     { key: 'holdings_count', header: 'Holdings', num: true, render: (r) => r.holdings_count || 0 },
     { key: 'total_balance', header: 'Portfolio', num: true, render: (r) => currency(r.total_balance) },
     { key: 'status', header: 'Status', render: (r) => <Badge value={r.status} /> },
-  ];
-
-  const groupCols = [
-    { key: 'name', header: 'Household', render: (r) => <span className="t-strong">{r.name}</span> },
-    { key: 'group_type', header: 'Type', render: (r) => <Badge tone="blue" value={r.group_type} /> },
-    { key: 'member_count', header: 'Members', num: true },
-    { key: 'total_balance', header: 'Combined Portfolio', num: true, render: (r) => currency(r.total_balance) },
   ];
 
   return (
     <>
       <PageHeader
         title="Client Management"
-        sub="Individuals and households"
-        actions={
-          tab === 'clients'
-            ? (
-              <>
-                <button className="btn" onClick={() => setShowImport(true)}>⬆ Import from Document</button>
-                <button className="btn primary" onClick={() => { setImportInitial(null); setPendingInv([]); setShowClient(true); }}>+ New Client</button>
-              </>
-            )
-            : <button className="btn primary" onClick={() => setShowGroup(true)}>+ New Household</button>
-        }
+        sub="One file per client or couple"
+        actions={<button className="btn primary" onClick={() => { setImportInitial(null); setPendingInv([]); setShowClient(true); }}>+ New Client</button>}
       />
-      <div className="content">
-        <div className="tabs">
-          <div className={`tab ${tab === 'clients' ? 'active' : ''}`} onClick={() => setTab('clients')}>
-            Clients {clients ? `(${clients.length})` : ''}
-          </div>
-          <div className={`tab ${tab === 'groups' ? 'active' : ''}`} onClick={() => setTab('groups')}>
-            Households {groups ? `(${groups.length})` : ''}
-          </div>
+      <div className="content stack">
+        {/* Drag a profile to create a client file */}
+        <div
+          className={`dropzone ${drag ? 'drag' : ''}`}
+          onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+          onDragLeave={() => setDrag(false)}
+          onDrop={(e) => { e.preventDefault(); setDrag(false); importFromFile(e.dataTransfer.files); }}
+          onClick={() => !importing && fileRef.current?.click()}
+        >
+          <div className="dz-ico">{importing ? <Spinner /> : '👤'}</div>
+          <h3 style={{ margin: '10px 0 4px' }}>{importing ? 'Reading profile…' : 'Drag a client profile here to create a file'}</h3>
+          <div className="muted">{importing ? 'Extracting details with AI…' : 'or click to browse · PDF, DOC, DOCX, XLSX, XLS, CSV, TXT — review before saving'}</div>
+          <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.txt,.xlsx,.xls,.csv" style={{ display: 'none' }}
+            onChange={(e) => importFromFile(e.target.files)} />
         </div>
 
         <div className="card">
-          {tab === 'clients' ? (
-            clients == null ? <Loading /> :
-              <DataTable columns={clientCols} rows={clients} onRowClick={(r) => nav(`/clients/${r.id}`)}
-                empty={<Empty icon="👥" title="No clients yet">Create your first client to get started.</Empty>} />
-          ) : (
-            groups == null ? <Loading /> :
-              <DataTable columns={groupCols} rows={groups}
-                empty={<Empty icon="🏠" title="No households yet">Group couples and families together.</Empty>} />
-          )}
+          <div className="card-head"><h3>Clients</h3><span className="muted">{clients?.length || 0}</span></div>
+          {clients == null ? <Loading /> :
+            <DataTable columns={clientCols} rows={clients} onRowClick={(r) => nav(`/clients/${r.id}`)}
+              empty={<Empty icon="👥" title="No clients yet">Drag a profile above or click “+ New Client”.</Empty>} />}
         </div>
       </div>
 
-      {showImport && (
-        <ImportClientModal
-          onClose={() => setShowImport(false)}
-          onParsed={(parsed) => {
-            setShowImport(false);
-            setImportInitial(parsed.client || {});
-            setPendingInv(parsed.investments || []);
-            setShowClient(true);
-          }} />
-      )}
       {showClient && (
-        <ClientForm groups={groups || []} initial={importInitial} pendingInvestments={pendingInv}
+        <ClientForm initial={importInitial} pendingInvestments={pendingInv}
           onClose={() => setShowClient(false)}
           onSaved={() => { setShowClient(false); setImportInitial(null); setPendingInv([]); load(); toast('Client saved', 'success'); }} />
-      )}
-      {showGroup && (
-        <GroupForm onClose={() => setShowGroup(false)}
-          onSaved={() => { setShowGroup(false); load(); toast('Household created', 'success'); }} />
       )}
     </>
   );
 }
 
-function ClientForm({ groups, initial, pendingInvestments = [], onClose, onSaved }) {
+function ClientForm({ initial, pendingInvestments = [], onClose, onSaved }) {
   // Build the starting form values, pre-filling from a scanned document when present.
   const [f, setF] = useState(() => {
-    const base = { first_name: '', last_name: '', email: '', phone: '', occupation: '',
-      risk_profile: '', status: 'prospect', group_id: '', annual_income: '', net_worth: '', date_of_birth: '', notes: '' };
+    const base = { first_name: '', last_name: '', email: '', phone: '', address: '', occupation: '',
+      risk_profile: '', status: 'prospect', annual_income: '', net_worth: '', date_of_birth: '', notes: '',
+      partner_first_name: '', partner_last_name: '', partner_email: '', partner_phone: '',
+      partner_date_of_birth: '', partner_occupation: '', partner_annual_income: '', partner_risk_profile: '' };
     if (initial) {
       for (const k of Object.keys(base)) {
         if (initial[k] != null && initial[k] !== '') base[k] = String(initial[k]);
@@ -146,7 +137,7 @@ function ClientForm({ groups, initial, pendingInvestments = [], onClose, onSaved
     setSaving(true);
     try {
       const payload = { ...f };
-      ['annual_income', 'net_worth'].forEach((k) => { payload[k] = payload[k] === '' ? null : Number(payload[k]); });
+      ['annual_income', 'net_worth', 'partner_annual_income'].forEach((k) => { payload[k] = payload[k] === '' ? null : Number(payload[k]); });
       Object.keys(payload).forEach((k) => { if (payload[k] === '') payload[k] = null; });
       const created = await api.post('/clients', payload);
 
@@ -191,88 +182,29 @@ function ClientForm({ groups, initial, pendingInvestments = [], onClose, onSaved
         <TextInput label="Last name *" value={f.last_name} onChange={set('last_name')} />
         <TextInput label="Email" type="email" value={f.email} onChange={set('email')} />
         <TextInput label="Phone" value={f.phone} onChange={set('phone')} />
+        <TextInput label="Address" value={f.address} onChange={set('address')} />
         <TextInput label="Occupation" value={f.occupation} onChange={set('occupation')} />
         <TextInput label="Date of birth" type="date" value={f.date_of_birth} onChange={set('date_of_birth')} />
         <Select label="Risk profile" placeholder="—" options={RISK} value={f.risk_profile} onChange={set('risk_profile')} />
         <Select label="Status" options={STATUS} value={f.status} onChange={set('status')} />
         <TextInput label="Annual income" type="number" value={f.annual_income} onChange={set('annual_income')} />
         <TextInput label="Net worth" type="number" value={f.net_worth} onChange={set('net_worth')} />
-        <Select label="Household" placeholder="None" options={groups.map((g) => ({ value: g.id, label: g.name }))}
-          value={f.group_id} onChange={set('group_id')} />
+      </div>
+
+      <h4 style={{ margin: '18px 0 8px' }}>Partner / Spouse
+        <span className="muted" style={{ fontWeight: 400, fontSize: 13 }}> (optional — leave blank if single)</span></h4>
+      <div className="form-grid">
+        <TextInput label="Partner first name" value={f.partner_first_name} onChange={set('partner_first_name')} />
+        <TextInput label="Partner last name" value={f.partner_last_name} onChange={set('partner_last_name')} />
+        <TextInput label="Partner email" type="email" value={f.partner_email} onChange={set('partner_email')} />
+        <TextInput label="Partner phone" value={f.partner_phone} onChange={set('partner_phone')} />
+        <TextInput label="Partner date of birth" type="date" value={f.partner_date_of_birth} onChange={set('partner_date_of_birth')} />
+        <TextInput label="Partner occupation" value={f.partner_occupation} onChange={set('partner_occupation')} />
+        <TextInput label="Partner annual income" type="number" value={f.partner_annual_income} onChange={set('partner_annual_income')} />
+        <Select label="Partner risk profile" placeholder="—" options={RISK} value={f.partner_risk_profile} onChange={set('partner_risk_profile')} />
       </div>
       <TextArea label="Notes" value={f.notes} onChange={set('notes')} />
     </Modal>
   );
 }
 
-function ImportClientModal({ onClose, onParsed }) {
-  const [busy, setBusy] = useState(false);
-  const [drag, setDrag] = useState(false);
-  const fileRef = useRef(null);
-  const toast = useToast();
-
-  const handle = async (files) => {
-    const file = files?.[0];
-    if (!file || busy) return;
-    setBusy(true);
-    try {
-      const fd = new FormData();
-      fd.append('file', file);
-      const res = await api.upload('/clients/import', fd);
-      if (!res.ai) toast('Read in offline mode — please double-check every field', 'info');
-      onParsed(res.parsed || {});
-    } catch (err) {
-      toast(err.message, 'error');
-      setBusy(false);
-    }
-  };
-
-  return (
-    <Modal title="Import Client from Document" onClose={onClose}
-      footer={<button className="btn" onClick={onClose}>Cancel</button>}>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Drag in a client profile (PDF or Word). The AI reads it and opens a <strong>pre-filled, editable
-        form</strong> — nothing is saved until you review and confirm it.
-      </p>
-      <div
-        className={`dropzone ${drag ? 'drag' : ''}`}
-        onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
-        onDragLeave={() => setDrag(false)}
-        onDrop={(e) => { e.preventDefault(); setDrag(false); handle(e.dataTransfer.files); }}
-        onClick={() => !busy && fileRef.current?.click()}
-      >
-        <div className="dz-ico">{busy ? <Spinner /> : '👤'}</div>
-        <h3 style={{ margin: '10px 0 4px' }}>{busy ? 'Reading document…' : 'Drag & drop a client profile'}</h3>
-        <div className="muted">{busy ? 'Extracting details with AI…' : 'or click to browse · PDF, DOC, DOCX, TXT'}</div>
-        <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.txt" style={{ display: 'none' }}
-          onChange={(e) => handle(e.target.files)} />
-      </div>
-    </Modal>
-  );
-}
-
-function GroupForm({ onClose, onSaved }) {
-  const [f, setF] = useState({ name: '', group_type: 'couple', notes: '' });
-  const [saving, setSaving] = useState(false);
-  const toast = useToast();
-  const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
-
-  const submit = async () => {
-    if (!f.name) { toast('Name is required', 'error'); return; }
-    setSaving(true);
-    try { await api.post('/client-groups', f); onSaved(); }
-    catch (err) { toast(err.message, 'error'); } finally { setSaving(false); }
-  };
-
-  return (
-    <Modal title="New Household" onClose={onClose}
-      footer={<>
-        <button className="btn" onClick={onClose}>Cancel</button>
-        <button className="btn primary" onClick={submit} disabled={saving}>{saving ? 'Saving…' : 'Create Household'}</button>
-      </>}>
-      <TextInput label="Household name *" placeholder="e.g. The Harrison Household" value={f.name} onChange={set('name')} />
-      <Select label="Type" options={GROUP_TYPES} value={f.group_type} onChange={set('group_type')} />
-      <TextArea label="Notes" value={f.notes} onChange={set('notes')} />
-    </Modal>
-  );
-}

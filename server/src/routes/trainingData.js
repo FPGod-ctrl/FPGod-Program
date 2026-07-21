@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { query } from '../config/db.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { badRequest } from '../utils/httpError.js';
+import { badRequest, notFound } from '../utils/httpError.js';
 import { upload } from '../middleware/upload.js';
 import { extractText } from '../services/documentExtractor.js';
 import { crudRouter } from './crudFactory.js';
@@ -77,6 +77,72 @@ router.post(
       imported,
       failed,
     });
+  })
+);
+
+// =====================================================================
+// Master template plan — the single plan the generator should emulate in
+// structure/style and draw strategies from. Flagged via metadata.is_template.
+// Registered before the generic CRUD router so these literal paths win.
+// =====================================================================
+const clearTemplate = () =>
+  query(`UPDATE training_data SET metadata = metadata - 'is_template' WHERE metadata ? 'is_template'`);
+
+router.get(
+  '/template',
+  asyncHandler(async (req, res) => {
+    const { rows: [row] } = await query(
+      `SELECT id, title, length(content) AS chars
+         FROM training_data
+        WHERE kind = 'plan' AND metadata->>'is_template' = 'true'
+        ORDER BY updated_at DESC LIMIT 1`
+    );
+    res.json(row || null);
+  })
+);
+
+// Upload a brand-new document and set it as the master template in one step.
+// MUST be registered BEFORE '/template/:id' so "upload" isn't matched as an id.
+router.post(
+  '/template/upload',
+  upload.single('file'),
+  asyncHandler(async (req, res) => {
+    if (!req.file) throw badRequest('No file uploaded (field name must be "file")');
+    const text = await extractText(req.file.buffer, req.file.mimetype, req.file.originalname);
+    if (!text || !text.trim()) throw badRequest('No readable text found in that document');
+    await clearTemplate();
+    const title = req.file.originalname.replace(/\.[^.]+$/, '');
+    const { rows: [row] } = await query(
+      `INSERT INTO training_data (kind, title, content, metadata)
+       VALUES ('plan', $1, $2, '{"is_template":true}'::jsonb)
+       RETURNING id, title`,
+      [title, text]
+    );
+    res.status(201).json(row);
+  })
+);
+
+// Flag an existing training plan as the master template.
+router.post(
+  '/template/:id',
+  asyncHandler(async (req, res) => {
+    await clearTemplate();
+    const { rows: [row] } = await query(
+      `UPDATE training_data
+          SET metadata = COALESCE(metadata, '{}'::jsonb) || '{"is_template":true}'::jsonb
+        WHERE id = $1 RETURNING id, title`,
+      [req.params.id]
+    );
+    if (!row) throw notFound('Training example not found');
+    res.json(row);
+  })
+);
+
+router.delete(
+  '/template',
+  asyncHandler(async (req, res) => {
+    await clearTemplate();
+    res.status(204).end();
   })
 );
 

@@ -1,7 +1,7 @@
 {
   "name": "fpgod-server",
   "version": "1.0.0",
-  "description": "FPGod financial planning API — Express + PostgreSQL + OpenAI",
+  "description": "FPGod financial planning API — Express + PostgreSQL + Anthropic Claude",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
@@ -16,7 +16,9 @@
     "node": ">=20"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.69.0",
     "cors": "^2.8.5",
+    "docx": "^9.5.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "html-to-docx": "^1.8.0",
@@ -24,9 +26,9 @@
     "marked": "^14.1.4",
     "morgan": "^1.10.0",
     "multer": "^2.1.1",
-    "openai": "^4.56.0",
     "pdf-parse": "^1.1.1",
-    "pg": "^8.12.0"
+    "pg": "^8.12.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

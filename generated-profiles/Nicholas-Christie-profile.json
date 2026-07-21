@@ -1,0 +1,63 @@
+{
+  "meta": { "adviser": "Tristan Biro", "date": "" },
+
+  "yourDetails": {
+    "fullName":                    { "client": "Mr Nicholas Christie", "spouse": "Mrs Collette Christie" },
+    "residentialAddress":          { "client": "13 Marine Ave\nMornington VIC 3931", "spouse": "13 Marine Ave\nMornington VIC 3931" },
+    "mobileNumber":                { "client": "0408 542 332", "spouse": "" },
+    "emailAddress":                { "client": "nickc@frankstonmazda.com.au", "spouse": "" },
+    "dateOfBirth":                 { "client": "06/02/1971", "spouse": "" },
+    "maritalStatus":               { "client": "Married", "spouse": "Married" },
+    "previousOccupation":          { "client": "", "spouse": "" },
+    "occupation":                  { "client": "Used Car Sales Manager", "spouse": "" },
+    "employmentBasis":             { "client": "Employed (PAYG)", "spouse": "" },
+    "employer":                    { "client": "Frankston Mazda (approx. 12 years)", "spouse": "" },
+    "annualIncomeIncBonus":        { "client": "$150,000", "spouse": "Unsure – to confirm" },
+    "estMonthlyExpenditureSurplus":{ "client": "", "spouse": "" },
+    "privateHealthInsurance":      { "client": "", "spouse": "" },
+    "superContributionsPct":       { "client": "Employer SG $16,874.68 (2025/26); no salary sacrifice", "spouse": "" },
+    "smoker":                      { "client": "", "spouse": "" },
+    "childrenDependents": "Children in private school — fees approx. $40,000 p.a. for a further ~18 months (names/DOB to confirm)."
+  },
+
+  "estatePlanning": {
+    "dateLastReviewed": "",
+    "hasWill": "No",
+    "willAllowsTestamentaryTrust": "",
+    "hasPowersOfAttorney": ""
+  },
+
+  "goals": {
+    "shortTerm": "Continue working; manage cash flow to fund private school fees (~$40,000 p.a.) for approx. another 18 months. Review/taper the current CFS investment mix (100% growth — a touch aggressive) as retirement approaches. Begin structuring for transition to retirement ahead of age 60.",
+    "longTerm": "Retire around age 60 (approx. 5 years away). Implement a transition-to-retirement / pension strategy for tax-free income and tax savings. Reduce/clear the ~$300K home loan. Put a comprehensive Will and estate plan in place."
+  },
+
+  "assets": [
+    { "asset": "Residential Home", "location": "Mornington",                        "value": "1500000", "owner": "" },
+    { "asset": "Superannuation",   "location": "CFS FirstChoice Wholesale (Nicholas)","value": "416671",  "owner": "Nicholas" },
+    { "asset": "Superannuation",   "location": "Qantas Super (Collette)",            "value": "500000",  "owner": "Collette" }
+  ],
+
+  "debts": [
+    { "debt": "Home Loan", "location": "Mornington", "balance": "300000", "bank": "", "fixedOrVariable": "", "ratePct": "", "monthlyPayment": "" }
+  ],
+
+  "familyProtection": {
+    "desiredOngoingIncome": "",
+    "clearInvestmentDebt": "n/a (no investment debt)",
+    "privateSchooling": "Yes — private school, approx. $40,000 p.a. for a further ~18 months"
+  },
+
+  "consent": {
+    "fsg": false,
+    "privacy": false,
+    "electronicCommunications": false,
+    "tfn": false,
+    "disclosureInformation": false,
+    "disclosureToSpouse": false,
+    "authorisationToRenew": false,
+    "clientName": "Nicholas Christie",
+    "signature": "",
+    "date": ""
+  }
+}

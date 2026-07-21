@@ -1,5 +1,5 @@
 import { query } from '../config/db.js';
-import { completeOrStub } from './openai.js';
+import { completeOrStub } from './ai.js';
 
 /** Historical follow-up emails used as tone/format references. */
 async function emailExamples(limit = 3) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api } from '../api/client.js';
 import { dateTime } from '../lib/format.js';
 import PageHeader from '../components/PageHeader.jsx';
@@ -9,8 +9,25 @@ import ChatPanel from '../components/ChatPanel.jsx';
 import { Loading, Empty } from '../components/ui/Loading.jsx';
 import { Select, TextArea, TextInput } from '../components/ui/Field.jsx';
 import { useToast } from '../components/ui/Toast.jsx';
+import { loadTemplate } from '../lib/template.js';
 
 const STATUSES = ['draft', 'in_review', 'final', 'delivered'];
+
+/** One selectable target per client file (couples show both names). */
+function buildTargets(clients) {
+  return clients.map((c) => {
+    const coupleName = (c.partner_first_name || c.partner_last_name)
+      ? `${c.first_name} ${c.last_name} & ${[c.partner_first_name, c.partner_last_name].filter(Boolean).join(' ')}`
+      : null;
+    return {
+      value: c.id,
+      label: coupleName || `${c.first_name} ${c.last_name}`,
+      household: coupleName, // used for the default plan title
+      groupId: null,
+      memberIds: [c.id],
+    };
+  });
+}
 
 export default function PlanGenerator() {
   const [plans, setPlans] = useState(null);
@@ -19,6 +36,8 @@ export default function PlanGenerator() {
   const [editing, setEditing] = useState(false);
   const [draftContent, setDraftContent] = useState('');
   const [showGen, setShowGen] = useState(false);
+  const [targetVal, setTargetVal] = useState('');   // selected client/household filter
+  const [exporting, setExporting] = useState(false);
   const toast = useToast();
 
   const loadPlans = (selectId) => api.get('/plans').then((rows) => {
@@ -71,22 +90,66 @@ export default function PlanGenerator() {
     loadPlans();
   };
 
+  // Download the selected plan as a branded Word document (uses saved style).
+  const downloadWord = async () => {
+    if (!selected) return;
+    setExporting(true);
+    try {
+      const blob = await api.postForBlob(`/plans/${selected.id}/export/docx`, loadTemplate());
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${(selected.title || 'financial-plan').replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.docx`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      toast('Word document downloaded', 'success');
+    } catch (err) { toast(`Word export failed: ${err.message}`, 'error'); }
+    finally { setExporting(false); }
+  };
+
+  // Filter the plan list to the selected client / household.
+  const targets = buildTargets(clients);
+  const selectedTarget = targets.find((t) => t.value === targetVal);
+  const visiblePlans = (plans || []).filter((p) => {
+    if (!selectedTarget) return true;
+    return selectedTarget.groupId
+      ? (p.group_id === selectedTarget.groupId || selectedTarget.memberIds.includes(p.client_id))
+      : p.client_id === selectedTarget.value;
+  });
+
   return (
     <>
       <PageHeader title="Financial Plan Generator"
-        sub="Generate ~95% complete plans, then refine in the editor or with AI chat"
+        sub="Select a client, generate, then discuss &amp; refine before exporting to Word"
         actions={<button className="btn primary" onClick={() => setShowGen(true)}>✨ Generate Plan</button>} />
       <div className="content">
-        <div className="split">
+        {/* Setup: choose the client/household + master template */}
+        <div className="grid grid-2" style={{ marginBottom: 18 }}>
+          <div className="card">
+            <div className="card-head"><h3>Client / Household</h3>
+              <button className="btn sm primary" onClick={() => setShowGen(true)}>✨ Generate</button></div>
+            <div className="card-pad">
+              <Select label="Show plans for" placeholder="— All clients —"
+                options={targets.map((t) => ({ value: t.value, label: t.label }))}
+                value={targetVal} onChange={(e) => setTargetVal(e.target.value)} />
+              <div className="muted" style={{ fontSize: 13, marginTop: 8 }}>
+                {selectedTarget ? `${visiblePlans.length} plan(s) for this ${selectedTarget.household ? 'household' : 'client'}` : `${visiblePlans.length} plan(s) total`}
+              </div>
+            </div>
+          </div>
+          <MasterTemplateCard />
+        </div>
+
+        <div className="split split-chat">
           <div className="stack">
             {/* Plan list */}
             <div className="card">
-              <div className="card-head"><h3>Plans</h3><span className="muted">{plans?.length || 0}</span></div>
-              {plans == null ? <Loading /> : plans.length === 0 ? (
-                <Empty icon="📝" title="No plans yet">Generate your first plan.</Empty>
+              <div className="card-head"><h3>Plans</h3><span className="muted">{visiblePlans.length}</span></div>
+              {plans == null ? <Loading /> : visiblePlans.length === 0 ? (
+                <Empty icon="📝" title="No plans yet">Generate a plan for this client.</Empty>
               ) : (
-                <div style={{ maxHeight: 200, overflowY: 'auto' }}>
-                  {plans.map((p) => (
+                <div style={{ maxHeight: 180, overflowY: 'auto' }}>
+                  {visiblePlans.map((p) => (
                     <div key={p.id} className="row between" onClick={() => selectPlan(p.id)}
                       style={{ padding: '11px 18px', borderBottom: '1px solid var(--border)', cursor: 'pointer',
                         background: selected?.id === p.id ? 'var(--primary-soft)' : 'transparent' }}>
@@ -119,7 +182,8 @@ export default function PlanGenerator() {
                       </>
                     ) : (
                       <>
-                        <button className="btn sm accent" onClick={() => window.open(`/present/${selected.id}`, '_blank')}>Present / Export</button>
+                        <button className="btn sm primary" onClick={downloadWord} disabled={exporting}>{exporting ? 'Preparing…' : '⬇️ Download Word'}</button>
+                        <button className="btn sm accent" onClick={() => window.open(`/present/${selected.id}`, '_blank')}>Present / Style</button>
                         <button className="btn sm ghost" onClick={regenerate}>Regenerate</button>
                         <button className="btn sm" onClick={() => setEditing(true)}>Edit</button>
                       </>
@@ -138,8 +202,8 @@ export default function PlanGenerator() {
             )}
           </div>
 
-          {/* Chat */}
-          <div style={{ position: 'sticky', top: 78 }}>
+          {/* Chat — discuss & refine the document before exporting */}
+          <div style={{ position: 'sticky', top: 78, height: 'calc(100vh - 104px)' }}>
             <ChatPanel targetType="plan" targetId={selected?.id} onUpdate={onChatUpdate} />
           </div>
         </div>
@@ -147,24 +211,91 @@ export default function PlanGenerator() {
 
       {showGen && (
         <GenerateModal clients={clients} onClose={() => setShowGen(false)}
-          onGenerated={(plan) => { setShowGen(false); loadPlans(plan.id); toast(plan.ai ? 'Plan generated' : 'Generated (AI off — stub)', 'success'); }} />
+          onGenerated={(plan) => { setShowGen(false); setTargetVal(''); loadPlans(plan.id); toast(plan.ai ? 'Plan generated' : 'Generated (AI off — stub)', 'success'); }} />
       )}
     </>
   );
 }
 
+function MasterTemplateCard() {
+  const [tpl, setTpl] = useState(undefined); // undefined = loading, null = none, object = set
+  const [busy, setBusy] = useState(false);
+  const fileRef = useRef(null);
+  const toast = useToast();
+
+  const load = () => api.get('/training-data/template').then(setTpl).catch(() => setTpl(null));
+  useEffect(() => { load(); }, []);
+
+  const upload = async (files) => {
+    const file = files?.[0];
+    if (!file || busy) return;
+    setBusy(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const row = await api.upload('/training-data/template/upload', fd);
+      setTpl(row);
+      toast(`Master template set: ${row.title}`, 'success');
+    } catch (err) { toast(err.message, 'error'); }
+    finally { setBusy(false); if (fileRef.current) fileRef.current.value = ''; }
+  };
+
+  const clear = async () => {
+    if (!window.confirm('Clear the master template? Generation will fall back to your historical plans only.')) return;
+    try { await api.del('/training-data/template'); setTpl(null); toast('Master template cleared', 'success'); }
+    catch (err) { toast(err.message, 'error'); }
+  };
+
+  return (
+    <div className="card">
+      <div className="card-head"><h3>⭐ Master Plan Template</h3>
+        {tpl && <button className="btn sm ghost" onClick={clear}>Clear</button>}
+      </div>
+      <div className="card-pad">
+        <p className="muted" style={{ marginTop: 0, fontSize: 13 }}>
+          Upload the one plan you want every generated plan to look like. The AI mirrors its structure &amp; style
+          and draws strategies from it.
+        </p>
+        {tpl === undefined ? <span className="muted">Loading…</span> : tpl ? (
+          <div className="row between" style={{ background: 'var(--surface-2)', padding: '10px 14px', borderRadius: 8 }}>
+            <div>
+              <div className="t-strong">{tpl.title}</div>
+              <div className="faint" style={{ fontSize: 12 }}>
+                {tpl.chars ? `${Number(tpl.chars).toLocaleString()} chars · ` : ''}active template
+              </div>
+            </div>
+            <button className="btn sm" onClick={() => fileRef.current?.click()} disabled={busy}>{busy ? 'Uploading…' : 'Replace'}</button>
+          </div>
+        ) : (
+          <button className="btn primary" onClick={() => fileRef.current?.click()} disabled={busy}>
+            {busy ? 'Uploading…' : '⬆ Upload master template'}
+          </button>
+        )}
+        <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.txt,.xlsx,.xls,.csv" style={{ display: 'none' }}
+          onChange={(e) => upload(e.target.files)} />
+      </div>
+    </div>
+  );
+}
+
 function GenerateModal({ clients, onClose, onGenerated }) {
-  const [clientId, setClientId] = useState(clients[0]?.id || '');
+  // One entry per client file (couples show both names).
+  const targets = buildTargets(clients);
+
+  const [targetVal, setTargetVal] = useState(targets[0]?.value || '');
   const [title, setTitle] = useState('');
   const [instructions, setInstructions] = useState('');
   const [busy, setBusy] = useState(false);
   const toast = useToast();
 
-  const go = async () => {
-    if (!clientId) { toast('Select a client', 'error'); return; }
+  const selected = targets.find((t) => t.value === targetVal);
+
+  const generate = async () => {
+    if (!targetVal) { toast('Select a client', 'error'); return; }
     setBusy(true);
     try {
-      const plan = await api.post('/plans/generate', { clientId, title: title || undefined, instructions });
+      const finalTitle = title || (selected?.household ? `Financial Plan — ${selected.household}` : undefined);
+      const plan = await api.post('/plans/generate', { clientId: targetVal, title: finalTitle, instructions });
       onGenerated(plan);
     } catch (err) { toast(err.message, 'error'); } finally { setBusy(false); }
   };
@@ -173,16 +304,18 @@ function GenerateModal({ clients, onClose, onGenerated }) {
     <Modal title="Generate Financial Plan" onClose={onClose}
       footer={<>
         <button className="btn" onClick={onClose}>Cancel</button>
-        <button className="btn accent" onClick={go} disabled={busy}>{busy ? 'Generating…' : '✨ Generate'}</button>
+        <button className="btn accent" onClick={generate} disabled={busy}>{busy ? 'Generating…' : '✨ Generate'}</button>
       </>}>
       <p className="muted" style={{ marginTop: 0 }}>
-        The AI builds a plan from the client's profile and holdings, using your historical plans as strategy references.
+        Choose the client or household. The AI builds a full plan from that file — profile, assets, debts, income,
+        expenses, insurance, goals, estate and uploaded documents — writing it <strong>section by section</strong> to
+        match your master template's depth. This takes a few minutes; keep this window open.
       </p>
-      <Select label="Client *" placeholder="— Select —"
-        options={clients.map((c) => ({ value: c.id, label: `${c.first_name} ${c.last_name}` }))}
-        value={clientId} onChange={(e) => setClientId(e.target.value)} />
+      <Select label="Client / Household *" placeholder="— Select —"
+        options={targets.map((t) => ({ value: t.value, label: t.label }))}
+        value={targetVal} onChange={(e) => setTargetVal(e.target.value)} />
       <TextInput label="Title (optional)" placeholder="Auto-generated if blank" value={title} onChange={(e) => setTitle(e.target.value)} />
-      <TextArea label="Extra instructions (optional)" placeholder="e.g. Emphasise tax efficiency and early retirement at 55."
+      <TextArea label="Extra instructions (optional)" placeholder="e.g. Emphasise SMSF and retirement at 60."
         value={instructions} onChange={(e) => setInstructions(e.target.value)} />
     </Modal>
   );

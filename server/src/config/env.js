@@ -33,11 +33,11 @@ export const env = {
     ssl: bool(process.env.PGSSL) ? { rejectUnauthorized: false } : false,
   },
 
-  openai: {
-    apiKey: process.env.OPENAI_API_KEY || '',
-    model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+  anthropic: {
+    apiKey: process.env.ANTHROPIC_API_KEY || '',
+    model: process.env.ANTHROPIC_MODEL || 'claude-opus-4-8',
     get enabled() {
-      return Boolean(process.env.OPENAI_API_KEY);
+      return Boolean(process.env.ANTHROPIC_API_KEY);
     },
   },
 

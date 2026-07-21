@@ -1,0 +1,82 @@
+{
+  "_about": "Lakeside Financial Client Profile — blank, segmented template. Copy this file, fill the values, and run: node server/scripts/generate-client-profile.mjs <filled.json> \"<output.docx>\". Every field is a segment of the firm's Client Profile & Consent form. Leave anything unknown as an empty string — the generator renders a blank cell (it never guesses). Paired fields use { client, spouse }.",
+
+  "meta": {
+    "adviser": "",
+    "date": ""
+  },
+
+  "yourDetails": {
+    "fullName":                    { "client": "", "spouse": "" },
+    "residentialAddress":          { "client": "", "spouse": "" },
+    "mobileNumber":                { "client": "", "spouse": "" },
+    "emailAddress":                { "client": "", "spouse": "" },
+    "dateOfBirth":                 { "client": "", "spouse": "" },
+    "maritalStatus":               { "client": "", "spouse": "" },
+    "previousOccupation":          { "client": "", "spouse": "" },
+    "occupation":                  { "client": "", "spouse": "" },
+    "employmentBasis":             { "client": "", "spouse": "" },
+    "employer":                    { "client": "", "spouse": "" },
+    "annualIncomeIncBonus":        { "client": "", "spouse": "" },
+    "estMonthlyExpenditureSurplus":{ "client": "", "spouse": "" },
+    "privateHealthInsurance":      { "client": "", "spouse": "" },
+    "superContributionsPct":       { "client": "", "spouse": "" },
+    "smoker":                      { "client": "", "spouse": "" },
+    "childrenDependents": ""
+  },
+
+  "estatePlanning": {
+    "dateLastReviewed": "",
+    "hasWill": "",
+    "willAllowsTestamentaryTrust": "",
+    "hasPowersOfAttorney": ""
+  },
+
+  "goals": {
+    "shortTerm": "",
+    "longTerm": ""
+  },
+
+  "assets": [
+    { "asset": "Residential Home",    "location": "", "value": "", "owner": "" },
+    { "asset": "Investment Property", "location": "", "value": "", "owner": "" },
+    { "asset": "Other Assets",        "location": "", "value": "", "owner": "" },
+    { "asset": "Shares",              "location": "", "value": "", "owner": "" },
+    { "asset": "Managed Funds",       "location": "", "value": "", "owner": "" },
+    { "asset": "Business Value",      "location": "", "value": "", "owner": "" },
+    { "asset": "Cash",                "location": "", "value": "", "owner": "" },
+    { "asset": "Home Contents",       "location": "", "value": "", "owner": "" },
+    { "asset": "Motor Vehicles",      "location": "", "value": "", "owner": "" },
+    { "asset": "Superannuation",      "location": "", "value": "", "owner": "" }
+  ],
+
+  "debts": [
+    { "debt": "Home Loan",              "location": "", "balance": "", "bank": "", "fixedOrVariable": "", "ratePct": "", "monthlyPayment": "" },
+    { "debt": "Investment Property Loan","location": "", "balance": "", "bank": "", "fixedOrVariable": "", "ratePct": "", "monthlyPayment": "" },
+    { "debt": "Other Liabilities",      "location": "", "balance": "", "bank": "", "fixedOrVariable": "", "ratePct": "", "monthlyPayment": "" },
+    { "debt": "Margin Lending",         "location": "", "balance": "", "bank": "", "fixedOrVariable": "", "ratePct": "", "monthlyPayment": "" },
+    { "debt": "Other Investment Loan",  "location": "", "balance": "", "bank": "", "fixedOrVariable": "", "ratePct": "", "monthlyPayment": "" },
+    { "debt": "Business Debt",          "location": "", "balance": "", "bank": "", "fixedOrVariable": "", "ratePct": "", "monthlyPayment": "" },
+    { "debt": "Credit Card",            "location": "", "balance": "", "bank": "", "fixedOrVariable": "", "ratePct": "", "monthlyPayment": "" },
+    { "debt": "Car Loan",               "location": "", "balance": "", "bank": "", "fixedOrVariable": "", "ratePct": "", "monthlyPayment": "" }
+  ],
+
+  "familyProtection": {
+    "desiredOngoingIncome": "",
+    "clearInvestmentDebt": "",
+    "privateSchooling": ""
+  },
+
+  "consent": {
+    "fsg": false,
+    "privacy": false,
+    "electronicCommunications": false,
+    "tfn": false,
+    "disclosureInformation": false,
+    "disclosureToSpouse": false,
+    "authorisationToRenew": false,
+    "clientName": "",
+    "signature": "",
+    "date": ""
+  }
+}

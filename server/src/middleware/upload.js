@@ -6,6 +6,10 @@ const ALLOWED = new Set([
   'application/pdf',
   'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+  'application/vnd.ms-excel', // .xls
+  'text/csv',
+  'application/octet-stream', // some browsers send this for .xls/.csv
   'text/plain',
 ]);
 
@@ -16,7 +20,7 @@ export const upload = multer({
   limits: { fileSize: env.storage.maxUploadBytes },
   fileFilter: (req, file, cb) => {
     if (ALLOWED.has(file.mimetype)) return cb(null, true);
-    return cb(badRequest(`Unsupported file type: ${file.mimetype}. Allowed: PDF, DOC, DOCX, TXT.`));
+    return cb(badRequest(`Unsupported file type: ${file.mimetype}. Allowed: PDF, DOC, DOCX, XLSX, XLS, CSV, TXT.`));
   },
 });
 

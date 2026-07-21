@@ -1,0 +1,15 @@
+{
+  "name": "xplan-assisted-automation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Assisted (you-in-the-loop) browser automation for XPLAN Risk Researcher quoting.",
+  "scripts": {
+    "login": "node src/login.mjs",
+    "record": "node src/record.mjs",
+    "quote": "node src/quote.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.61.1"
+  }
+}

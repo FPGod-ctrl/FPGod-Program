@@ -1,0 +1,7 @@
+# NEVER commit your authenticated session, credentials, or browser profile
+.session/
+.env
+node_modules/
+
+# generated quote outputs
+out/

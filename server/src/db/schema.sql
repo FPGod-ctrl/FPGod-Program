@@ -35,12 +35,22 @@ CREATE TABLE IF NOT EXISTS clients (
   last_name     TEXT NOT NULL,
   email         TEXT,
   phone         TEXT,
+  address       TEXT,
   date_of_birth DATE,
   occupation    TEXT,
   risk_profile  TEXT CHECK (risk_profile IN
                   ('conservative', 'moderate', 'balanced', 'growth', 'aggressive')),
   annual_income NUMERIC(14,2),
   net_worth     NUMERIC(14,2),
+  -- Optional partner / spouse, so one client file can represent a couple.
+  partner_first_name    TEXT,
+  partner_last_name     TEXT,
+  partner_email         TEXT,
+  partner_phone         TEXT,
+  partner_date_of_birth DATE,
+  partner_occupation    TEXT,
+  partner_annual_income NUMERIC(14,2),
+  partner_risk_profile  TEXT,
   notes         TEXT,
   status        TEXT NOT NULL DEFAULT 'active'
                   CHECK (status IN ('prospect', 'active', 'inactive', 'archived')),
@@ -49,6 +59,16 @@ CREATE TABLE IF NOT EXISTS clients (
 );
 CREATE INDEX IF NOT EXISTS idx_clients_group ON clients(group_id);
 CREATE INDEX IF NOT EXISTS idx_clients_name  ON clients(last_name, first_name);
+-- Add columns on existing databases (CREATE TABLE above won't alter them).
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS address TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_first_name    TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_last_name     TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_email         TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_phone         TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_date_of_birth DATE;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_occupation    TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_annual_income NUMERIC(14,2);
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_risk_profile  TEXT;
 
 -- =====================================================================
 -- Documents (uploaded PDFs / Word docs). Belong to a client or a group.
@@ -61,8 +81,8 @@ CREATE TABLE IF NOT EXISTS documents (
   storage_key     TEXT NOT NULL,        -- path/key returned by the storage driver
   doc_type        TEXT NOT NULL DEFAULT 'other'
                     CHECK (doc_type IN
-                      ('statement', 'tax', 'identification', 'insurance',
-                       'estate', 'plan', 'other')),
+                      ('client_profile', 'statement', 'tax', 'identification',
+                       'insurance', 'estate', 'plan', 'other')),
   mime_type       TEXT,
   size_bytes      BIGINT,
   extracted_text  TEXT,                 -- populated after text extraction
@@ -74,6 +94,14 @@ CREATE TABLE IF NOT EXISTS documents (
 );
 CREATE INDEX IF NOT EXISTS idx_documents_client ON documents(client_id);
 CREATE INDEX IF NOT EXISTS idx_documents_group  ON documents(group_id);
+
+-- Keep the doc_type whitelist current on existing databases (CREATE TABLE
+-- IF NOT EXISTS above won't alter an already-created table).
+ALTER TABLE documents DROP CONSTRAINT IF EXISTS documents_doc_type_check;
+ALTER TABLE documents ADD CONSTRAINT documents_doc_type_check
+  CHECK (doc_type IN
+    ('client_profile', 'statement', 'tax', 'identification',
+     'insurance', 'estate', 'plan', 'other'));
 
 -- =====================================================================
 -- Current investments (existing holdings)
@@ -223,6 +251,154 @@ CREATE TABLE IF NOT EXISTS chat_messages (
 CREATE INDEX IF NOT EXISTS idx_chat_target ON chat_messages(target_type, target_id);
 
 -- =====================================================================
+-- Assets — itemized assets (cash, property, etc.). Investment holdings are
+-- tracked separately in current_investments and folded in by the UI.
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS assets (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id   UUID REFERENCES clients(id) ON DELETE CASCADE,
+  group_id    UUID REFERENCES client_groups(id) ON DELETE CASCADE,
+  category    TEXT NOT NULL DEFAULT 'other'
+                CHECK (category IN
+                  ('cash', 'property', 'vehicle', 'business', 'investment',
+                   'superannuation', 'collectible', 'other')),
+  name        TEXT NOT NULL,
+  value       NUMERIC(14,2) NOT NULL DEFAULT 0,
+  owner       TEXT,                    -- client / partner / joint
+  notes       TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_assets_client ON assets(client_id);
+
+-- =====================================================================
+-- Liabilities / debts
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS liabilities (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id       UUID REFERENCES clients(id) ON DELETE CASCADE,
+  group_id        UUID REFERENCES client_groups(id) ON DELETE CASCADE,
+  liability_type  TEXT NOT NULL DEFAULT 'other'
+                    CHECK (liability_type IN
+                      ('mortgage', 'personal_loan', 'auto_loan', 'credit_card',
+                       'student_loan', 'tax', 'business_loan', 'other')),
+  name            TEXT NOT NULL,
+  balance         NUMERIC(14,2) NOT NULL DEFAULT 0,
+  interest_rate   NUMERIC(6,3),            -- annual %, optional
+  monthly_payment NUMERIC(14,2),
+  lender          TEXT,
+  owner           TEXT,
+  notes           TEXT,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_liabilities_client ON liabilities(client_id);
+
+-- =====================================================================
+-- Income sources
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS income_sources (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id   UUID REFERENCES clients(id) ON DELETE CASCADE,
+  group_id    UUID REFERENCES client_groups(id) ON DELETE CASCADE,
+  income_type TEXT NOT NULL DEFAULT 'other'
+                CHECK (income_type IN
+                  ('salary', 'rental', 'pension', 'dividends', 'business',
+                   'government', 'trust', 'other')),
+  name        TEXT NOT NULL,
+  amount      NUMERIC(14,2) NOT NULL DEFAULT 0,
+  frequency   TEXT NOT NULL DEFAULT 'annual'
+                CHECK (frequency IN ('weekly', 'fortnightly', 'monthly', 'quarterly', 'annual')),
+  owner       TEXT,
+  notes       TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_income_client ON income_sources(client_id);
+
+-- =====================================================================
+-- Expenses
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS expenses (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id   UUID REFERENCES clients(id) ON DELETE CASCADE,
+  group_id    UUID REFERENCES client_groups(id) ON DELETE CASCADE,
+  category    TEXT NOT NULL DEFAULT 'other'
+                CHECK (category IN
+                  ('housing', 'utilities', 'living', 'transport', 'insurance',
+                   'education', 'discretionary', 'other')),
+  name        TEXT NOT NULL,
+  amount      NUMERIC(14,2) NOT NULL DEFAULT 0,
+  frequency   TEXT NOT NULL DEFAULT 'monthly'
+                CHECK (frequency IN ('weekly', 'fortnightly', 'monthly', 'quarterly', 'annual')),
+  notes       TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_expenses_client ON expenses(client_id);
+
+-- =====================================================================
+-- Insurance policies
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS insurance_policies (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id     UUID REFERENCES clients(id) ON DELETE CASCADE,
+  group_id      UUID REFERENCES client_groups(id) ON DELETE CASCADE,
+  policy_type   TEXT NOT NULL DEFAULT 'other'
+                  CHECK (policy_type IN
+                    ('life', 'tpd', 'income_protection', 'trauma', 'health',
+                     'home', 'auto', 'other')),
+  provider      TEXT,
+  cover_amount  NUMERIC(14,2),
+  premium       NUMERIC(14,2),
+  frequency     TEXT DEFAULT 'annual'
+                  CHECK (frequency IN ('weekly', 'fortnightly', 'monthly', 'quarterly', 'annual')),
+  policy_number TEXT,
+  notes         TEXT,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_insurance_client ON insurance_policies(client_id);
+
+-- =====================================================================
+-- Financial goals
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS financial_goals (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id      UUID REFERENCES clients(id) ON DELETE CASCADE,
+  group_id       UUID REFERENCES client_groups(id) ON DELETE CASCADE,
+  name           TEXT NOT NULL,
+  target_amount  NUMERIC(14,2),
+  current_amount NUMERIC(14,2) DEFAULT 0,
+  target_date    DATE,
+  priority       TEXT NOT NULL DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
+  notes          TEXT,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_goals_client ON financial_goals(client_id);
+
+-- =====================================================================
+-- Estate planning — one row per client (wills, POA, testamentary trust).
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS estate_plans (
+  client_id              UUID PRIMARY KEY REFERENCES clients(id) ON DELETE CASCADE,
+  has_will               BOOLEAN NOT NULL DEFAULT false,
+  will_date              DATE,
+  will_location          TEXT,
+  executor               TEXT,
+  has_poa                BOOLEAN NOT NULL DEFAULT false,
+  poa_type               TEXT CHECK (poa_type IN ('financial', 'medical', 'both', 'enduring')),
+  poa_attorney           TEXT,
+  has_testamentary_trust BOOLEAN NOT NULL DEFAULT false,
+  trust_details          TEXT,             -- family ongoing income arrangements
+  beneficiaries          TEXT,
+  notes                  TEXT,
+  created_at             TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at             TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- =====================================================================
 -- updated_at triggers
 -- =====================================================================
 DO $$
@@ -232,7 +408,9 @@ BEGIN
   FOREACH t IN ARRAY ARRAY[
     'client_groups','clients','documents','current_investments',
     'recommended_investments','financial_plans','meeting_transcripts',
-    'followup_emails','training_data'
+    'followup_emails','training_data','assets','liabilities',
+    'income_sources','expenses','insurance_policies','financial_goals',
+    'estate_plans'
   ] LOOP
     IF NOT EXISTS (
       SELECT 1 FROM pg_trigger WHERE tgname = 'trg_' || t || '_updated_at'

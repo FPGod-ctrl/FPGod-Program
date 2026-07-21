@@ -1,4 +1,5 @@
 import mammoth from 'mammoth';
+import * as XLSX from 'xlsx';
 
 // Import the library file directly. pdf-parse's index.js runs a debug/test
 // block when it thinks it's the entry module (no module.parent), which under
@@ -27,6 +28,24 @@ export async function extractText(buffer, mimeType, originalName = '') {
   ) {
     const { value } = await mammoth.extractRawText({ buffer });
     return (value || '').trim();
+  }
+
+  if (
+    mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+    mimeType === 'application/vnd.ms-excel' ||
+    name.endsWith('.xlsx') || name.endsWith('.xls') || name.endsWith('.xlsm')
+  ) {
+    const wb = XLSX.read(buffer, { type: 'buffer' });
+    const parts = [];
+    for (const sheetName of wb.SheetNames) {
+      const csv = XLSX.utils.sheet_to_csv(wb.Sheets[sheetName], { blankrows: false });
+      if (csv && csv.trim()) parts.push(`# Sheet: ${sheetName}\n${csv.trim()}`);
+    }
+    return parts.join('\n\n').trim();
+  }
+
+  if (mimeType === 'text/csv' || name.endsWith('.csv')) {
+    return buffer.toString('utf8').trim();
   }
 
   if (mimeType === 'text/plain' || name.endsWith('.txt')) {

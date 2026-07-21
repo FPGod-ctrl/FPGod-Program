@@ -95,7 +95,7 @@ export default function BulkImportTraining({ onDone }) {
             {busy ? `Importing… ${progress.done}/${progress.total}` : 'Drag & drop plan files here'}
           </h3>
           <div className="muted">{busy ? `${pctDone}% complete` : 'or click to browse · select many at once · PDF, DOC, DOCX, TXT'}</div>
-          <input ref={fileRef} type="file" multiple accept=".pdf,.doc,.docx,.txt" style={{ display: 'none' }}
+          <input ref={fileRef} type="file" multiple accept=".pdf,.doc,.docx,.txt,.xlsx,.xls,.csv" style={{ display: 'none' }}
             onChange={(e) => importFiles(e.target.files)} />
         </div>
 

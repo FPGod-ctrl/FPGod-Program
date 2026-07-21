@@ -1,0 +1,9 @@
+{
+  "//": "Add this 'xplan-api' entry to .mcp.json at the repo root (h:/FPGod-Program/.mcp.json). Restart Claude Code to load it.",
+  "mcpServers": {
+    "xplan-api": {
+      "command": "node",
+      "args": ["automation/xplan-api/src/server.mjs"]
+    }
+  }
+}

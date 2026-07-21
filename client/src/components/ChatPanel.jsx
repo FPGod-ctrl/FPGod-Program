@@ -49,14 +49,16 @@ export default function ChatPanel({ targetType, targetId, onUpdate }) {
   return (
     <div className="card chat" style={{ height: '100%', minHeight: 420 }}>
       <div className="card-head">
-        <h3>✨ Refine with AI</h3>
+        <h3>✨ Build &amp; refine with AI</h3>
         <span className="badge teal">{targetType}</span>
       </div>
       <div className="chat-log" ref={logRef}>
         {messages.length === 0 && (
           <div className="muted" style={{ fontSize: 13, padding: 8 }}>
-            Ask for changes in plain English — e.g. “Make the tone warmer”, “Add a section on
-            tax efficiency”, or “Shorten the summary”. Edits apply to the {targetType} live.
+            Talk to the AI to build this {targetType} together. Ask for changes in plain English — e.g.
+            “Add an SMSF strategy section”, “Expand the retirement projections”, “Make the tone warmer”,
+            or “Shorten the summary”. Each change is applied to the document <strong>live</strong> in the
+            preview, and I’ll confirm what I changed here.
           </div>
         )}
         {messages.map((m) => (

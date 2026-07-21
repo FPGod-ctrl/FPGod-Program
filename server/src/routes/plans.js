@@ -4,7 +4,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { badRequest, notFound } from '../utils/httpError.js';
 import HTMLtoDOCX from 'html-to-docx';
 import { crudRouter } from './crudFactory.js';
-import { gatherClientContext, generatePlan } from '../services/planGenerator.js';
+import { gatherClientContext, generatePlanSectioned, generateQuestions } from '../services/planGenerator.js';
 import { renderPlanHtml } from '../services/planRender.js';
 
 const crud = crudRouter({
@@ -21,21 +21,41 @@ const crud = crudRouter({
 const router = Router();
 
 /**
- * POST /api/plans/generate
- * Body: { clientId, title?, instructions?, save? }
- * Builds context from the client + training data, generates a plan, and
- * (by default) persists it.
+ * POST /api/plans/interview
+ * Body: { clientId, instructions? }
+ * Reviews the client/household file and returns clarifying questions for the
+ * adviser to answer before the plan is generated. Saves nothing.
  */
 router.post(
-  '/generate',
+  '/interview',
   asyncHandler(async (req, res) => {
-    const { clientId, title, instructions, save = true } = req.body || {};
+    const { clientId, instructions } = req.body || {};
     if (!clientId) throw badRequest('clientId is required');
 
     const ctx = await gatherClientContext(clientId);
     if (!ctx) throw notFound('Client not found');
 
-    const { text, ai } = await generatePlan(ctx, instructions);
+    const { questions, ai } = await generateQuestions(ctx, instructions);
+    res.json({ questions, ai });
+  })
+);
+
+/**
+ * POST /api/plans/generate
+ * Body: { clientId, title?, instructions?, answers?, save? }
+ * Builds context from the client + training data, generates a plan
+ * (incorporating the adviser's answers), and (by default) persists it.
+ */
+router.post(
+  '/generate',
+  asyncHandler(async (req, res) => {
+    const { clientId, title, instructions, answers, save = true } = req.body || {};
+    if (!clientId) throw badRequest('clientId is required');
+
+    const ctx = await gatherClientContext(clientId);
+    if (!ctx) throw notFound('Client not found');
+
+    const { text, ai } = await generatePlanSectioned(ctx, instructions);
     const planTitle = title || `Financial Plan — ${ctx.client.first_name} ${ctx.client.last_name}`;
 
     if (!save) {
@@ -65,7 +85,7 @@ router.post(
     if (!plan.client_id) throw badRequest('Plan has no associated client to regenerate from');
 
     const ctx = await gatherClientContext(plan.client_id);
-    const { text, ai } = await generatePlan(ctx, instructions);
+    const { text, ai } = await generatePlanSectioned(ctx, instructions);
     const { rows: [updated] } = await query(
       `UPDATE financial_plans
        SET content = $1, generated_by_ai = $2, completeness = $3 WHERE id = $4 RETURNING *`,

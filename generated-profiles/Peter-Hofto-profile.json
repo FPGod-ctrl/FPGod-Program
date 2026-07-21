@@ -1,0 +1,63 @@
+{
+  "meta": { "adviser": "Tristan Biro", "date": "" },
+
+  "yourDetails": {
+    "fullName":                    { "client": "MR Peter Hofto", "spouse": "MRS Veronica Hofto" },
+    "residentialAddress":          { "client": "163 Orielton Road\nOrielton TAS 7172", "spouse": "163 Orielton Road\nOrielton TAS 7172" },
+    "mobileNumber":                { "client": "0417 960 769", "spouse": "" },
+    "emailAddress":                { "client": "peter@rocksolidgeotechnics.com.au", "spouse": "" },
+    "dateOfBirth":                 { "client": "02/06/1965", "spouse": "10/08/1958" },
+    "maritalStatus":               { "client": "Married", "spouse": "Married" },
+    "previousOccupation":          { "client": "", "spouse": "" },
+    "occupation":                  { "client": "Geologist", "spouse": "" },
+    "employmentBasis":             { "client": "Self Employed", "spouse": "" },
+    "employer":                    { "client": "Rock Solid Geotechnics Pty Ltd", "spouse": "" },
+    "annualIncomeIncBonus":        { "client": "$100,000", "spouse": "" },
+    "estMonthlyExpenditureSurplus":{ "client": "$6,000", "spouse": "" },
+    "privateHealthInsurance":      { "client": "", "spouse": "" },
+    "superContributionsPct":       { "client": "$20,000", "spouse": "$20,000" },
+    "smoker":                      { "client": "No", "spouse": "No" },
+    "childrenDependents": "No dependents"
+  },
+
+  "estatePlanning": {
+    "dateLastReviewed": "2015",
+    "hasWill": "Yes",
+    "willAllowsTestamentaryTrust": "No",
+    "hasPowersOfAttorney": "No"
+  },
+
+  "goals": {
+    "shortTerm": "Continue to work and pay down debt.",
+    "longTerm": ""
+  },
+
+  "assets": [
+    { "asset": "Residential Home",  "location": "Orielton", "value": "1500000", "owner": "" },
+    { "asset": "Business Value",    "location": "",         "value": "500000",  "owner": "" },
+    { "asset": "Superannuation",    "location": "SMSF",     "value": "800000",  "owner": "" }
+  ],
+
+  "debts": [
+    { "debt": "Home Loan", "location": "Orielton", "balance": "100000", "bank": "CBA", "fixedOrVariable": "Variable", "ratePct": "6", "monthlyPayment": "$250" }
+  ],
+
+  "familyProtection": {
+    "desiredOngoingIncome": "$100,000",
+    "clearInvestmentDebt": "n/a",
+    "privateSchooling": "n/a"
+  },
+
+  "consent": {
+    "fsg": false,
+    "privacy": false,
+    "electronicCommunications": false,
+    "tfn": false,
+    "disclosureInformation": false,
+    "disclosureToSpouse": false,
+    "authorisationToRenew": false,
+    "clientName": "Peter Hofto",
+    "signature": "",
+    "date": ""
+  }
+}

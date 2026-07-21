@@ -1,0 +1,6 @@
+# Never commit scanned mailbox data or saved attachments
+*.json
+*.log
+attachments/
+morning/
+_sample-*

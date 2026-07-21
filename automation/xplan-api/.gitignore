@@ -1,0 +1,4 @@
+# NEVER commit secrets or tokens
+.env
+.session/
+node_modules/

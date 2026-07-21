@@ -315,11 +315,12 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.55; }
 
 .split { display: grid; grid-template-columns: 1fr 380px; gap: 18px; align-items: start; }
 .split-narrow { grid-template-columns: 1fr 340px; }
+.split-chat { display: grid; grid-template-columns: 1fr 480px; gap: 18px; align-items: start; }
 
 @media (max-width: 1100px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
-  .split, .split-narrow { grid-template-columns: 1fr; }
+  .split, .split-narrow, .split-chat { grid-template-columns: 1fr; }
 }
 @media (max-width: 720px) {
   .sidebar { display: none; }

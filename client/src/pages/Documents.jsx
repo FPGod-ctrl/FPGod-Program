@@ -8,8 +8,9 @@ import Modal from '../components/ui/Modal.jsx';
 import { Loading, Empty, Spinner } from '../components/ui/Loading.jsx';
 import { Select } from '../components/ui/Field.jsx';
 import { useToast } from '../components/ui/Toast.jsx';
+import OutlookScan from '../components/OutlookScan.jsx';
 
-const DOC_TYPES = ['statement', 'tax', 'identification', 'insurance', 'estate', 'plan', 'other'];
+const DOC_TYPES = ['client_profile', 'statement', 'tax', 'identification', 'insurance', 'estate', 'plan', 'other'];
 
 export default function Documents() {
   const [docs, setDocs] = useState(null);
@@ -104,10 +105,12 @@ export default function Documents() {
             <div className="dz-ico">{uploading ? <Spinner /> : '⬆️'}</div>
             <h3 style={{ margin: '10px 0 4px' }}>{uploading ? 'Uploading…' : 'Drag & drop files here'}</h3>
             <div className="muted">or click to browse · PDF, DOC, DOCX, TXT</div>
-            <input ref={fileRef} type="file" multiple accept=".pdf,.doc,.docx,.txt" style={{ display: 'none' }}
+            <input ref={fileRef} type="file" multiple accept=".pdf,.doc,.docx,.txt,.xlsx,.xls,.csv" style={{ display: 'none' }}
               onChange={(e) => upload(Array.from(e.target.files))} />
           </div>
         </div>
+
+        <OutlookScan clientId={clientId} docType={docType} onIngested={load} />
 
         <div className="card">
           <div className="card-head"><h3>All Documents</h3><span className="muted">{docs?.length || 0} files</span></div>

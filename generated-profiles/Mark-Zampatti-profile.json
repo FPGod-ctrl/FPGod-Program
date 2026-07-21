@@ -1,0 +1,65 @@
+{
+  "meta": { "adviser": "Tristan Biro", "date": "28/01/2026" },
+
+  "yourDetails": {
+    "fullName":                    { "client": "MR Mark Zampatti", "spouse": "MRS Allison Zampatti" },
+    "residentialAddress":          { "client": "Colac VIC", "spouse": "Colac VIC" },
+    "mobileNumber":                { "client": "0429 185 434", "spouse": "" },
+    "emailAddress":                { "client": "markzampatti@bigpond.com", "spouse": "" },
+    "dateOfBirth":                 { "client": "04/05/1971", "spouse": "01/07/1970" },
+    "maritalStatus":               { "client": "Married", "spouse": "Married" },
+    "previousOccupation":          { "client": "Business Owner", "spouse": "" },
+    "occupation":                  { "client": "", "spouse": "" },
+    "employmentBasis":             { "client": "", "spouse": "" },
+    "employer":                    { "client": "", "spouse": "" },
+    "annualIncomeIncBonus":        { "client": "", "spouse": "" },
+    "estMonthlyExpenditureSurplus":{ "client": "", "spouse": "" },
+    "privateHealthInsurance":      { "client": "", "spouse": "" },
+    "superContributionsPct":       { "client": "", "spouse": "" },
+    "smoker":                      { "client": "", "spouse": "" },
+    "childrenDependents": "Three adult children (non-dependent): Tom (25) - physiotherapy dept manager, partner Marie expecting, likely relocating to family farm; Liam (23) - physiotherapist, new role at an orthopaedic sports clinic in Ballarat; Dom (21) - studying to become a teacher."
+  },
+
+  "estatePlanning": {
+    "dateLastReviewed": "",
+    "hasWill": "Yes",
+    "willAllowsTestamentaryTrust": "Yes",
+    "hasPowersOfAttorney": ""
+  },
+
+  "goals": {
+    "shortTerm": "Determine how best to deploy the ~$800,000 held in the bucket company (Tolido) and structure existing assets (incl. the commercial buildings) into tax-effective environments rather than simply selling. Manage the return-to-work / income protection claim transition.",
+    "longTerm": "Continue maximising superannuation for tax-effective retirement income while balancing assets held outside super; move toward retirement over the coming decade. Minimise the estimated ~$112,000 capital gain and long-term tax."
+  },
+
+  "assets": [
+    { "asset": "Residential Home",    "location": "Colac",                 "value": "",        "owner": "Mark & Ally" },
+    { "asset": "Investment Property", "location": "Geelong",               "value": "",        "owner": "" },
+    { "asset": "Investment Property", "location": "Forrest",               "value": "",        "owner": "" },
+    { "asset": "Commercial Property", "location": "Business premises",      "value": "",        "owner": "Ally" },
+    { "asset": "Cash",                "location": "Bucket company (Tolido)","value": "800000",  "owner": "Tolido Pty Ltd" },
+    { "asset": "Superannuation",      "location": "Macquarie (mgd by Brett)","value": "1300000","owner": "Mark" },
+    { "asset": "Superannuation",      "location": "Aware Super",           "value": "1400000", "owner": "Ally" }
+  ],
+
+  "debts": [],
+
+  "familyProtection": {
+    "desiredOngoingIncome": "",
+    "clearInvestmentDebt": "",
+    "privateSchooling": "n/a"
+  },
+
+  "consent": {
+    "fsg": false,
+    "privacy": false,
+    "electronicCommunications": false,
+    "tfn": false,
+    "disclosureInformation": false,
+    "disclosureToSpouse": false,
+    "authorisationToRenew": false,
+    "clientName": "Mark Zampatti",
+    "signature": "",
+    "date": ""
+  }
+}

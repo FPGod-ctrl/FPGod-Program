@@ -1,0 +1,74 @@
+{
+  "adviser": "Tristan Biro",
+  "date": "30th of June 2026",
+  "current": [
+    {
+      "type": "Income Protection",
+      "startDate": "28/06/2021",
+      "product": "Zurich Income Protector (91118840)",
+      "lifeInsured": "Himashi Amarapala",
+      "sumInsured": "$14,147 / month\n1-year wait, benefit to age 65",
+      "owner": "Himashi Amarapala (non-super)",
+      "premium": "$9,142.57 p.a.",
+      "premiumType": "Not stated",
+      "replace": ""
+    },
+    {
+      "type": "Life (Death)",
+      "startDate": "28/06/2021",
+      "product": "Zurich Protection Plus (91118838)",
+      "lifeInsured": "Himashi Amarapala",
+      "sumInsured": "$656,138",
+      "owner": "Brighter Super (Trustee) — inside super",
+      "premium": "$658.14 p.a.",
+      "premiumType": "Not stated",
+      "replace": ""
+    },
+    {
+      "type": "TPD (Any) — inside super",
+      "startDate": "28/06/2021",
+      "product": "Zurich Protection Plus (91118838)",
+      "lifeInsured": "Himashi Amarapala",
+      "sumInsured": "$1,491,503",
+      "owner": "Brighter Super (Trustee) — inside super",
+      "premium": "$2,341.70 p.a.",
+      "premiumType": "Not stated",
+      "replace": ""
+    },
+    {
+      "type": "TPD (Own) — outside super",
+      "startDate": "28/06/2021",
+      "product": "Zurich Protection Plus (91118839)",
+      "lifeInsured": "Himashi Amarapala",
+      "sumInsured": "$1,491,503\n(linked to super TPD — not additional cover)",
+      "owner": "Himashi Amarapala (non-super)",
+      "premium": "$1,978.84 p.a.",
+      "premiumType": "Not stated",
+      "replace": ""
+    },
+    {
+      "type": "Trauma",
+      "startDate": "28/06/2021",
+      "product": "Zurich Protection Plus (91118839)",
+      "lifeInsured": "Himashi Amarapala",
+      "sumInsured": "$150,000",
+      "owner": "Himashi Amarapala (non-super)",
+      "premium": "$923.08 p.a.",
+      "premiumType": "Not stated",
+      "replace": ""
+    },
+    {
+      "type": "Needlestick (option)",
+      "startDate": "28/06/2021",
+      "product": "Zurich Protection Plus (91118839)",
+      "lifeInsured": "Himashi Amarapala",
+      "sumInsured": "$1,000,000",
+      "owner": "Himashi Amarapala (non-super)",
+      "premium": "$495.00 p.a.",
+      "premiumType": "Not stated",
+      "replace": ""
+    }
+  ],
+  "indicative": [],
+  "totalPremium": "Total premium of $17,283.21 p.a. (all three policies, incl. management fees & stamp duty)"
+}
