@@ -4,7 +4,7 @@ import { ToastProvider } from './components/ui/Toast.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Clients from './pages/Clients.jsx';
 import ClientDetail from './pages/ClientDetail.jsx';
-import Documents from './pages/Documents.jsx';
+import Calendar from './pages/Calendar.jsx';
 import PlanGenerator from './pages/PlanGenerator.jsx';
 import Investments from './pages/Investments.jsx';
 import Meetings from './pages/Meetings.jsx';
@@ -20,7 +20,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="clients" element={<Clients />} />
           <Route path="clients/:id" element={<ClientDetail />} />
-          <Route path="documents" element={<Documents />} />
+          <Route path="calendar" element={<Calendar />} />
           <Route path="plans" element={<PlanGenerator />} />
           <Route path="investments" element={<Investments />} />
           <Route path="meetings" element={<Meetings />} />

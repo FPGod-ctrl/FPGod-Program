@@ -127,7 +127,6 @@ export default function ClientDetail() {
         actions={<>
           <button className="btn primary" onClick={() => setShowEdit(true)}>Edit</button>
           <button className="btn" onClick={() => setShowImport(true)}>⬆ Fill from Document</button>
-          <button className="btn" onClick={() => nav('/plans')}>Generate Plan</button>
           <button className="btn danger" onClick={removeClient}>Delete</button>
         </>}
       />

@@ -5,6 +5,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    // The repo lives on a network share (\\lakeside.local). Native FS file-watching
+    // throws ECONNRESET over SMB, so use polling to keep hot-reload stable.
+    watch: { usePolling: true, interval: 300 },
     // Proxy /api to the backend so the frontend can use same-origin relative URLs
     // in dev. In production, set VITE_API_URL to the deployed API base instead.
     proxy: {

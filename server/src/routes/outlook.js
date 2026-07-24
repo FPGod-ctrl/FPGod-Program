@@ -7,6 +7,7 @@ import { extractText } from '../services/documentExtractor.js';
 import { scanDocument } from '../services/documentScan.js';
 import {
   scanOutlook,
+  scanCalendar,
   outlookAvailable,
   getOutlookAttachments,
   mimeFromName,
@@ -36,6 +37,24 @@ router.get(
       maxItems: maxItems !== undefined ? Number(maxItems) : undefined,
     });
     res.json({ count: messages.length, messages });
+  })
+);
+
+/**
+ * GET /api/outlook/calendar?back=1&ahead=30&maxItems=500
+ * Reads the locally signed-in Outlook desktop calendar via COM and returns
+ * appointments in the window (recurrences expanded). Read-only.
+ */
+router.get(
+  '/calendar',
+  asyncHandler(async (req, res) => {
+    const { back, ahead, maxItems } = req.query;
+    const events = await scanCalendar({
+      back: back !== undefined ? Number(back) : undefined,
+      ahead: ahead !== undefined ? Number(ahead) : undefined,
+      maxItems: maxItems !== undefined ? Number(maxItems) : undefined,
+    });
+    res.json({ count: events.length, events });
   })
 );
 

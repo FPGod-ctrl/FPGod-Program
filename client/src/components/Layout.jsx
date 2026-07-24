@@ -6,7 +6,7 @@ const NAV = [
   { section: 'Overview' },
   { to: '/', label: 'Dashboard', icon: '◈', end: true },
   { to: '/clients', label: 'Clients', icon: '👥' },
-  { to: '/documents', label: 'Documents', icon: '📄' },
+  { to: '/calendar', label: 'Calendar', icon: '📅' },
   { section: 'Advisory' },
   { to: '/plans', label: 'Plan Generator', icon: '📝' },
   { to: '/investments', label: 'Investments', icon: '📊' },
@@ -15,7 +15,7 @@ const NAV = [
   { to: '/settings', label: 'Settings', icon: '⚙️' },
 ];
 
-function Sidebar({ meta }) {
+function Sidebar({ meta, theme, onToggleTheme }) {
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -43,6 +43,10 @@ function Sidebar({ meta }) {
         )}
       </nav>
       <div className="sidebar-foot">
+        <button className="theme-toggle" onClick={onToggleTheme} title="Switch theme">
+          <span className="tt-ico">{theme === 'linen' ? '🌙' : '☀️'}</span>
+          {theme === 'linen' ? 'Dark mode' : 'Linen mode'}
+        </button>
         <div className="ai-pill">
           <span className={`ai-dot ${meta?.aiEnabled ? 'on' : 'off'}`} />
           {meta ? (meta.aiEnabled ? `AI: ${meta.model}` : 'AI: stub mode') : 'AI: …'}
@@ -55,10 +59,16 @@ function Sidebar({ meta }) {
 
 export default function Layout() {
   const [meta, setMeta] = useState(null);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   useEffect(() => { api.get('/meta').then(setMeta).catch(() => {}); }, []);
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+  const toggleTheme = () => setTheme((t) => (t === 'linen' ? 'dark' : 'linen'));
   return (
     <div className="app-shell">
-      <Sidebar meta={meta} />
+      <Sidebar meta={meta} theme={theme} onToggleTheme={toggleTheme} />
       <div className="main">
         <Outlet context={{ meta }} />
       </div>

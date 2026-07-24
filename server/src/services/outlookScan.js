@@ -12,6 +12,9 @@ const SCRIPT = fileURLToPath(
 const SAVE_SCRIPT = fileURLToPath(
   new URL('../../../automation/outlook/save-attachments.ps1', import.meta.url)
 );
+const CAL_SCRIPT = fileURLToPath(
+  new URL('../../../automation/outlook/scan-calendar.ps1', import.meta.url)
+);
 
 // Run a PowerShell script with args and return trimmed stdout (rejects on non-zero).
 function runPowerShell(scriptPath, extraArgs) {
@@ -62,6 +65,29 @@ export function scanOutlook({ days = 7, from = '', subject = '', folder = 'Inbox
     if (!text) return []; // zero messages -> empty stdout
     const parsed = JSON.parse(text);
     // ConvertTo-Json emits a bare object for a single result — normalise.
+    return Array.isArray(parsed) ? parsed : [parsed];
+  });
+}
+
+/**
+ * Read the local Outlook desktop calendar (COM) and return appointments in a
+ * date window. Recurring appointments are expanded into occurrences. Read-only.
+ *
+ * @param {{back?:number, ahead?:number, maxItems?:number}} opts
+ * @returns {Promise<Array>} appointment rows (start, end, subject, location, …)
+ */
+export function scanCalendar({ back = 1, ahead = 30, maxItems = 500 } = {}) {
+  if (!outlookAvailable()) {
+    return Promise.reject(new Error('Outlook calendar is only available on the Windows desktop host'));
+  }
+  const args = [
+    '-Back', String(Math.max(0, Math.min(365, Number(back) || 1))),
+    '-Ahead', String(Math.max(1, Math.min(365, Number(ahead) || 30))),
+    '-MaxItems', String(Math.max(1, Math.min(2000, Number(maxItems) || 500))),
+  ];
+  return runPowerShell(CAL_SCRIPT, args).then((text) => {
+    if (!text) return []; // zero appointments -> empty stdout
+    const parsed = JSON.parse(text);
     return Array.isArray(parsed) ? parsed : [parsed];
   });
 }
