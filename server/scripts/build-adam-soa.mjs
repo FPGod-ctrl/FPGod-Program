@@ -221,7 +221,7 @@ if (bad.length) {
   // clone paragraph styling from the LIFE heading + its following body paragraph
   const lifeHeadingXML = doc.slice(lifeStart, lifeEnd);
   const headingPPr = (lifeHeadingXML.match(/<w:pPr>[\s\S]*?<\/w:pPr>/) || ['<w:pPr/>'])[0];
-  const headingRPr = (lifeHeadingXML.match(/<w:r>\s*(<w:rPr>[\s\S]*?<\/w:rPr>)/) || [, '<w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:b/><w:sz w:val="20"/><w:u w:val="single"/></w:rPr>'])[1];
+  const headingRPr = (lifeHeadingXML.match(/<w:r>\s*(<w:rPr>[\s\S]*?<\/w:rPr>)/) || [null, '<w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:b/><w:sz w:val="20"/><w:u w:val="single"/></w:rPr>'])[1];
   const bodyParaXML = doc.slice(lifeEnd, pEndOf(lifeEnd));
   const bodyPPr = (bodyParaXML.match(/<w:pPr>[\s\S]*?<\/w:pPr>/) || ['<w:pPr><w:spacing w:after="0" w:line="240" w:lineRule="auto"/></w:pPr>'])[0];
   const bodyRPr = (bodyParaXML.match(/<w:rPr>[\s\S]*?<\/w:rPr>/) || ['<w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="20"/></w:rPr>'])[0];

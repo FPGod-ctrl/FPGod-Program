@@ -6,6 +6,13 @@ import { env } from './env.js';
 // convenient JSON output. (OID 1700 = numeric.)
 pg.types.setTypeParser(1700, (val) => (val === null ? null : parseFloat(val)));
 
+// A DATE column is a calendar day, not an instant. By default pg turns it into a
+// JS Date at LOCAL midnight, which JSON-serialises to the previous day for any
+// timezone ahead of UTC (a 1974-03-14 birthday came back as
+// "1974-03-13T14:00:00.000Z" in Sydney). Return the raw 'YYYY-MM-DD' string so
+// dates survive the round trip unchanged. (OID 1082 = date.)
+pg.types.setTypeParser(1082, (val) => val);
+
 const poolConfig = env.db.connectionString
   ? { connectionString: env.db.connectionString, ssl: env.db.ssl }
   : {

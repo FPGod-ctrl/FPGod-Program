@@ -10,8 +10,15 @@ import { crudRouter } from './crudFactory.js';
 const COLUMNS = [
   'group_id', 'first_name', 'last_name', 'email', 'phone', 'address', 'date_of_birth',
   'occupation', 'risk_profile', 'annual_income', 'net_worth', 'notes', 'status',
+  'middle_name', 'preferred_name', 'marital_status', 'smoker',
+  'employment_status', 'employment_basis', 'employer_name',
+  'super_balance', 'super_provider', 'super_contributions',
+  'health_notes', 'goals_scope', 'historic_context', 'other_details',
   'partner_first_name', 'partner_last_name', 'partner_email', 'partner_phone',
   'partner_date_of_birth', 'partner_occupation', 'partner_annual_income', 'partner_risk_profile',
+  'partner_middle_name', 'partner_preferred_name', 'partner_marital_status', 'partner_smoker',
+  'partner_employment_status', 'partner_employment_basis', 'partner_employer_name',
+  'partner_super_balance', 'partner_super_provider', 'partner_super_contributions',
 ];
 
 const crud = crudRouter({
@@ -57,7 +64,7 @@ router.get(
 
     const [
       group, partners, current, recommended, plans, transcripts, emails, documents,
-      assets, liabilities, income, expenses, insurance, goals, estate,
+      assets, liabilities, income, expenses, insurance, goals, estate, family,
     ] = await Promise.all([
       client.group_id
         ? query('SELECT * FROM client_groups WHERE id = $1', [client.group_id]).then((r) => r.rows[0])
@@ -78,11 +85,12 @@ router.get(
       query('SELECT * FROM insurance_policies WHERE client_id = $1 ORDER BY cover_amount DESC NULLS LAST', [id]).then((r) => r.rows),
       query('SELECT * FROM financial_goals WHERE client_id = $1 ORDER BY target_date ASC NULLS LAST', [id]).then((r) => r.rows),
       query('SELECT * FROM estate_plans WHERE client_id = $1', [id]).then((r) => r.rows[0] || null),
+      query('SELECT * FROM family_members WHERE client_id = $1 ORDER BY date_of_birth ASC NULLS LAST, created_at ASC', [id]).then((r) => r.rows),
     ]);
 
     res.json({
       client, group, partners, current, recommended, plans, transcripts, emails, documents,
-      assets, liabilities, income, expenses, insurance, goals, estate,
+      assets, liabilities, income, expenses, insurance, goals, estate, family,
     });
   })
 );
@@ -109,6 +117,7 @@ router.post(
       source: req.file.originalname,
       parsed: {
         client: result?.client || {},
+        family: list('family'),
         investments: list('investments'),
         assets: list('assets'),
         liabilities: list('liabilities'),
@@ -135,8 +144,16 @@ router.post(
  * fund name.
  */
 const CLIENT_FIELDS = [
-  'first_name', 'last_name', 'email', 'phone', 'date_of_birth',
-  'occupation', 'annual_income', 'net_worth', 'risk_profile',
+  'first_name', 'middle_name', 'preferred_name', 'last_name', 'email', 'phone', 'address',
+  'date_of_birth', 'occupation', 'annual_income', 'net_worth', 'risk_profile',
+  'marital_status', 'smoker', 'employment_status', 'employment_basis', 'employer_name',
+  'super_balance', 'super_provider', 'super_contributions',
+  'health_notes', 'goals_scope', 'historic_context', 'other_details',
+  'partner_first_name', 'partner_middle_name', 'partner_preferred_name', 'partner_last_name',
+  'partner_email', 'partner_phone', 'partner_date_of_birth', 'partner_occupation',
+  'partner_annual_income', 'partner_risk_profile', 'partner_marital_status', 'partner_smoker',
+  'partner_employment_status', 'partner_employment_basis', 'partner_employer_name',
+  'partner_super_balance', 'partner_super_provider', 'partner_super_contributions',
 ];
 
 router.post(
@@ -159,6 +176,7 @@ router.post(
 
     // Each financial array de-dupes on a key built from these fields.
     const LIST_SPECS = {
+      family: ['first_name', 'relationship'],
       investments: ['fund_name'],
       assets: ['name', 'category'],
       liabilities: ['name'],
@@ -171,7 +189,7 @@ router.post(
     const ESTATE_BOOL = ['has_will', 'has_poa', 'has_testamentary_trust'];
 
     const mergedClient = {};
-    const lists = { investments: [], assets: [], liabilities: [], income: [], expenses: [], insurance: [], goals: [] };
+    const lists = { family: [], investments: [], assets: [], liabilities: [], income: [], expenses: [], insurance: [], goals: [] };
     const seen = Object.fromEntries(Object.keys(lists).map((k) => [k, new Set()]));
     const estate = {};
     const sources = [];
@@ -230,6 +248,7 @@ const ESTATE_COLUMNS = [
   'has_will', 'will_date', 'will_location', 'executor',
   'has_poa', 'poa_type', 'poa_attorney',
   'has_testamentary_trust', 'trust_details', 'beneficiaries', 'notes',
+  'has_binding_nomination', 'binding_nomination', 'death_income_goal',
 ];
 
 router.get(

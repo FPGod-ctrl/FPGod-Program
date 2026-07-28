@@ -5,7 +5,9 @@ export default [
   { ignores: ['node_modules/**', 'uploads/**', 'coverage/**'] },
   js.configs.recommended,
   {
-    files: ['**/*.js'],
+    // .mjs too — the one-off scripts in scripts/ are Node modules and need the
+    // same globals, otherwise every `process`/`console` reads as undefined.
+    files: ['**/*.js', '**/*.mjs'],
     languageOptions: {
       ecmaVersion: 2023,
       sourceType: 'module',

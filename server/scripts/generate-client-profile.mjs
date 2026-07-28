@@ -62,7 +62,7 @@ const rebuildTable = (tblXml, rows) =>
 // ---- number helpers (totals) ------------------------------------------------
 function num(s) {
   if (typeof s === 'number') return s;
-  const m = String(s ?? '').replace(/[^0-9.\-]/g, '');
+  const m = String(s ?? '').replace(/[^0-9.-]/g, '');
   if (m === '' || m === '-' || m === '.') return null;
   const v = parseFloat(m);
   return Number.isNaN(v) ? null : v;

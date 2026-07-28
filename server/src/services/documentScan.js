@@ -4,9 +4,21 @@ const SYSTEM_PROMPT =
   'You extract structured data from financial documents. Given the raw text of a ' +
   'client document, return a JSON object with any of these keys you can confidently ' +
   'populate. Use exactly these field names so they map to our system:\n' +
-  '- client {first_name,last_name,email,phone,address,date_of_birth,occupation,annual_income,net_worth,risk_profile,' +
-  'partner_first_name,partner_last_name,partner_email,partner_phone,partner_date_of_birth,partner_occupation,partner_annual_income,partner_risk_profile} ' +
-  '(partner_* is the spouse/partner if the document describes a couple)\n' +
+  '- client {first_name,middle_name,preferred_name,last_name,email,phone,address,date_of_birth,occupation,' +
+  'annual_income,net_worth,risk_profile,marital_status,smoker,' +
+  'employment_status,employment_basis,employer_name,super_balance,super_provider,super_contributions,' +
+  'health_notes,goals_scope,historic_context,other_details,' +
+  'partner_first_name,partner_middle_name,partner_preferred_name,partner_last_name,partner_email,partner_phone,' +
+  'partner_date_of_birth,partner_occupation,partner_annual_income,partner_risk_profile,partner_marital_status,' +
+  'partner_smoker,partner_employment_status,partner_employment_basis,partner_employer_name,' +
+  'partner_super_balance,partner_super_provider,partner_super_contributions} ' +
+  '(partner_* is the spouse/partner if the document describes a couple; smoker fields are booleans; ' +
+  'employment_status is employed/self-employed/retired/unemployed/home-duties; ' +
+  'employment_basis is full-time/part-time/casual/contract; ' +
+  'health_notes is any health/medical background, goals_scope is what the client wants advice on, ' +
+  'historic_context is relevant background/history, other_details is anything else notable)\n' +
+  '- family [{first_name,last_name,relationship,date_of_birth,is_dependent,notes}] — children and other ' +
+  'dependants; relationship one of child,stepchild,dependent,parent,sibling,grandchild,other; is_dependent boolean\n' +
   '- investments [{fund_name,ticker,account_type,balance,allocation_pct,asset_class,fee_pct,provider}]\n' +
   '- assets [{category,name,value,owner}] — category one of cash,property,vehicle,business,investment,superannuation,collectible,other\n' +
   '- liabilities [{liability_type,name,balance,interest_rate,monthly_payment,lender,owner}] — liability_type one of mortgage,personal_loan,auto_loan,credit_card,student_loan,tax,business_loan,other\n' +
@@ -56,7 +68,7 @@ export async function scanDocument(text) {
 /** Very small regex-based fallback so offline scans still return *something*. */
 function heuristicScan(text) {
   const out = {
-    client: {}, investments: [], assets: [], liabilities: [],
+    client: {}, family: [], investments: [], assets: [], liabilities: [],
     income: [], expenses: [], insurance: [], goals: [], estate: {},
     notes: 'Heuristic offline scan (no OpenAI key).',
   };

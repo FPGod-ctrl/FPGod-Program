@@ -40,4 +40,15 @@ describe('format helpers', () => {
     expect(date(null)).toBe('—');
     expect(date('not-a-date')).toBe('—');
   });
+
+  it('renders a calendar day as that day, whatever the timezone', () => {
+    // 'YYYY-MM-DD' must not be read as UTC midnight — that shifts it a day west.
+    expect(date('1974-03-14')).toBe('Mar 14, 1974');
+    expect(date('2021-05-12')).toBe('May 12, 2021');
+    expect(date('2032-01-01')).toBe('Jan 1, 2032');
+  });
+
+  it('still formats real instants', () => {
+    expect(date('2021-05-12T09:30:00.000Z')).toMatch(/May 1[23], 2021/);
+  });
 });
