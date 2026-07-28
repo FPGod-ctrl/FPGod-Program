@@ -70,6 +70,34 @@ ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_occupation    TEXT;
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_annual_income NUMERIC(14,2);
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_risk_profile  TEXT;
 
+-- Extended identity fields (Mantle-style client profile) — primary client.
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS middle_name          TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS preferred_name       TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS marital_status       TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS smoker               BOOLEAN;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS employment_status    TEXT;   -- employed / self-employed / retired…
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS employment_basis     TEXT;   -- full-time / part-time / casual…
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS employer_name        TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS super_balance        NUMERIC(14,2);
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS super_provider       TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS super_contributions  NUMERIC(14,2);
+-- Extended identity fields — partner / spouse.
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_middle_name         TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_preferred_name      TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_marital_status      TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_smoker              BOOLEAN;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_employment_status   TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_employment_basis    TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_employer_name       TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_super_balance       NUMERIC(14,2);
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_super_provider      TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS partner_super_contributions NUMERIC(14,2);
+-- Profile prose (Personal / History sections).
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS health_notes      TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS goals_scope       TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS historic_context  TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS other_details     TEXT;
+
 -- =====================================================================
 -- Documents (uploaded PDFs / Word docs). Belong to a client or a group.
 -- =====================================================================
@@ -82,7 +110,7 @@ CREATE TABLE IF NOT EXISTS documents (
   doc_type        TEXT NOT NULL DEFAULT 'other'
                     CHECK (doc_type IN
                       ('client_profile', 'statement', 'tax', 'identification',
-                       'insurance', 'estate', 'plan', 'other')),
+                       'insurance', 'estate', 'plan', 'soa', 'email', 'other')),
   mime_type       TEXT,
   size_bytes      BIGINT,
   extracted_text  TEXT,                 -- populated after text extraction
@@ -101,7 +129,7 @@ ALTER TABLE documents DROP CONSTRAINT IF EXISTS documents_doc_type_check;
 ALTER TABLE documents ADD CONSTRAINT documents_doc_type_check
   CHECK (doc_type IN
     ('client_profile', 'statement', 'tax', 'identification',
-     'insurance', 'estate', 'plan', 'other'));
+     'insurance', 'estate', 'plan', 'soa', 'email', 'other'));
 
 -- =====================================================================
 -- Current investments (existing holdings)
@@ -397,6 +425,133 @@ CREATE TABLE IF NOT EXISTS estate_plans (
   created_at             TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at             TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+-- Super binding nomination + death-planning income target (added on existing DBs).
+ALTER TABLE estate_plans ADD COLUMN IF NOT EXISTS has_binding_nomination BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE estate_plans ADD COLUMN IF NOT EXISTS binding_nomination     TEXT;
+ALTER TABLE estate_plans ADD COLUMN IF NOT EXISTS death_income_goal      NUMERIC(14,2);
+
+-- =====================================================================
+-- Family members / dependents (children, and other people on the file).
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS family_members (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id     UUID REFERENCES clients(id) ON DELETE CASCADE,
+  group_id      UUID REFERENCES client_groups(id) ON DELETE CASCADE,
+  first_name    TEXT NOT NULL,
+  last_name     TEXT,
+  relationship  TEXT NOT NULL DEFAULT 'child'
+                  CHECK (relationship IN
+                    ('child', 'stepchild', 'dependent', 'parent', 'sibling', 'grandchild', 'other')),
+  date_of_birth DATE,
+  is_dependent  BOOLEAN NOT NULL DEFAULT true,
+  notes         TEXT,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_family_client ON family_members(client_id);
+CREATE INDEX IF NOT EXISTS idx_family_group  ON family_members(group_id);
+
+-- =====================================================================
+-- CFS book — accounts under management, imported from a CFS adviser
+-- export (spreadsheet) and topped up from individual PDF statements.
+--
+-- Kept separate from current_investments: that table is "what the client
+-- told us they hold", this is "what CFS says is on my adviser code", and
+-- the two need to be reconcilable rather than merged.
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS cfs_imports (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  filename       TEXT NOT NULL,
+  source         TEXT NOT NULL DEFAULT 'spreadsheet'
+                   CHECK (source IN ('spreadsheet', 'pdf')),
+  as_at_date     DATE,
+  account_count  INTEGER NOT NULL DEFAULT 0,
+  holding_count  INTEGER NOT NULL DEFAULT 0,
+  total_fum      NUMERIC(16,2) NOT NULL DEFAULT 0,
+  total_fees     NUMERIC(14,2) NOT NULL DEFAULT 0,
+  column_map     JSONB DEFAULT '{}'::jsonb,   -- which sheet column fed which field
+  notes          TEXT,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS cfs_accounts (
+  id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id          UUID REFERENCES clients(id) ON DELETE SET NULL,
+  import_id          UUID REFERENCES cfs_imports(id) ON DELETE SET NULL,
+  account_number     TEXT,
+  account_name       TEXT NOT NULL,
+  product            TEXT,                    -- e.g. FirstChoice Wholesale Personal Super
+  account_type       TEXT NOT NULL DEFAULT 'other'
+                       CHECK (account_type IN ('super', 'pension', 'investment', 'other')),
+  balance            NUMERIC(16,2) NOT NULL DEFAULT 0,
+  adviser_fee_pct    NUMERIC(7,4),            -- ongoing advice fee, % p.a.
+  adviser_fee_amount NUMERIC(14,2),           -- ongoing advice fee, $ p.a.
+  fee_basis          TEXT,                    -- free text from the export
+  as_at_date         DATE,
+  match_status       TEXT NOT NULL DEFAULT 'unmatched'
+                       CHECK (match_status IN ('matched', 'unmatched', 'ignored')),
+  match_confidence   TEXT CHECK (match_confidence IN ('high', 'medium', 'low')),
+  notes              TEXT,
+  created_at         TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at         TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_cfs_accounts_client ON cfs_accounts(client_id);
+CREATE INDEX IF NOT EXISTS idx_cfs_accounts_import ON cfs_accounts(import_id);
+-- Re-importing next month's export updates the same account rather than
+-- duplicating it. Accounts with no number fall back to name+product (below).
+CREATE UNIQUE INDEX IF NOT EXISTS uq_cfs_accounts_number
+  ON cfs_accounts(account_number) WHERE account_number IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_cfs_accounts_name_product
+  ON cfs_accounts(lower(account_name), lower(coalesce(product, '')))
+  WHERE account_number IS NULL;
+
+-- Fee status is the point of the whole exercise: a CFS statement that carries
+-- no "Adviser service fee" line is an account being serviced for nothing.
+-- Added separately so existing databases pick them up.
+ALTER TABLE cfs_accounts ADD COLUMN IF NOT EXISTS fee_status TEXT NOT NULL DEFAULT 'unknown';
+ALTER TABLE cfs_accounts DROP CONSTRAINT IF EXISTS cfs_accounts_fee_status_check;
+ALTER TABLE cfs_accounts ADD CONSTRAINT cfs_accounts_fee_status_check
+  CHECK (fee_status IN ('paying', 'not_paying', 'unknown'));
+ALTER TABLE cfs_accounts ADD COLUMN IF NOT EXISTS email               TEXT;
+ALTER TABLE cfs_accounts ADD COLUMN IF NOT EXISTS date_of_birth       DATE;
+ALTER TABLE cfs_accounts ADD COLUMN IF NOT EXISTS opening_balance     NUMERIC(16,2);
+ALTER TABLE cfs_accounts ADD COLUMN IF NOT EXISTS growth_pct          NUMERIC(6,2);
+ALTER TABLE cfs_accounts ADD COLUMN IF NOT EXISTS report_period_start DATE;
+ALTER TABLE cfs_accounts ADD COLUMN IF NOT EXISTS report_period_end   DATE;
+CREATE INDEX IF NOT EXISTS idx_cfs_accounts_fee_status ON cfs_accounts(fee_status);
+
+-- Growth/defensive asset split, as CFS derives it from each option's benchmark.
+-- Statement valuation tables list options without an asset class, so the
+-- investment mix comes from here rather than from cfs_holdings.
+CREATE TABLE IF NOT EXISTS cfs_allocations (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_id  UUID NOT NULL REFERENCES cfs_accounts(id) ON DELETE CASCADE,
+  asset_class TEXT NOT NULL,
+  bucket      TEXT NOT NULL DEFAULT 'growth' CHECK (bucket IN ('growth', 'defensive')),
+  value       NUMERIC(16,2) NOT NULL DEFAULT 0,
+  pct         NUMERIC(6,2),
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_cfs_allocations_account ON cfs_allocations(account_id);
+
+CREATE TABLE IF NOT EXISTS cfs_holdings (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_id     UUID NOT NULL REFERENCES cfs_accounts(id) ON DELETE CASCADE,
+  option_name    TEXT NOT NULL,               -- CFS investment option
+  option_code    TEXT,
+  asset_class    TEXT,
+  units          NUMERIC(20,6),
+  unit_price     NUMERIC(16,6),
+  balance        NUMERIC(16,2) NOT NULL DEFAULT 0,
+  allocation_pct NUMERIC(7,3),
+  mgmt_fee_pct   NUMERIC(7,4),                -- ICR / management cost
+  as_at_date     DATE,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_cfs_holdings_account ON cfs_holdings(account_id);
 
 -- =====================================================================
 -- updated_at triggers
@@ -410,7 +565,8 @@ BEGIN
     'recommended_investments','financial_plans','meeting_transcripts',
     'followup_emails','training_data','assets','liabilities',
     'income_sources','expenses','insurance_policies','financial_goals',
-    'estate_plans'
+    'estate_plans','family_members','cfs_imports','cfs_accounts','cfs_holdings',
+    'cfs_allocations'
   ] LOOP
     IF NOT EXISTS (
       SELECT 1 FROM pg_trigger WHERE tgname = 'trg_' || t || '_updated_at'

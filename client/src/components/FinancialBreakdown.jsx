@@ -353,6 +353,9 @@ function EstatePanel({ clientId, estate, reload }) {
     poa_attorney: estate?.poa_attorney || '',
     has_testamentary_trust: estate?.has_testamentary_trust || false,
     trust_details: estate?.trust_details || '',
+    has_binding_nomination: estate?.has_binding_nomination || false,
+    binding_nomination: estate?.binding_nomination || '',
+    death_income_goal: estate?.death_income_goal ?? '',
     beneficiaries: estate?.beneficiaries || '',
     notes: estate?.notes || '',
   }));
@@ -365,6 +368,7 @@ function EstatePanel({ clientId, estate, reload }) {
     setSaving(true);
     try {
       const payload = { ...f };
+      payload.death_income_goal = payload.death_income_goal === '' ? null : Number(payload.death_income_goal);
       Object.keys(payload).forEach((k) => { if (payload[k] === '') payload[k] = null; });
       await api.put(`/clients/${clientId}/estate`, payload);
       reload();
@@ -410,6 +414,20 @@ function EstatePanel({ clientId, estate, reload }) {
           <TextArea label="Trust details" value={f.trust_details} onChange={set('trust_details')}
             placeholder="Structure, trustees, ongoing income arrangements…" />
         )}
+
+        <label className="row" style={{ gap: 8 }}>
+          <input type="checkbox" checked={f.has_binding_nomination} onChange={toggle('has_binding_nomination')} />
+          <span className="t-strong">Binding death benefit nomination (super)</span>
+        </label>
+        {f.has_binding_nomination && (
+          <TextInput label="Nominated beneficiaries" value={f.binding_nomination} onChange={set('binding_nomination')}
+            placeholder="e.g. Spouse 100%" />
+        )}
+
+        <div className="form-grid">
+          <TextInput label="Death planning — income goal" type="number" value={f.death_income_goal}
+            onChange={set('death_income_goal')} placeholder="Annual income for dependents on death" />
+        </div>
 
         <TextArea label="Beneficiaries" value={f.beneficiaries} onChange={set('beneficiaries')} />
         <TextArea label="Estate notes" value={f.notes} onChange={set('notes')} />

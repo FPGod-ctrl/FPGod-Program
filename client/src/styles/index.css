@@ -460,3 +460,48 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.55; }
   padding: 3px 8px; border-radius: 999px;
   background: var(--accent); color: #fff;
 }
+
+/* ---------- CFS book ---------- */
+/* Accent bars for stat tiles that were referenced but never defined. */
+.stat.amber::before { background: var(--amber); }
+.stat.red::before { background: var(--red); }
+
+.cfs-bars { display: flex; flex-direction: column; gap: 9px; margin-top: 12px; }
+.cfs-bar-row { display: grid; grid-template-columns: 130px 1fr 150px; gap: 10px; align-items: center; }
+.cfs-bar-label { font-size: 12.5px; color: var(--text); font-weight: 500; }
+.cfs-bar-track { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.cfs-bar-fill { height: 100%; border-radius: 999px; background: var(--accent); }
+.cfs-bar-value { font-size: 12.5px; text-align: right; font-variant-numeric: tabular-nums; }
+
+.cfs-warn {
+  font-size: 12.5px; line-height: 1.5; margin-bottom: 10px;
+  padding: 9px 12px; border-radius: 8px;
+  background: var(--amber-soft); color: var(--amber);
+}
+.cfs-note { font-size: 11.5px; color: var(--amber); margin-top: 3px; }
+.cfs-skipped { opacity: 0.42; }
+.cfs-skipped td { text-decoration: line-through; }
+.cfs-skipped td:first-child { text-decoration: none; }
+.cfs-suggest { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+
+@media (max-width: 900px) {
+  .cfs-bar-row { grid-template-columns: 100px 1fr; }
+  .cfs-bar-value { grid-column: 2; text-align: left; }
+}
+.cfs-bar-fill.defensive { background: var(--primary); }
+.cfs-fee-panel { border-left: 3px solid var(--red); }
+.cfs-rate-foot { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.cfs-rate-foot input {
+  width: 62px; padding: 2px 6px; font-size: 11.5px;
+  border: 1px solid var(--border-strong); border-radius: 5px;
+  background: var(--surface); color: var(--text);
+}
+.cfs-filters {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 16px; align-items: end;
+}
+.cfs-filters .field { margin-bottom: 10px; }
+.cfs-check {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12.5px; color: var(--text); margin-bottom: 18px; cursor: pointer;
+}
+@media (max-width: 900px) { .cfs-filters { grid-template-columns: 1fr 1fr; } }

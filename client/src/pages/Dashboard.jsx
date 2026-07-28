@@ -19,22 +19,22 @@ function Stat({ label, value, foot, tone }) {
 // Each generator area, styled as a launch card. `accent`/`soft` drive the card colour.
 const TOOLS = [
   {
-    to: '/clients', icon: '🧾', title: 'Client Profile',
+    to: '/generate/client-profile', icon: '🧾', title: 'Client Profile',
     desc: 'Generate the Lakeside client information & consent profile for a household, ready to review and export.',
     cta: 'Pick a client', accent: 'var(--accent-2)', soft: 'var(--accent-soft)', featured: true, pill: 'Featured',
   },
   {
-    to: '/clients', icon: '🛡️', title: 'Insurance Report',
+    to: '/generate/insurance-report', icon: '🛡️', title: 'Insurance Report',
     desc: 'Build the current / indicative cover summary — clone-and-fill from the firm’s insurance report template.',
     cta: 'Pick a client', accent: 'var(--accent-2)', soft: 'var(--accent-soft)', featured: true, pill: 'Featured',
   },
   {
-    to: '/plans', icon: '📝', title: 'SOA & Plan Generator',
-    desc: 'Draft a Statement of Advice or financial plan from the house template, client data and your strategy notes.',
+    to: '/generate/soa', icon: '📝', title: 'SOA & Financial Plan',
+    desc: 'Draft a Statement of Advice or full financial plan from the house template, client data and your strategy notes.',
     cta: 'Open generator', accent: '#6366f1', soft: 'rgba(99,102,241,0.16)',
   },
   {
-    to: '/meetings', icon: '✉️', title: 'Follow-up Emails',
+    to: '/generate/follow-ups', icon: '✉️', title: 'Follow-up Emails',
     desc: 'Turn a meeting transcript or call note into a follow-on-from-meeting or phone-call email in your voice.',
     cta: 'Open emails', accent: 'var(--primary)', soft: 'var(--primary-soft)',
   },

@@ -9,11 +9,17 @@ import Modal from '../components/ui/Modal.jsx';
 import { Loading, Empty, Spinner } from '../components/ui/Loading.jsx';
 import { TextInput, Select, TextArea } from '../components/ui/Field.jsx';
 import { useToast } from '../components/ui/Toast.jsx';
-import FinancialBreakdown from '../components/FinancialBreakdown.jsx';
+import ClientProfile from '../components/ClientProfile.jsx';
 import DocumentReviewModal from '../components/DocumentReviewModal.jsx';
 
 const RISK = ['conservative', 'moderate', 'balanced', 'growth', 'aggressive'];
 const STATUS = ['prospect', 'active', 'inactive', 'archived'];
+const MARITAL = ['single', 'married', 'de_facto', 'separated', 'divorced', 'widowed'];
+const EMPLOYMENT = ['employed', 'self_employed', 'contractor', 'retired', 'unemployed', 'home_duties', 'student'];
+const EMP_BASIS = ['full_time', 'part_time', 'casual', 'contract', 'seasonal'];
+const SMOKER_OPTS = [{ value: 'false', label: 'Non-smoker' }, { value: 'true', label: 'Smoker' }];
+// Options carrying human labels for underscore_valued selects.
+const opts = (arr) => arr.map((v) => ({ value: v, label: titleCase(v) }));
 
 export default function ClientDetail() {
   const { id } = useParams();
@@ -147,49 +153,14 @@ export default function ClientDetail() {
 
         <div className="tabs">
           {['overview', 'investments', 'plans', 'meetings', 'documents'].map((t) => (
-            <div key={t} className={`tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>{titleCase(t)}</div>
+            <div key={t} className={`tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>
+              {t === 'overview' ? 'Client Profile' : titleCase(t)}
+            </div>
           ))}
         </div>
 
         {tab === 'overview' && (
-          <div className="stack">
-            <div className="card">
-              <div className="card-head"><h3>Personal Details</h3>
-                <button className="btn sm ghost" onClick={() => setShowEdit(true)}>Edit</button>
-              </div>
-              <div className="card-pad">
-                <dl className="kv">
-                  <dt>Full name</dt><dd>{client.first_name} {client.last_name}</dd>
-                  <dt>Email</dt><dd>{client.email || '—'}</dd>
-                  <dt>Phone</dt><dd>{client.phone || '—'}</dd>
-                  <dt>Address</dt><dd>{client.address || '—'}</dd>
-                  <dt>Date of birth</dt><dd>{date(client.date_of_birth)}</dd>
-                  <dt>Occupation</dt><dd>{client.occupation || '—'}</dd>
-                  <dt>Notes</dt><dd>{client.notes || '—'}</dd>
-                </dl>
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="card-head"><h3>Partner / Spouse</h3>
-                <button className="btn sm ghost" onClick={() => setShowEdit(true)}>Edit</button></div>
-              <div className="card-pad">
-                {hasPartner ? (
-                  <dl className="kv">
-                    <dt>Full name</dt><dd>{client.partner_first_name} {client.partner_last_name}</dd>
-                    <dt>Email</dt><dd>{client.partner_email || '—'}</dd>
-                    <dt>Phone</dt><dd>{client.partner_phone || '—'}</dd>
-                    <dt>Date of birth</dt><dd>{date(client.partner_date_of_birth)}</dd>
-                    <dt>Occupation</dt><dd>{client.partner_occupation || '—'}</dd>
-                  </dl>
-                ) : (
-                  <Empty icon="👤" title="No partner on this file">Click Edit to add a husband / wife or partner.</Empty>
-                )}
-              </div>
-            </div>
-
-            <FinancialBreakdown data={data} clientId={id} reload={load} />
-          </div>
+          <ClientProfile data={data} clientId={id} reload={load} onEdit={() => setShowEdit(true)} />
         )}
 
         {tab === 'investments' && (
@@ -384,9 +355,12 @@ function EditClientForm({ client, overrides, onClose, onSaved }) {
   // Pre-fill from the client's current values; when importing, overlay any
   // fields the document scan found (only non-empty ones win).
   const [f, setF] = useState(() => {
+    const bool = (v) => (v == null ? '' : (v ? 'true' : 'false'));
     const base = {
       first_name: client.first_name ?? '',
       last_name: client.last_name ?? '',
+      middle_name: client.middle_name ?? '',
+      preferred_name: client.preferred_name ?? '',
       email: client.email ?? '',
       phone: client.phone ?? '',
       address: client.address ?? '',
@@ -394,16 +368,34 @@ function EditClientForm({ client, overrides, onClose, onSaved }) {
       date_of_birth: client.date_of_birth ? String(client.date_of_birth).slice(0, 10) : '',
       risk_profile: client.risk_profile ?? '',
       status: client.status ?? 'prospect',
+      marital_status: client.marital_status ?? '',
+      smoker: bool(client.smoker),
+      employment_status: client.employment_status ?? '',
+      employment_basis: client.employment_basis ?? '',
+      employer_name: client.employer_name ?? '',
       annual_income: client.annual_income ?? '',
       net_worth: client.net_worth ?? '',
+      super_balance: client.super_balance ?? '',
+      super_provider: client.super_provider ?? '',
+      super_contributions: client.super_contributions ?? '',
       partner_first_name: client.partner_first_name ?? '',
       partner_last_name: client.partner_last_name ?? '',
+      partner_middle_name: client.partner_middle_name ?? '',
+      partner_preferred_name: client.partner_preferred_name ?? '',
       partner_email: client.partner_email ?? '',
       partner_phone: client.partner_phone ?? '',
       partner_date_of_birth: client.partner_date_of_birth ? String(client.partner_date_of_birth).slice(0, 10) : '',
       partner_occupation: client.partner_occupation ?? '',
       partner_annual_income: client.partner_annual_income ?? '',
       partner_risk_profile: client.partner_risk_profile ?? '',
+      partner_marital_status: client.partner_marital_status ?? '',
+      partner_smoker: bool(client.partner_smoker),
+      partner_employment_status: client.partner_employment_status ?? '',
+      partner_employment_basis: client.partner_employment_basis ?? '',
+      partner_employer_name: client.partner_employer_name ?? '',
+      partner_super_balance: client.partner_super_balance ?? '',
+      partner_super_provider: client.partner_super_provider ?? '',
+      partner_super_contributions: client.partner_super_contributions ?? '',
       notes: client.notes ?? '',
     };
     if (overrides) {
@@ -426,7 +418,12 @@ function EditClientForm({ client, overrides, onClose, onSaved }) {
     setSaving(true);
     try {
       const payload = { ...f };
-      ['annual_income', 'net_worth', 'partner_annual_income'].forEach((k) => { payload[k] = payload[k] === '' ? null : Number(payload[k]); });
+      ['annual_income', 'net_worth', 'super_balance', 'super_contributions',
+        'partner_annual_income', 'partner_super_balance', 'partner_super_contributions']
+        .forEach((k) => { payload[k] = payload[k] === '' ? null : Number(payload[k]); });
+      ['smoker', 'partner_smoker'].forEach((k) => {
+        payload[k] = payload[k] === '' ? null : payload[k] === 'true';
+      });
       Object.keys(payload).forEach((k) => { if (payload[k] === '') payload[k] = null; });
       await api.put(`/clients/${client.id}`, payload);
       onSaved();
@@ -449,29 +446,49 @@ function EditClientForm({ client, overrides, onClose, onSaved }) {
       )}
       <div className="form-grid">
         <TextInput label="First name *" value={f.first_name} onChange={set('first_name')} />
+        <TextInput label="Middle name" value={f.middle_name} onChange={set('middle_name')} />
         <TextInput label="Last name *" value={f.last_name} onChange={set('last_name')} />
+        <TextInput label="Preferred name" value={f.preferred_name} onChange={set('preferred_name')} />
         <TextInput label="Email" type="email" value={f.email} onChange={set('email')} />
         <TextInput label="Phone" value={f.phone} onChange={set('phone')} />
         <TextInput label="Address" value={f.address} onChange={set('address')} />
         <TextInput label="Occupation" value={f.occupation} onChange={set('occupation')} />
         <TextInput label="Date of birth" type="date" value={f.date_of_birth} onChange={set('date_of_birth')} />
+        <Select label="Marital status" placeholder="—" options={opts(MARITAL)} value={f.marital_status} onChange={set('marital_status')} />
+        <Select label="Employment" placeholder="—" options={opts(EMPLOYMENT)} value={f.employment_status} onChange={set('employment_status')} />
+        <Select label="Employment basis" placeholder="—" options={opts(EMP_BASIS)} value={f.employment_basis} onChange={set('employment_basis')} />
+        <TextInput label="Employer name" value={f.employer_name} onChange={set('employer_name')} />
+        <Select label="Smoker" placeholder="—" options={SMOKER_OPTS} value={f.smoker} onChange={set('smoker')} />
         <Select label="Risk profile" placeholder="—" options={RISK} value={f.risk_profile} onChange={set('risk_profile')} />
         <Select label="Status" options={STATUS} value={f.status} onChange={set('status')} />
         <TextInput label="Annual income" type="number" value={f.annual_income} onChange={set('annual_income')} />
         <TextInput label="Net worth" type="number" value={f.net_worth} onChange={set('net_worth')} />
+        <TextInput label="Super balance" type="number" value={f.super_balance} onChange={set('super_balance')} />
+        <TextInput label="Super provider" value={f.super_provider} onChange={set('super_provider')} />
+        <TextInput label="Super contributions" type="number" value={f.super_contributions} onChange={set('super_contributions')} />
       </div>
 
       <h4 style={{ margin: '18px 0 8px' }}>Partner / Spouse
         <span className="muted" style={{ fontWeight: 400, fontSize: 13 }}> (optional — leave blank if single)</span></h4>
       <div className="form-grid">
         <TextInput label="Partner first name" value={f.partner_first_name} onChange={set('partner_first_name')} />
+        <TextInput label="Partner middle name" value={f.partner_middle_name} onChange={set('partner_middle_name')} />
         <TextInput label="Partner last name" value={f.partner_last_name} onChange={set('partner_last_name')} />
+        <TextInput label="Partner preferred name" value={f.partner_preferred_name} onChange={set('partner_preferred_name')} />
         <TextInput label="Partner email" type="email" value={f.partner_email} onChange={set('partner_email')} />
         <TextInput label="Partner phone" value={f.partner_phone} onChange={set('partner_phone')} />
         <TextInput label="Partner date of birth" type="date" value={f.partner_date_of_birth} onChange={set('partner_date_of_birth')} />
         <TextInput label="Partner occupation" value={f.partner_occupation} onChange={set('partner_occupation')} />
-        <TextInput label="Partner annual income" type="number" value={f.partner_annual_income} onChange={set('partner_annual_income')} />
+        <Select label="Partner marital status" placeholder="—" options={opts(MARITAL)} value={f.partner_marital_status} onChange={set('partner_marital_status')} />
+        <Select label="Partner employment" placeholder="—" options={opts(EMPLOYMENT)} value={f.partner_employment_status} onChange={set('partner_employment_status')} />
+        <Select label="Partner employment basis" placeholder="—" options={opts(EMP_BASIS)} value={f.partner_employment_basis} onChange={set('partner_employment_basis')} />
+        <TextInput label="Partner employer name" value={f.partner_employer_name} onChange={set('partner_employer_name')} />
+        <Select label="Partner smoker" placeholder="—" options={SMOKER_OPTS} value={f.partner_smoker} onChange={set('partner_smoker')} />
         <Select label="Partner risk profile" placeholder="—" options={RISK} value={f.partner_risk_profile} onChange={set('partner_risk_profile')} />
+        <TextInput label="Partner annual income" type="number" value={f.partner_annual_income} onChange={set('partner_annual_income')} />
+        <TextInput label="Partner super balance" type="number" value={f.partner_super_balance} onChange={set('partner_super_balance')} />
+        <TextInput label="Partner super provider" value={f.partner_super_provider} onChange={set('partner_super_provider')} />
+        <TextInput label="Partner super contributions" type="number" value={f.partner_super_contributions} onChange={set('partner_super_contributions')} />
       </div>
       <TextArea label="Notes" value={f.notes} onChange={set('notes')} />
     </Modal>

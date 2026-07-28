@@ -6,6 +6,7 @@ import HTMLtoDOCX from 'html-to-docx';
 import { crudRouter } from './crudFactory.js';
 import { gatherClientContext, generatePlanSectioned, generateQuestions } from '../services/planGenerator.js';
 import { renderPlanHtml } from '../services/planRender.js';
+import { saveGeneratedDocument } from '../services/generatedDocs.js';
 
 const crud = crudRouter({
   table: 'financial_plans',
@@ -49,14 +50,17 @@ router.post(
 router.post(
   '/generate',
   asyncHandler(async (req, res) => {
-    const { clientId, title, instructions, answers, save = true } = req.body || {};
+    const { clientId, title, instructions, answers, save = true, docType = 'plan' } = req.body || {};
     if (!clientId) throw badRequest('clientId is required');
 
     const ctx = await gatherClientContext(clientId);
     if (!ctx) throw notFound('Client not found');
 
+    const isSoa = docType === 'soa';
     const { text, ai } = await generatePlanSectioned(ctx, instructions);
-    const planTitle = title || `Financial Plan — ${ctx.client.first_name} ${ctx.client.last_name}`;
+    const planTitle =
+      title ||
+      `${isSoa ? 'Statement of Advice' : 'Financial Plan'} — ${ctx.client.first_name} ${ctx.client.last_name}`;
 
     if (!save) {
       return res.json({ content: text, ai, saved: false });
@@ -68,7 +72,17 @@ router.post(
        VALUES ($1,$2,$3,'draft',$4,$5,$6) RETURNING *`,
       [clientId, ctx.client.group_id || null, planTitle, text, ai ? 95 : 60, ai]
     );
-    res.status(201).json({ ...plan, ai, saved: true });
+
+    // Also file it into the client's Documents (Both: native table + document).
+    const document = await saveGeneratedDocument({
+      clientId,
+      groupId: ctx.client.group_id || null,
+      title: planTitle,
+      docType: isSoa ? 'soa' : 'plan',
+      text,
+    });
+
+    res.status(201).json({ ...plan, content: text, ai, saved: true, document });
   })
 );
 
