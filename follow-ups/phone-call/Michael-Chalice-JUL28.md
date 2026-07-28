@@ -31,9 +31,40 @@ So the honest question isn't "how do we find a cheaper version of this policy". 
 1. **Right-sizing your cover.** Working out what the cover is genuinely for now, and reducing it to match — which on its own may bring that premium down substantially.
 2. **Kaylene's position.** There may be a case for putting something modest in place for her for the next few years while you're both still working, then winding it back at retirement.
 3. **Cover inside your super.** You'll almost certainly have some default insurance sitting inside your super fund that you're paying for without realising. We'll find it and make sure it isn't duplicating what you hold outside.
-4. **Stepped versus level premiums.** The alternative to stepped is a **level** premium, where you pay more early on but the rate is locked in and stays flat rather than climbing with age.
-5. **Jack and Haley.** This is where level premiums really matter. Their late twenties to early thirties is the prime window to lock in life cover at a level rate that holds all the way through — the saving over a lifetime is very significant. It's genuinely inexpensive at their age, and most of it can usually be funded out of their super rather than their pocket. With Jack about to have a young family, this matters more than it did a year ago. The blunt version: if something happened to either of them, the bank of mum and dad is open for business, and you've worked too hard building what you've got to be dipping into it.
-6. **A broader health check.** Wills and estate planning, any inheritance in the picture, and what retirement actually looks like for the two of you.
+4. **Stepped versus level premiums.** Whether your remaining cover is better priced on a flat rate rather than one that climbs every year. More on this below, because it matters even more for Jack and Haley than it does for you.
+5. **A broader health check.** Wills and estate planning, any inheritance in the picture, and what retirement actually looks like for the two of you.
+
+**Stepped versus level premiums — the bit worth reading twice**
+
+This is the single most useful thing to come out of our call, and it's worth setting out properly because it's the difference between your situation and the one Jack and Haley are about to walk into.
+
+**Stepped** is what you're on. The premium is recalculated every year against your current age, so it starts cheap and climbs — slowly at first, then steeply once you're past fifty. It's the default on most policies and it's a perfectly sensible way to buy cover for a short stretch. Over twelve years, though, it's exactly how a policy quietly becomes $467.02.
+
+**Level** works the other way around. The rate is set at the age you take the policy out and then held flat, right through to age 65 (and on some policies you can extend to 70). You pay more in the early years — sometimes noticeably more — but you're buying a fixed price instead of a rising one. Somewhere around the eight-to-twelve-year mark the two lines cross, and from that point on level is cheaper every single year, by a widening margin. By the back end the gap is enormous; on the figures I've seen it can be in the order of 80% cheaper than the stepped equivalent at the same age. I'll show you the actual crossover on real quotes rather than asking you to take my word for it.
+
+Two things I want to be straight with you about, because I'd rather you heard them from me than found them in the fine print. "Level" means level for *age* — it doesn't mean the insurer can never reprice, because they can lift rates across an entire book of policies. And indexation will still creep your cover up each year unless we switch it off. Neither undoes the argument, but neither should be a surprise.
+
+**Why this matters so much more for Jack and Haley**
+
+The locked-in rate depends entirely on the age you start. Someone who takes out level cover at 26 locks a materially lower flat rate than the same person starting at 36 — and that gap never closes, it just compounds for the next thirty years. Late twenties to early thirties is genuinely the prime window, and Jack at 26 and Haley at 29 are sitting right in the middle of it.
+
+They're also the two people most likely to actually *hold* cover for thirty-odd years, because they're at the front end of mortgages and young families. That's precisely the shape of situation level premiums are built for. Your policy has done its job; theirs is only just starting.
+
+The cost is the part that surprises people. At their ages a full spread of cover — life, TPD, trauma and income protection — is likely to come in around a couple of thousand a year, and a good portion of that can usually be funded out of their super rather than their take-home pay. That matters a lot when there's a baby on the way and money is tight.
+
+For Jack, with the little one coming, I'd look at the lot. For Haley, given things are a bit more in flux, it may make more sense to start smaller and build it out as her situation settles — there's no rule that says it has to be done all at once.
+
+**The bank of mum and dad**
+
+Here's the blunt version, and I say it with respect because you've earned the right to hear it straight.
+
+If something serious happened to Jack or Haley tomorrow, there is no insurer standing behind either of them. The fallback is you and Kaylene. In practice that looks like funeral costs, clearing or servicing their mortgage, supporting a partner left on one income, possibly helping raise a grandchild, or carrying someone for six or twelve months while they're off work and recovering. None of that is hypothetical — it's the ordinary shape of what happens when a young family has no cover.
+
+And the money has to come from somewhere. In your case that somewhere is the equity you've spent decades building, your super, or the toys you've worked hard for and are entitled to enjoy. You said it yourself on the call — you've done the hard yards. It would be a rough outcome to have that unwound by a risk that could have been shifted onto an insurer for a couple of thousand a year.
+
+That's really the whole argument. Insurance doesn't make the event less likely; it just decides who carries the cost. At the moment, that's you.
+
+I'm very happy to speak to Jack and Haley directly — no cost, no obligation, and it doesn't require you to be across their finances or for them to be across yours. Sometimes it lands better coming from someone who isn't Dad. If you'd like, mention it to them and I'll take it from there.
 
 The short version: you and Kaylene have done the hard yards, you've built real equity in the home, and you're in a genuinely solid position. I think there's money to be saved here and some structure to tidy up — and I don't think you need to be paying anywhere near $467.02 for the privilege.
 
