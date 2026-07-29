@@ -36,6 +36,14 @@ React (Vite) frontend  ──►  Express API  ──►  PostgreSQL
 - **Bulk training import** — drag in a whole library of historical plans
   (Word/PDF/TXT) at once under Settings → Bulk Import.
 
+## Moving to another computer
+
+See **[MIGRATION.md](MIGRATION.md)** for a step-by-step guide to move FPGod
+(and your VS Code setup) to a new laptop with nothing different. In short: run
+`bash scripts/backup.sh` on the old machine, copy the one backup file over, and
+run `bash scripts/restore.sh` on the new one — this carries the database,
+uploaded documents, and `.env` secrets that git does **not** track.
+
 ## Project layout
 
 ```
