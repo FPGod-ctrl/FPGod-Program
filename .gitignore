@@ -34,3 +34,8 @@ logs/
 coverage/
 .cache/
 .vite/
+
+# Laptop-migration export/backup archives (see MIGRATION.md) — never commit these,
+# they contain .env secrets and a full database dump.
+fpgod-FULL-*.tar.gz
+fpgod-backup-*.tar.gz

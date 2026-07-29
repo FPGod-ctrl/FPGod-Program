@@ -6,12 +6,55 @@ clients/plans, and the same VS Code setup.
 
 > **The one thing to understand:** cloning from GitHub only copies the *code*.
 > Your OpenAI key, your uploaded files, and your entire database of clients and
-> plans are **not** in GitHub (on purpose — they're private). The two scripts
-> below move those for you.
+> plans are **not** in GitHub (on purpose — they're private). The scripts below
+> move those for you.
 
 ---
 
-## Part A — The FPGod program
+## Recommended: one self-contained file (safe even if you lose the old laptop)
+
+If you're about to hand back / wipe the old laptop, use this. It packs
+**everything** — the code, your secrets, your uploaded documents, and the whole
+database — into a single file you upload to Google Drive or copy to a USB stick.
+It does **not** need GitHub afterwards.
+
+**On the OLD laptop** (from the project folder):
+
+```bash
+bash scripts/full-export.sh
+```
+
+This produces `fpgod-FULL-<date>.tar.gz`. **Upload that one file to Google Drive
+or copy it to a USB stick.** Watch the output — if it warns that the database
+wasn't included, start PostgreSQL and run it again *before* you lose the laptop.
+
+> ⚠️ That file contains your OpenAI key and all client data. Keep it private, and
+> delete it from Google Drive once the move is done.
+
+**On the NEW laptop** (after installing Node 20+ and a running PostgreSQL — see
+Step 2 below):
+
+1. Download the file from Google Drive / USB.
+2. Unzip it (double-click on macOS, or `tar -xzf fpgod-FULL-*.tar.gz`).
+3. Open a terminal inside the resulting `fpgod` folder and run:
+
+```bash
+bash scripts/full-restore.sh
+npm run install:all
+npm run build
+npm start                # then open http://localhost:4000
+```
+
+That's the whole move. **Part A below is an alternative** for when you'll still
+have GitHub access on the new laptop and prefer a smaller backup file. Then do
+**Part B** for VS Code either way.
+
+---
+
+## Part A — Alternative: clone from GitHub + a smaller data-only backup
+
+Use this only if the old laptop's code is already pushed to GitHub and you're
+happy to `git clone` on the new machine. It backs up just the data (not the code).
 
 ### Step 1 — On the OLD laptop: make a backup
 
