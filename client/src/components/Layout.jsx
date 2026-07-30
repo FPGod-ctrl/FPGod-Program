@@ -52,7 +52,7 @@ function Sidebar({ meta, theme, onToggleTheme }) {
       <div className="sidebar-foot">
         <button className="theme-toggle" onClick={onToggleTheme} title="Switch theme">
           <span className="tt-ico">{theme === 'linen' ? '🌙' : '☀️'}</span>
-          {theme === 'linen' ? 'Dark mode' : 'Linen mode'}
+          {theme === 'linen' ? 'Dark mode' : 'Light mode'}
         </button>
         <div className="ai-pill">
           <span className={`ai-dot ${meta?.aiEnabled ? 'on' : 'off'}`} />
