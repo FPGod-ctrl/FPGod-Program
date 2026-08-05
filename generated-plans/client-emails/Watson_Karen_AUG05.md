@@ -9,7 +9,7 @@ Hi Karen,
 
 My name is Tristan Biro, a financial adviser with Lakeside Financial. We haven't spoken before, so I'll keep this brief.
 
-Your FirstChoice Wholesale Personal Super account sits within a group our firm is listed against, and **no ongoing advice fee is being charged on it**. You haven't been paying for advice you weren't receiving — but it also means nobody has reviewed the account in some time. Having looked at your statement, I'll start with the good news.
+Your FirstChoice Wholesale Personal Super account sits under our advisory, though **no ongoing advice fee is being charged on it**. You haven't been paying for advice you weren't receiving — but it also means nobody has reviewed the account in some time. Having looked at your statement, I'll start with the good news.
 
 **1. It's had a strong year.** Your balance grew from $325,305 to **$376,112**, a return of around **10.1%** — the strongest of any statement I've looked at recently. Nothing is broken here.
 

@@ -8,7 +8,7 @@ Hi Chiemi,
 
 My name is Tristan Biro, a financial adviser with Lakeside Financial. We haven't spoken before, so I'll keep this short.
 
-Your FirstChoice Employer Super account sits within a group our firm is listed against, and **no ongoing advice fee is being charged on it**. So you haven't been paying for advice you weren't receiving — but nobody has reviewed the account in some time either. Having looked at your statement, here's what I'd raise.
+Your FirstChoice Employer Super account sits under our advisory, though **no ongoing advice fee is being charged on it**. So you haven't been paying for advice you weren't receiving — but nobody has reviewed the account in some time either. Having looked at your statement, here's what I'd raise.
 
 **1. It's had a very good year.** Your balance grew from $278,571 to **$322,572**, a return of around **11.9%**. That's a strong result and there's nothing wrong with the outcome.
 

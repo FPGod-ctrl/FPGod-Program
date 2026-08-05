@@ -9,7 +9,7 @@ Hi Ian,
 
 My name is Tristan Biro, a financial adviser with Lakeside Financial. We haven't spoken before, so I'll get straight to it.
 
-Your FirstChoice Wholesale Personal Super account sits within a group our firm is listed against, and **no ongoing advice fee is being charged on it**. So you haven't been paying for advice you weren't receiving — but equally, nobody has looked at this account in some time. Having read your latest statement, there are four things I'd want to raise with you.
+Your FirstChoice Wholesale Personal Super account sits under our advisory, though **no ongoing advice fee is being charged on it**. So you haven't been paying for advice you weren't receiving — but equally, nobody has looked at this account in some time. Having read your latest statement, there are four things I'd want to raise with you.
 
 **1. Your entire balance is in one investment option.** All $383,208 sits in the FSI Concentrated Australian Share option — a single, concentrated Australian shares strategy. It returned **−11.76%** for the year, and your balance fell from $434,059 to $383,208. One poor year in isolation isn't a reason to panic. But holding 100% of your super in one concentrated option, in one asset class, in one country, at 57, is a level of risk worth confirming you've actually chosen.
 

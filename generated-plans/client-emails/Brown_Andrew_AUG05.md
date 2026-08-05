@@ -8,7 +8,7 @@ Hi Andrew,
 
 My name is Tristan Biro, a financial adviser with Lakeside Financial. We haven't spoken before, so I'll keep this short.
 
-Your FirstChoice Wholesale Personal Super account sits within a group our firm is listed against, and **no ongoing advice fee is being charged on it**. That means you haven't been paying for advice you weren't receiving — but it also means the account hasn't been reviewed in some time. Having looked at your latest statement, a few things stand out.
+Your FirstChoice Wholesale Personal Super account sits under our advisory, though **no ongoing advice fee is being charged on it**. That means you haven't been paying for advice you weren't receiving — but it also means the account hasn't been reviewed in some time. Having looked at your latest statement, a few things stand out.
 
 **1. The account is doing its job, but the mix is worth confirming.** Your balance grew from $369,745 to **$408,513** over the year, a return of around **4.4%**, with roughly 68% in growth assets and the rest defensive. That's a reasonable, fairly balanced position. The question at 51 is whether it's the position you'd actively choose with retirement still a decade or more away — a more growth-weighted mix may suit your timeframe better, or you may prefer exactly where you are. Either way it's worth deciding rather than defaulting.
 

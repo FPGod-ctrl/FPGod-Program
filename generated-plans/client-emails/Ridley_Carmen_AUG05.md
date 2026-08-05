@@ -8,7 +8,7 @@ Hi Carmen,
 
 My name is Tristan Biro, a financial adviser with Lakeside Financial. We haven't spoken before, so I'll be brief.
 
-Your FirstChoice Wholesale Personal Super account sits within a group our firm is listed against, and **no ongoing advice fee is being charged on it**. You haven't been paying for advice you weren't getting, which is fair enough — but it does mean nobody has reviewed the account in some time. Having looked at your latest statement, there are three things I think are worth a conversation.
+Your FirstChoice Wholesale Personal Super account sits under our advisory, though **no ongoing advice fee is being charged on it**. You haven't been paying for advice you weren't getting, which is fair enough — but it does mean nobody has reviewed the account in some time. Having looked at your latest statement, there are three things I think are worth a conversation.
 
 **1. You're entirely in growth assets.** All $761,398 sits across Australian shares, global shares and property, with **no defensive allocation at all**. At 52 that may well be the right call — you have time on your side. But it should be a deliberate decision rather than the setting the account happens to be on, and it's worth confirming you'd be comfortable with the swing that comes with it in a poor year.
 
