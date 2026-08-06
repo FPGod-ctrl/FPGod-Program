@@ -1,12 +1,12 @@
-<!-- Roselyne Marie Antolli ("Rosalind") | 76 (DOB 08 Jan 1950)
+<!-- Roselyne Marie Antolli ("Roselyne") | 76 (DOB 08 Jan 1950)
      FirstChoice Wholesale Personal Super | Acct 0110 3931 3305 | $73,689.89 as at 30 Jun 2026
      roscla8@hotmail.com | (03) 9460 3940 | 8/132A Leamington Street, Reservoir VIC 3073
      Previous adviser: Andrew Lord (departed). Estate planning with Donna.
-     NOTE: transcript says "Rosalind", statement says "Roselyne Marie" — confirm preferred name. -->
+     Preferred name confirmed by adviser: Roselyne. -->
 
-**Subject:** Rosalind — the letter from Colonial First State, and a few notes on your super
+**Subject:** Roselyne — the letter from Colonial First State, and a few notes on your super
 
-Hi Rosalind,
+Hi Roselyne,
 
 Lovely to speak with you today. As promised, here's a short note confirming what we discussed.
 
