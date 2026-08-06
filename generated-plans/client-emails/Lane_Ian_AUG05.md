@@ -21,11 +21,7 @@ Your FirstChoice Wholesale Personal Super account sits under our advisory, thoug
 
 Your beneficiary nomination is non-lapsing in favour of Cheryl Ann Margaret Lane as spouse at 100% — worth confirming that's still current.
 
-**What I'd suggest**
-
-Twenty minutes on the phone where I go through your statement with you. **No cost, no obligation.**
-
-Reply with a couple of times that suit, or call me on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

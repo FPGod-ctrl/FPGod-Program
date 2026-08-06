@@ -21,11 +21,7 @@ Two things matter here. A nomination is only valid if the person still meets the
 
 This is a five-minute fix, but only if someone looks at it. That's the main reason I'm writing.
 
-**What I'd suggest**
-
-Twenty minutes on the phone where I go through your statement and tell you what I see. **No cost, no obligation.**
-
-Reply with a couple of times that suit, or call me on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

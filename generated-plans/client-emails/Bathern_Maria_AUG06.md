@@ -25,11 +25,7 @@ Your account has actually done well — a return of around **9.3%** for the year
 
 And at 65, this money is fully accessible to you. Whether it's worth keeping in super, moving to a pension arrangement, or simply drawing out, depends on your circumstances — but you should know the choice is entirely yours.
 
-**What I'd suggest**
-
-A short call — fifteen or twenty minutes — where I go through it with you and we sort the beneficiary nomination at the very least. **No cost and no obligation.** I've attached your latest statement.
-
-Reply with a time that suits, or call me on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

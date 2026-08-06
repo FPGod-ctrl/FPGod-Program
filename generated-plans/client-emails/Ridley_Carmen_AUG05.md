@@ -18,11 +18,7 @@ Your FirstChoice Wholesale Personal Super account sits under our advisory, thoug
 
 One smaller thing: your statement shows an **excess non-concessional contributions tax charge of $211.95**. Small in itself, but it usually signals a contribution timing issue worth understanding so it doesn't repeat.
 
-**What I'd suggest**
-
-Twenty minutes on the phone where I walk through your statement with you and tell you what I see. **No cost, no obligation.** If it's all in good order, I'll say so and you'll have the peace of mind.
-
-Reply with a couple of times that suit, or call me on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

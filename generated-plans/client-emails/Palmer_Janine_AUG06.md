@@ -25,11 +25,7 @@ Because your balance is under $500,000, you can generally also draw on unused ro
 
 At 64 you're also at the point where super becomes accessible, which opens up some useful options worth understanding.
 
-**What I'd suggest**
-
-Twenty minutes on the phone where I go through your statement with you. **No cost and no obligation.**
-
-Give me a call on **03 9596 5111**, or let me know a time that suits and I'll ring you.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

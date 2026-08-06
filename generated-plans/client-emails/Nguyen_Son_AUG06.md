@@ -22,11 +22,7 @@ That matters more than usual in your case, because you're already drawing money 
 
 Your account is simply structured — a single option, costing **$446** for the year — and I wouldn't be suggesting changes there.
 
-**What I'd suggest**
-
-Twenty minutes on the phone where I go through your statement with you, particularly the pension phase question. **No cost and no obligation.** I've attached your latest statement.
-
-Reply with a couple of times that suit, or call me on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

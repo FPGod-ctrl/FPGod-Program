@@ -20,11 +20,7 @@ Your FirstChoice Employer Super account sits under our advisory, though **no ong
 
 Your beneficiary nomination is non-lapsing in favour of Andrew Michael Titterington as spouse at 100% — straightforward, and worth confirming it's still current.
 
-**What I'd suggest**
-
-Twenty minutes on the phone where I go through your statement with you and tell you what I see. **No cost, no obligation.**
-
-Reply with a couple of times that suit, or call me on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

@@ -23,11 +23,7 @@ But if the carry-forward room has run out, contributions above the cap attract a
 
 Your beneficiary nomination is non-lapsing in favour of Sapienza as your spouse at 100% — straightforward, and worth confirming it's current.
 
-**What I'd suggest**
-
-Twenty minutes on the phone where I go through your statement with you. **No cost and no obligation.** I've attached your latest statement so you can follow along.
-
-Reply with a couple of times that suit, or call me on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

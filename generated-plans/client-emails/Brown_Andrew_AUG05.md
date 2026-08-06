@@ -18,11 +18,7 @@ Your FirstChoice Wholesale Personal Super account sits under our advisory, thoug
 
 Your investment and administration costs for the year were **$1,839**, which is on the reasonable side.
 
-**What I'd suggest**
-
-Twenty minutes on the phone where I go through your statement and tell you what I see. **No cost and no obligation.** If everything is in good shape, I'll tell you that.
-
-Reply with a couple of times that suit, or call me on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

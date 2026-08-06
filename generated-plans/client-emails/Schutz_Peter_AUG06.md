@@ -24,11 +24,7 @@ The account has done well — a return of around **10.8%** for the year, in a si
 
 More usefully: nothing has gone into this account for at least five years. If you're still working and contributing elsewhere, it may be worth consolidating so you're not carrying two sets of costs. And at 61 you're at the age where super becomes accessible, which opens up options around contributions and drawing an income that are worth understanding while you can still act on them.
 
-**What I'd suggest**
-
-A short call — fifteen or twenty minutes — where I go through it and we sort the nomination at minimum. **No cost and no obligation.** I've attached your latest statement.
-
-Reply with a time that suits, or call me on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

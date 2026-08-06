@@ -21,11 +21,7 @@ The trade-off is that pension phase requires a minimum withdrawal each year, so 
 
 Your beneficiary nomination is non-lapsing in favour of Roberto as your spouse at 100%, which is straightforward. Worth confirming it's still current.
 
-**What I'd suggest**
-
-Twenty minutes on the phone where I go through your statement with you. **No cost and no obligation.** I've attached your latest statement so you have it to hand.
-
-Reply with a couple of times that suit, or call me on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

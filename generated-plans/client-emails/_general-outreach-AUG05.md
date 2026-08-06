@@ -24,13 +24,7 @@ At **[Age]**, with a balance of around **[Balance]**, that's worth correcting. Y
 
 **5. Fees are being drawn regardless.** Investment and administration costs come out whether or not anyone is reviewing the account. Worth confirming they're buying you something.
 
-**What I'd suggest**
-
-A short conversation — twenty minutes on the phone — where I go through your statement with you and tell you what I see. **There's no cost for this and no obligation to become a client.** If it turns out everything is in good order, I'll tell you that and you'll have the peace of mind.
-
-If you'd like to take it further afterwards, we can talk about how that works. If not, that's completely fine.
-
-Just reply to this email with a couple of times that suit, or call me directly on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

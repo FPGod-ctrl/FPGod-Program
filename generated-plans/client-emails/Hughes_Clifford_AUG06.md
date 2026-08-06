@@ -28,11 +28,7 @@ More broadly, your account is **100% growth assets** — roughly half Australian
 
 One smaller thing: you made a **$4,000 personal after-tax contribution** last year, following several years of none. Depending on your income at the time, claiming that as a deduction may have been more effective. Worth a look if you plan to contribute again.
 
-**What I'd suggest**
-
-Twenty minutes on the phone where I go through your statement with you and tell you what I see. **No cost and no obligation.** I've attached your latest statement so you have it in front of you.
-
-Reply with a couple of times that suit, or call me on **03 9596 5111**.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 

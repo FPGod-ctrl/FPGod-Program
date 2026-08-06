@@ -24,11 +24,7 @@ The account itself is fine: a return of around **6.7%** for the year, in a singl
 
 At 63 you're also at the age where super becomes accessible, which opens up options worth understanding before you need them.
 
-**What I'd suggest**
-
-Twenty minutes on the phone where I go through your statement with you. **No cost and no obligation.**
-
-Give me a call on **03 9596 5111**, or let me know a time and I'll ring you.
+Please let me know of a time to organise a meeting and discuss the above.
 
 Kind regards,
 
