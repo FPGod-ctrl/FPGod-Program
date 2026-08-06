@@ -25,15 +25,3 @@ The account has done well — a return of around **10.8%** for the year, in a si
 More usefully: nothing has gone into this account for at least five years. If you're still working and contributing elsewhere, it may be worth consolidating so you're not carrying two sets of costs. And at 61 you're at the age where super becomes accessible, which opens up options around contributions and drawing an income that are worth understanding while you can still act on them.
 
 Please let me know of a time to organise a meeting and discuss the above.
-
-Kind regards,
-
-Tristan Biro
-Financial Adviser | Lakeside Financial
-Authorised Representative No. 001313019
-Pareto Group Pty Ltd | AFSL 418700
-Ph: 03 9596 5111
-
----
-
-*General information only, based on your most recent statement. It does not take your objectives, financial situation or needs into account. Any specific recommendation would follow a full review and be provided in a Statement of Advice.*

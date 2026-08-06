@@ -21,15 +21,3 @@ Your FirstChoice Employer Super account sits under our advisory, though **no ong
 Your beneficiary nomination is non-lapsing in favour of Andrew Michael Titterington as spouse at 100% — straightforward, and worth confirming it's still current.
 
 Please let me know of a time to organise a meeting and discuss the above.
-
-Kind regards,
-
-Tristan Biro
-Financial Adviser | Lakeside Financial
-Authorised Representative No. 001313019
-Pareto Group Pty Ltd | AFSL 418700
-Ph: 03 9596 5111
-
----
-
-*General information only, based on your most recent statement. It does not take your objectives, financial situation or needs into account. Any specific recommendation would follow a full review and be provided in a Statement of Advice.*

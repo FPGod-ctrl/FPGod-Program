@@ -26,18 +26,6 @@ At **[Age]**, with a balance of around **[Balance]**, that's worth correcting. Y
 
 Please let me know of a time to organise a meeting and discuss the above.
 
-Kind regards,
-
-Tristan Biro
-Financial Adviser | Lakeside Financial
-Authorised Representative No. 001313019
-Pareto Group Pty Ltd | AFSL 418700
-Ph: 03 9596 5111
-
----
-
-*This email contains general information only, based on the most recent statement information available to us. It does not take your objectives, financial situation or needs into account. Any specific recommendation would be provided in a Statement of Advice following a full review.*
-
 ---
 
 ## Merge values

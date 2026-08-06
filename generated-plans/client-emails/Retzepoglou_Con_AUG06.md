@@ -25,15 +25,3 @@ The account itself is fine: a return of around **6.7%** for the year, in a singl
 At 63 you're also at the age where super becomes accessible, which opens up options worth understanding before you need them.
 
 Please let me know of a time to organise a meeting and discuss the above.
-
-Kind regards,
-
-Tristan Biro
-Financial Adviser | Lakeside Financial
-Authorised Representative No. 001313019
-Pareto Group Pty Ltd | AFSL 418700
-Ph: 03 9596 5111
-
----
-
-*General information only, based on your most recent statement. It does not take your objectives, financial situation or needs into account. Any specific recommendation would follow a full review and be provided in a Statement of Advice.*

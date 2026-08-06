@@ -19,15 +19,3 @@ Your FirstChoice Wholesale Personal Super account sits under our advisory, thoug
 One smaller thing: your statement shows an **excess non-concessional contributions tax charge of $211.95**. Small in itself, but it usually signals a contribution timing issue worth understanding so it doesn't repeat.
 
 Please let me know of a time to organise a meeting and discuss the above.
-
-Kind regards,
-
-Tristan Biro
-Financial Adviser | Lakeside Financial
-Authorised Representative No. 001313019
-Pareto Group Pty Ltd | AFSL 418700
-Ph: 03 9596 5111
-
----
-
-*General information only, based on your most recent statement. It does not take your objectives, financial situation or needs into account. Any specific recommendation would follow a full review and be provided in a Statement of Advice.*
