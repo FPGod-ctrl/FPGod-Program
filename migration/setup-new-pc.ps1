@@ -93,16 +93,19 @@ else {
     $bundleFile = Join-Path $BundlePath 'FPGod-Program.bundle'
     $cloned = $false
 
+    # No 2>&1 on native commands: PowerShell 5.1 wraps merged stderr in an
+    # ErrorRecord, which trips ErrorActionPreference='Stop' even on success.
+    # git clone reports progress on stderr, so judge it by exit code instead.
     if (-not $Offline) {
         Say "trying GitHub..."
-        git clone --branch $Branch $RepoUrl $RepoPath 2>&1 | Out-Null
+        git clone --branch $Branch $RepoUrl $RepoPath | Out-Null
         if ($LASTEXITCODE -eq 0) { $cloned = $true; Ok "cloned from GitHub" }
         else { Warn "GitHub unreachable (or access denied) - falling back to the offline bundle" }
     }
 
     if (-not $cloned) {
         if (-not (Test-Path $bundleFile)) { Die "No network and no bundle at $bundleFile" }
-        git clone --branch $Branch $bundleFile $RepoPath 2>&1 | Out-Null
+        git clone --branch $Branch $bundleFile $RepoPath | Out-Null
         if ($LASTEXITCODE -ne 0) { Die "Restoring from the bundle failed." }
         # A bundle-cloned repo points 'origin' at a file that won't exist forever.
         Push-Location $RepoPath
@@ -153,7 +156,7 @@ $PgPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
 [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
 $env:PGPASSWORD = $PgPassword
 
-& $psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT 1;" *> $null
+& $psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT 1;" | Out-Null
 if ($LASTEXITCODE -ne 0) { Die "Could not connect to PostgreSQL with that password." }
 Ok "connected to PostgreSQL"
 
@@ -168,16 +171,20 @@ Ok "database credentials updated in server\.env"
 # --------------------------------------------------------------- database ----
 Step "Restoring the database"
 
+$skipDb   = $false
+$dbExisted = $false
+
 $exists = & $psql -h localhost -p 5432 -U postgres -d postgres -A -t -c "SELECT 1 FROM pg_database WHERE datname='fpgod';"
 if ($exists -match '1') {
-    $rows = & $psql -h localhost -p 5432 -U postgres -d fpgod -A -t -c "SELECT count(*) FROM clients;" 2>$null
+    $dbExisted = $true
+    $rows = & $psql -h localhost -p 5432 -U postgres -d fpgod -A -t -c "SELECT count(*) FROM clients;"
     if (($LASTEXITCODE -eq 0) -and ([int]$rows -gt 0) -and (-not $Force)) {
         Warn "database 'fpgod' already holds $rows clients - skipping restore. Pass -Force to overwrite."
         $skipDb = $true
     }
 }
 else {
-    & $psql -h localhost -p 5432 -U postgres -d postgres -c "CREATE DATABASE fpgod;" *> $null
+    & $psql -h localhost -p 5432 -U postgres -d postgres -c "CREATE DATABASE fpgod;" | Out-Null
     if ($LASTEXITCODE -ne 0) { Die "Could not create the fpgod database." }
     Ok "created database 'fpgod'"
 }
@@ -185,10 +192,17 @@ else {
 if (-not $skipDb) {
     $dump = Join-Path $BundlePath 'fpgod-db.dump'
     if (Test-Path $dump) {
-        # --clean lets a re-run replace what's there; pg_restore warns noisily on a
-        # fresh database about dropping objects that don't exist yet, hence the filter.
-        & $pgRestore -h localhost -p 5432 -U postgres -d fpgod --clean --if-exists --no-owner --no-privileges $dump 2>&1 |
-            Where-Object { $_ -notmatch 'does not exist|already exists' } | ForEach-Object { Say $_ }
+        # --clean only when there's something to clean. On a fresh database it
+        # emits a wall of "does not exist" warnings on stderr, and filtering
+        # those would mean 2>&1 - which PowerShell 5.1 turns into a terminating
+        # error on native commands. Avoiding the noise beats filtering it.
+        if ($dbExisted) {
+            & $pgRestore -h localhost -p 5432 -U postgres -d fpgod --clean --if-exists --no-owner --no-privileges $dump
+        }
+        else {
+            & $pgRestore -h localhost -p 5432 -U postgres -d fpgod --no-owner --no-privileges $dump
+        }
+        if ($LASTEXITCODE -ne 0) { Die "pg_restore failed - the database was not restored." }
         Ok "database restored from dump"
     }
     else {

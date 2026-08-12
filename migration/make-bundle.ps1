@@ -69,9 +69,14 @@ if ($dirty) {
     Warn "commit them first if you want them to travel."
 }
 
-git bundle create "$out\FPGod-Program.bundle" --all 2>&1 | Out-Null
+# No 2>&1 on native commands: PowerShell 5.1 wraps merged stderr in an
+# ErrorRecord, which trips ErrorActionPreference='Stop' even on success.
+# git writes progress to stderr, so let it through and judge by exit code.
+git bundle create "$out\FPGod-Program.bundle" --all | Out-Null
 if ($LASTEXITCODE -ne 0) { Pop-Location; Die "git bundle failed" }
-git bundle verify "$out\FPGod-Program.bundle" 2>&1 | Select-String 'complete history' | ForEach-Object { Ok $_.ToString().Trim() }
+git bundle verify "$out\FPGod-Program.bundle" | Out-Null
+if ($LASTEXITCODE -ne 0) { Pop-Location; Die "the bundle did not verify - do not rely on it" }
+Ok "bundle verified - complete history"
 
 $head   = git rev-parse HEAD
 $branch = git rev-parse --abbrev-ref HEAD
