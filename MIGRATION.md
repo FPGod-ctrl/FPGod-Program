@@ -82,7 +82,7 @@ database that has rows in it unless you pass `-Force`.
 
 ---
 
-## Three things that will bite you
+## Four things that will bite you
 
 ### 1. `main` is not the branch you want
 
@@ -114,6 +114,34 @@ The new PC's PostgreSQL superuser password is whatever you set at install. The
 setup script prompts for it and rewrites `DATABASE_URL`, `PGUSER` and `PGPASSWORD`
 in `server/.env` to match. Nothing to do by hand.
 
+### 4. Windows' 260-character path limit
+
+`reference-plans/` contains filenames up to 144 characters, e.g.
+
+```
+2025 - 03 - 26 - Finlayson, Greg & Roth, Shira - Superannuation, Investment
+Structures, Surplus Funds & Retirement Planning.docx
+```
+
+Clone somewhere deep and Windows refuses to create those files. The nasty part is
+that **`git clone` still reports success** — it prints `Filename too long` errors
+mid-progress and leaves you with a repo that looks fine but is quietly missing
+dozens of client plans. This was reproduced during testing: a clone into a
+129-character destination lost 40+ files.
+
+Two defences are built in. Both clones pass `-c core.longpaths=true`, and after
+checkout the script re-runs `git status` to confirm nothing came through as
+deleted, retrying with long-path support if it did.
+
+Cloning by hand? Include the flag:
+
+```powershell
+git clone -c core.longpaths=true --branch claude/financial-planning-app-8GWYC https://github.com/FPGod-ctrl/FPGod-Program.git C:\FPGod-Program
+```
+
+At `C:\FPGod-Program` the longest path lands at 162 of 260, so there's room to
+spare — but a Drive-synced or deeply nested folder eats that fast. Keep it short.
+
 ---
 
 ## Client data
@@ -141,6 +169,7 @@ Never put the bundle in a shared Drive folder or a public repo.
 
 ```powershell
 cd C:\FPGod-Program
+git status --porcelain      # must be empty - anything listed as D didn't check out
 npm test
 ```
 

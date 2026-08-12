@@ -96,16 +96,25 @@ else {
     # No 2>&1 on native commands: PowerShell 5.1 wraps merged stderr in an
     # ErrorRecord, which trips ErrorActionPreference='Stop' even on success.
     # git clone reports progress on stderr, so judge it by exit code instead.
+    # reference-plans/ holds filenames up to 144 characters. Windows caps a full
+    # path at 260, so a deep destination silently fails to check those files out
+    # ("Filename too long"). core.longpaths makes git use the extended-length API.
+    $headroom = 260 - 144 - 1
+    if ($RepoPath.Length -gt $headroom) {
+        Warn "$RepoPath is deep - long filenames in reference-plans may not check out."
+        Warn "somewhere short like C:\FPGod-Program is safer."
+    }
+
     if (-not $Offline) {
         Say "trying GitHub..."
-        git clone --branch $Branch $RepoUrl $RepoPath | Out-Null
+        git clone -c core.longpaths=true --branch $Branch $RepoUrl $RepoPath | Out-Null
         if ($LASTEXITCODE -eq 0) { $cloned = $true; Ok "cloned from GitHub" }
         else { Warn "GitHub unreachable (or access denied) - falling back to the offline bundle" }
     }
 
     if (-not $cloned) {
         if (-not (Test-Path $bundleFile)) { Die "No network and no bundle at $bundleFile" }
-        git clone --branch $Branch $bundleFile $RepoPath | Out-Null
+        git clone -c core.longpaths=true --branch $Branch $bundleFile $RepoPath | Out-Null
         if ($LASTEXITCODE -ne 0) { Die "Restoring from the bundle failed." }
         # A bundle-cloned repo points 'origin' at a file that won't exist forever.
         Push-Location $RepoPath
@@ -121,6 +130,25 @@ $cur  = (git rev-parse --abbrev-ref HEAD)
 Ok "on branch $cur at $head"
 if ($cur -ne $Branch) {
     Warn "expected branch $Branch - 'main' is 31 commits behind and will not run correctly"
+}
+
+# A checkout that hit the path limit reports the missing files as deletions
+# rather than failing the clone, so confirm the working tree is actually whole.
+$missing = @(git status --porcelain | Where-Object { $_ -match '^\s*D\s' })
+if ($missing.Count -gt 0) {
+    Warn "$($missing.Count) tracked files did not check out (likely the 260-char path limit):"
+    $missing | Select-Object -First 5 | ForEach-Object { Say "    $_" }
+    Say "  retrying with long-path support..."
+    git config core.longpaths true
+    git checkout -- .
+    $missing = @(git status --porcelain | Where-Object { $_ -match '^\s*D\s' })
+    if ($missing.Count -gt 0) {
+        Die "$($missing.Count) files still missing. Clone somewhere shorter, e.g. C:\FPGod-Program"
+    }
+    Ok "recovered - working tree complete"
+}
+else {
+    Ok "working tree complete ($(@(git ls-files).Count) files)"
 }
 
 # ---------------------------------------------------------------- secrets ----
