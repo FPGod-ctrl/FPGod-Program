@@ -1,0 +1,158 @@
+====================================================================
+  FPGod - moving to your new PC
+  Read this first. It takes about 30 minutes, most of it waiting.
+====================================================================
+
+
+WHAT THIS FOLDER IS
+-------------------
+Everything needed to rebuild your financial planning application on a
+new computer: the program itself, your database of client accounts,
+uploaded documents, settings, and your VS Code setup.
+
+
+BEFORE YOU START
+----------------
+Copy this ENTIRE folder from Google Drive down to the new PC first -
+somewhere simple like the Desktop or Downloads.
+
+Do not run it straight from Google Drive. Some of the files are large
+and the setup will fail halfway through if Drive is still syncing.
+
+
+-------------------------------------------------------------------
+  STEP 1  -  Install the programs
+-------------------------------------------------------------------
+
+  Double-click:   1-INSTALL-PROGRAMS.bat
+
+It will ask for administrator permission - say yes.
+
+This installs Node.js, Git, PostgreSQL and VS Code.
+
+  >>> IMPORTANT <<<
+  PostgreSQL will ask you to create a password during its install.
+  WRITE IT DOWN. Step 2 asks you for it, and there is no way to
+  recover it afterwards.
+
+Takes about 10 minutes. When it finishes, close the window.
+
+
+-------------------------------------------------------------------
+  STEP 2  -  Restore everything
+-------------------------------------------------------------------
+
+  Double-click:   2-SETUP-EVERYTHING.bat
+
+Do NOT run this one as administrator.
+
+It will ask for the PostgreSQL password from step 1, then do the rest
+on its own: the code, the database, your documents, your VS Code
+extensions and settings.
+
+Takes 10-15 minutes. Most of it is a progress bar during
+"Installing dependencies" - that part is normal, let it run.
+
+
+-------------------------------------------------------------------
+  STEP 3  -  Start the app
+-------------------------------------------------------------------
+
+Open PowerShell and type:
+
+    cd C:\FPGod-Program
+    npm run dev
+
+Then open your browser at:
+
+    http://localhost:5173
+
+You should see your clients and the CFS Book with 250 accounts.
+
+
+-------------------------------------------------------------------
+  DID IT WORK?
+-------------------------------------------------------------------
+Check these numbers match:
+
+    Clients ................. 5
+    CFS accounts ............ 250
+    Holdings ................ 1,271
+    Uploaded documents ...... 21
+
+If the CFS Book page lists 250 accounts, everything came across.
+
+
+-------------------------------------------------------------------
+  THREE THINGS TO DO AFTERWARDS
+-------------------------------------------------------------------
+
+1. PUT IN YOUR OWN ANTHROPIC API KEY
+   Open C:\FPGod-Program\server\.env in VS Code and replace the
+   ANTHROPIC_API_KEY line. The key that came across bills to your
+   old firm. Until you change it the AI features still run, but in
+   a clearly-labelled placeholder mode.
+
+2. SIGN IN TO CLAUDE CODE
+   Open VS Code and sign in. Your login is not copied across for
+   security reasons.
+
+3. SET YOUR NAME ON COMMITS
+   Step 2 will prompt you for this. If you skipped it, run:
+
+       git config --global user.name  "Tristan Biro"
+       git config --global user.email "tristan.biro26@gmail.com"
+
+
+-------------------------------------------------------------------
+  IF SOMETHING GOES WRONG
+-------------------------------------------------------------------
+
+"Running scripts is disabled on this system"
+    You ran a .ps1 file directly. Use the .bat files instead -
+    they handle this for you.
+
+"Could not connect to PostgreSQL"
+    Wrong password. Re-run 2-SETUP-EVERYTHING.bat and try again.
+    If you have genuinely lost it, uninstall PostgreSQL from
+    Add/Remove Programs, then start again from step 1.
+
+"Filename too long" scrolling past
+    The folder path is too deep. Rerun and let it install to
+    C:\FPGod-Program rather than anywhere nested.
+
+Setup stopped partway
+    Just run 2-SETUP-EVERYTHING.bat again. It skips whatever
+    already succeeded and picks up where it left off.
+
+Anything else
+    MIGRATION.md in this folder has the full technical detail,
+    including what to do if GitHub is blocked on the new network.
+
+
+-------------------------------------------------------------------
+  WHAT IS IN THIS FOLDER
+-------------------------------------------------------------------
+
+  START-HERE.txt ............ this file
+  1-INSTALL-PROGRAMS.bat .... step 1
+  2-SETUP-EVERYTHING.bat .... step 2
+  MIGRATION.md .............. full technical runbook
+  MANIFEST.txt .............. exactly what was captured, and when
+
+  FPGod-Program.bundle ...... the application and its full history
+  fpgod-db.dump ............. your client database
+  uploads\ .................. uploaded client documents
+  secrets\ .................. configuration files
+  environment\ .............. VS Code setup and program list
+
+  setup-new-pc.ps1 .......... run by step 2, not directly
+  restore-environment.ps1 ... run by step 2, not directly
+
+
+====================================================================
+  NOTE: This folder contains real client personal information -
+  statements, advice documents and financial records. Keep it in a
+  private Drive folder, never a shared or public one, and delete it
+  from the new PC once the setup is confirmed working.
+====================================================================

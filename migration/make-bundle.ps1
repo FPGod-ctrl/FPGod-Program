@@ -133,11 +133,22 @@ if (Test-Path $capture) { & $capture -OutPath "$out\environment" }
 else { Warn "capture-environment.ps1 missing - VS Code and program inventory skipped" }
 
 # ------------------------------------------------------------------ docs -----
-Step "Adding the runbook"
+Step "Adding the runbook and launchers"
 foreach ($f in @('migration\setup-new-pc.ps1', 'migration\restore-environment.ps1', 'MIGRATION.md')) {
     $src = Join-Path $RepoPath $f
     if (Test-Path $src) { Copy-Item $src "$out\$(Split-Path $f -Leaf)" -Force; Ok (Split-Path $f -Leaf) }
 }
+
+# The .bat wrappers exist so the new PC needs no PowerShell setup: Windows
+# blocks .ps1 by default and Drive marks downloads as untrusted.
+$launchers = Join-Path $RepoPath 'migration\launchers'
+if (Test-Path $launchers) {
+    Get-ChildItem $launchers -File | ForEach-Object {
+        Copy-Item $_.FullName "$out\$($_.Name)" -Force
+        Ok $_.Name
+    }
+}
+else { Warn "migration\launchers missing - the bundle will have no double-click entry point" }
 
 $sizeMb = [math]::Round((Get-ChildItem $out -Recurse -File | Measure-Object Length -Sum).Sum / 1MB, 1)
 
@@ -171,11 +182,13 @@ MIGRATION.md             the full runbook
 
 To rebuild on a new PC
 ----------------------
-    # 1. elevated PowerShell - installs Node, Git, PostgreSQL, VS Code
-    .\environment\reinstall-programs.ps1
+Read START-HERE.txt, then double-click in order:
 
-    # 2. normal PowerShell - repo, database, uploads, secrets, VS Code, git identity
-    .\setup-new-pc.ps1 -BundlePath "<this folder>"
+    1-INSTALL-PROGRAMS.bat     (allow the admin prompt)
+    2-SETUP-EVERYTHING.bat     (do not run as admin)
+
+Copy this whole folder down from Drive first - do not run it from the
+Drive folder while it is still syncing.
 
 CONTAINS CLIENT PERSONAL INFORMATION
 ------------------------------------

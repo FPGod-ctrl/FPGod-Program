@@ -1,0 +1,67 @@
+{
+  "_source": "Built from meeting transcript follow-ups/meeting/transcripts/Gleeson-Martin-JUL20-transcript.md (Teams meeting 20 Jul 2026). Fields not stated in the meeting are left blank rather than assumed.",
+
+  "meta": { "adviser": "Tristan Biro", "date": "20/07/2026" },
+
+  "yourDetails": {
+    "fullName":                    { "client": "MR Martin Gleeson", "spouse": "MRS Miriam Gleeson" },
+    "residentialAddress":          { "client": "", "spouse": "" },
+    "mobileNumber":                { "client": "", "spouse": "" },
+    "emailAddress":                { "client": "", "spouse": "" },
+    "dateOfBirth":                 { "client": "Age 60 (recently turned 60)", "spouse": "Age 63" },
+    "maritalStatus":               { "client": "Married", "spouse": "Married" },
+    "previousOccupation":          { "client": "", "spouse": "" },
+    "occupation":                  { "client": "Shipping & logistics executive (dry bulk chartering)", "spouse": "Gardening work - casual" },
+    "employmentBasis":             { "client": "Full time", "spouse": "Casual" },
+    "employer":                    { "client": "", "spouse": "" },
+    "annualIncomeIncBonus":        { "client": "", "spouse": "$15,000 (approx.)" },
+    "estMonthlyExpenditureSurplus":{ "client": "", "spouse": "" },
+    "privateHealthInsurance":      { "client": "", "spouse": "" },
+    "superContributionsPct":       { "client": "", "spouse": "" },
+    "smoker":                      { "client": "", "spouse": "" },
+    "childrenDependents": "Three adult children, all non-dependent. Nikki (recently engaged); Chris - commences a two-year graduate program with an international shipping company (Melbourne office) on 1 September 2026, package includes life and medical cover; third child not named in the meeting. Two grandchildren - eldest turned 3 in June 2026, second born February 2026."
+  },
+
+  "estatePlanning": {
+    "dateLastReviewed": "Unchanged since prepared - date to be confirmed",
+    "hasWill": "Yes",
+    "willAllowsTestamentaryTrust": "Yes",
+    "hasPowersOfAttorney": "To be confirmed"
+  },
+
+  "goals": {
+    "shortTerm": "Reduce the cost of the insurance portfolio without giving up contract quality - target approx. $1,500 on the Encompass life/TPD/trauma policy (open to reducing the sum insured to $120,000) and approx. $250 on the standalone trauma cover. Re-underwrite Miriam's cover following her successful ablation to remove the 50% loading carried since 1989-90. Confirm the $2,770.21 life premium debit has been taken. Refer the three adult children for income protection.",
+    "longTerm": "Retire at 67-68 rather than 65. Clear the approx. $550,000 mortgage, with a sale and downsizer contribution ($300,000 each / $600,000 as a couple) a realistic path to a superannuation balance of roughly $2 million and a debt-free, tax-free retirement income. Decide whether to retain the SMSF or move to a managed portfolio; retaining it preserves the ability to liquidate quickly ahead of a death benefit passing to non-dependent adult children."
+  },
+
+  "assets": [
+    { "asset": "Residential Home", "location": "Victoria - single storey, owned 20-21 years", "value": "", "owner": "Joint" },
+    { "asset": "Shares",           "location": "Held inside the SMSF - predominantly Australian blue chip", "value": "", "owner": "SMSF" },
+    { "asset": "Cash",             "location": "Held inside the SMSF", "value": "35000", "owner": "SMSF" },
+    { "asset": "Superannuation",   "location": "Self Managed Super Fund", "value": "1100000", "owner": "Martin & Miriam" },
+    { "asset": "Superannuation",   "location": "Industry fund - name to be confirmed", "value": "80000", "owner": "Miriam" }
+  ],
+
+  "debts": [
+    { "debt": "Home Loan", "location": "Recently refinanced with an equity release - $408,000 facility plus a second facility", "balance": "550000", "bank": "", "fixedOrVariable": "", "ratePct": "", "monthlyPayment": "" }
+  ],
+
+  "familyProtection": {
+    "desiredOngoingIncome": "Income protection in place at $23,000 per month (agreed value) to age 65",
+    "clearInvestmentDebt": "Yes - clearing the approx. $550,000 home loan is the priority; TPD retained on the basis that a permanent inability to work would otherwise force a sale of the home",
+    "privateSchooling": "n/a - all children are adults"
+  },
+
+  "consent": {
+    "fsg": false,
+    "privacy": false,
+    "electronicCommunications": false,
+    "tfn": false,
+    "disclosureInformation": false,
+    "disclosureToSpouse": false,
+    "authorisationToRenew": false,
+    "clientName": "Martin Gleeson",
+    "signature": "",
+    "date": ""
+  }
+}
