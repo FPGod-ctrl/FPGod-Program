@@ -7,7 +7,7 @@ watch out for on the way.
 
 ## What has to move
 
-The repo alone is not enough. Three things live outside git and are lost if you
+The repo alone is not enough. Four things live outside git and are lost if you
 only clone:
 
 | | Where | Why it's not in git |
@@ -15,8 +15,14 @@ only clone:
 | **PostgreSQL database** | `fpgod` on localhost:5432 | 5 clients, 250 CFS accounts, 1,271 holdings |
 | **Uploaded documents** | `server/uploads/` | gitignored |
 | **API keys and DB password** | `server/.env` | gitignored, and rightly so |
+| **VS Code setup** | `%APPDATA%\Code\User` | not part of the project at all |
 
-The `migration/` scripts handle all three.
+The `migration/` scripts handle all four.
+
+Installed **programs** are a different matter — Windows software can't be moved by
+copying files, it has to be reinstalled. What travels is an inventory of all 37
+programs (`environment/installed-programs.csv`) plus a scripted winget reinstall
+of the toolchain that matters.
 
 ---
 
@@ -50,23 +56,32 @@ folder to Google Drive.
 
 ## On the new PC
 
-Install first — none of these are optional:
+Download the bundle folder from Drive, then two commands.
 
-1. [Node.js 20+](https://nodejs.org) (the old PC ran v24.16)
-2. [Git for Windows](https://git-scm.com/download/win)
-3. [PostgreSQL 16+](https://www.postgresql.org/download/windows/) — **write down the
-   superuser password you set during install**, the script asks for it
+**1. Install the toolchain** — elevated PowerShell:
 
-Then download the bundle folder from Drive and run:
+```powershell
+.\environment\reinstall-programs.ps1
+```
+
+Node, Git, PostgreSQL and VS Code via winget, skipping anything already there.
+**Write down the PostgreSQL superuser password you set** — the next step asks for
+it. Doing it by hand instead is fine: [Node 20+](https://nodejs.org),
+[Git](https://git-scm.com/download/win),
+[PostgreSQL 16+](https://www.postgresql.org/download/windows/),
+[VS Code](https://code.visualstudio.com).
+
+**2. Restore everything** — normal PowerShell:
 
 ```powershell
 .\setup-new-pc.ps1 -BundlePath "G:\My Drive\FPGod-Migration-2026-08-12"
 ```
 
-It will clone the repo (falling back to the offline bundle if GitHub is blocked —
-corporate networks often block it), restore the database, put the uploads and
-`.env` files back, install dependencies and build the client. Ten to fifteen
-minutes, most of it `npm install`.
+Clones the repo (falling back to the offline bundle if GitHub is blocked —
+corporate networks often are), restores the database, puts the uploads and `.env`
+files back, installs dependencies, builds the client, reinstalls your VS Code
+extensions and settings, and sets a global git identity. Ten to fifteen minutes,
+most of it `npm install`.
 
 Then:
 
@@ -82,7 +97,7 @@ database that has rows in it unless you pass `-Force`.
 
 ---
 
-## Four things that will bite you
+## Six things that will bite you
 
 ### 1. `main` is not the branch you want
 
@@ -141,6 +156,44 @@ git clone -c core.longpaths=true --branch claude/financial-planning-app-8GWYC ht
 
 At `C:\FPGod-Program` the longest path lands at 162 of 260, so there's room to
 spare — but a Drive-synced or deeply nested folder eats that fast. Keep it short.
+
+### 5. This machine is ARM64
+
+Your PC is Windows on ARM. If the new one is a normal Intel/AMD laptop — most are
+— **every installer must be the x64 build**. ARM64 downloads simply won't run.
+`reinstall-programs.ps1` handles this automatically because winget resolves the
+right architecture; hand-downloading is where it goes wrong.
+
+Node modules with native components must also be rebuilt for the new
+architecture. Nothing to do — the setup script runs a fresh `npm install`, which
+compiles against whatever CPU it finds. Just don't copy `node_modules/` across by
+hand, because that will fail in confusing ways.
+
+### 6. Your commit identity comes from the old firm
+
+`HOMEDRIVE` is `H:`, a mapped work drive, so git looks for its global config at
+`H:\.gitconfig` — which doesn't exist. With no config to read, git has been
+deriving your identity from the domain account, which is why all 30 of your
+commits are authored `Tristan.Biro@lakesidefinancial.com.au`.
+
+`restore-environment.ps1` prompts you to set this properly. Your GitHub account is
+`FPGod-ctrl` / `tristan.biro26@gmail.com`, so that's the sensible pairing:
+
+```powershell
+git config --global user.name  "Tristan Biro"
+git config --global user.email "tristan.biro26@gmail.com"
+```
+
+---
+
+## What's on H:\ and L:\
+
+Two mapped network drives, roughly 642 GB each. They're the firm's file shares and
+they vanish the day your account is disabled. This migration covers
+`C:\FPGod-Program` only.
+
+If anything you need lives on those drives, deal with it separately and before
+your last day — subject to the same licensee sign-off as everything else below.
 
 ---
 

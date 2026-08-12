@@ -270,6 +270,13 @@ if ($LASTEXITCODE -ne 0) { Pop-Location; Die "client build failed." }
 Ok "client built"
 Pop-Location
 
+# ------------------------------------------------------------ environment ---
+$restoreEnv = Join-Path $RepoPath 'migration\restore-environment.ps1'
+if (Test-Path $restoreEnv) {
+    & $restoreEnv -BundlePath $BundlePath
+}
+else { Warn "restore-environment.ps1 not found - skipping VS Code and git identity" }
+
 # ------------------------------------------------------------------ verify ---
 Step "Verifying"
 

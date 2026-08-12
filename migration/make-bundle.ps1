@@ -126,9 +126,15 @@ foreach ($p in @(@('automation\xplan\.env', 'xplan.env'), @('automation\xplan-ap
     if (Test-Path $src) { Copy-Item $src "$out\secrets\$($p[1])" -Force; Ok $p[0] }
 }
 
+# ----------------------------------------------------------- environment -----
+Step "Capturing the dev environment"
+$capture = Join-Path $RepoPath 'migration\capture-environment.ps1'
+if (Test-Path $capture) { & $capture -OutPath "$out\environment" }
+else { Warn "capture-environment.ps1 missing - VS Code and program inventory skipped" }
+
 # ------------------------------------------------------------------ docs -----
 Step "Adding the runbook"
-foreach ($f in @('migration\setup-new-pc.ps1', 'MIGRATION.md')) {
+foreach ($f in @('migration\setup-new-pc.ps1', 'migration\restore-environment.ps1', 'MIGRATION.md')) {
     $src = Join-Path $RepoPath $f
     if (Test-Path $src) { Copy-Item $src "$out\$(Split-Path $f -Leaf)" -Force; Ok (Split-Path $f -Leaf) }
 }
@@ -153,16 +159,22 @@ Uploaded documents: $nUploads
 
 Contents
 --------
-FPGod-Program.bundle  full git history, all branches - clone from this offline
-fpgod-db.dump         pg_dump custom format - restore with pg_restore
-fpgod-schema.sql      schema only, reference
-uploads\              server\uploads (not in git)
-secrets\              .env files (not in git)
-setup-new-pc.ps1      restore script - run this on the new machine
-MIGRATION.md          the full runbook
+FPGod-Program.bundle     full git history, all branches - clone from this offline
+fpgod-db.dump            pg_dump custom format - restore with pg_restore
+fpgod-schema.sql         schema only, reference
+uploads\                 server\uploads (not in git)
+secrets\                 .env files (not in git)
+environment\             VS Code config, extensions, program inventory
+setup-new-pc.ps1         restore script - run this on the new machine
+restore-environment.ps1  VS Code + git identity
+MIGRATION.md             the full runbook
 
 To rebuild on a new PC
 ----------------------
+    # 1. elevated PowerShell - installs Node, Git, PostgreSQL, VS Code
+    .\environment\reinstall-programs.ps1
+
+    # 2. normal PowerShell - repo, database, uploads, secrets, VS Code, git identity
     .\setup-new-pc.ps1 -BundlePath "<this folder>"
 
 CONTAINS CLIENT PERSONAL INFORMATION
