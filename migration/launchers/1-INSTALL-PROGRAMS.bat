@@ -13,13 +13,18 @@ setlocal
 set "HERE=%~dp0"
 if "%HERE:~-1%"=="\" set "HERE=%HERE:~0,-1%"
 
+REM Caret line-continuation inside a parenthesised block is unreliable in cmd,
+REM so every command below stays on one line.
 net session >nul 2>&1
-if not "%errorlevel%"=="0" (
-    echo Requesting administrator rights...
-    powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-        "Start-Process -FilePath '%~f0' -Verb RunAs"
-    exit /b
-)
+if not "%errorlevel%"=="0" goto :elevate
+goto :isadmin
+
+:elevate
+echo Requesting administrator rights...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
+exit /b
+
+:isadmin
 
 echo.
 echo  FPGod migration - step 1 of 2
@@ -37,8 +42,7 @@ if not exist "%HERE%\environment\reinstall-programs.ps1" (
 
 REM Strip the "downloaded from the internet" tag Drive adds, or PowerShell
 REM will refuse to run the scripts even with the policy bypassed.
-powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-    "Get-ChildItem -Path '%HERE%' -Recurse -File | Unblock-File -ErrorAction SilentlyContinue"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-ChildItem -Path '%HERE%' -Recurse -File | Unblock-File -ErrorAction SilentlyContinue"
 
 powershell -NoProfile -ExecutionPolicy Bypass -File "%HERE%\environment\reinstall-programs.ps1"
 

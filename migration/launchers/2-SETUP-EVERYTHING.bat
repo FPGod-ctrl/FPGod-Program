@@ -35,8 +35,8 @@ if not exist "%HERE%\setup-new-pc.ps1" (
     exit /b 1
 )
 
-powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-    "Get-ChildItem -Path '%HERE%' -Recurse -File | Unblock-File -ErrorAction SilentlyContinue"
+REM One line each - caret continuation is unreliable in cmd.
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-ChildItem -Path '%HERE%' -Recurse -File | Unblock-File -ErrorAction SilentlyContinue"
 
 powershell -NoProfile -ExecutionPolicy Bypass -File "%HERE%\setup-new-pc.ps1" -BundlePath "%HERE%"
 
