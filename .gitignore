@@ -37,3 +37,10 @@ coverage/
 
 # Test artefacts (vitest UPLOAD_DIR)
 server/uploads-test/
+
+# Client documents dropped for analysis — real PII, large binaries.
+# Read in place; never committed. READMEs stay tracked.
+legacy/drop/**/*.docx
+legacy/drop/**/*.pdf
+legacy/drop/**/*.doc
+legacy/drop/**/.extracted/
