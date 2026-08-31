@@ -7,11 +7,11 @@ export default function GenerateInsuranceReport() {
       sub="Current / indicative cover summary"
       icon="🛡️"
       accent="#16a34a"
-      blurb="Builds the Lakeside insurance report — a current and indicative cover summary per household — from the client's policies on file, ready to review and export as Word."
+      blurb="Builds the insurance report — a current and indicative cover summary per household — from the client's policies on file, ready to review and export as Word."
       ready={false}
       readyNote={
-        'Next step: wire this to the Insurance Report Word template (clone-and-fill) so picking a client generates and downloads the filled .docx. ' +
-        'The template and build script already exist — I’ll connect them to this button.'
+        'Awaiting the Legacy Risk Advice insurance report Word template. The clone-and-fill generator already works — ' +
+        'drop the Legacy template into templates/ and this button gets wired to it.'
       }
     />
   );

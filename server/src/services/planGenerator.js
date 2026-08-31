@@ -99,7 +99,7 @@ function financialsToLines(L, p) {
   }
 }
 
-function contextToText(ctx) {
+export function contextToText(ctx) {
   const L = [];
   if (ctx.group) L.push(`Household: ${ctx.group.name} (${ctx.group.group_type})`);
 
@@ -373,7 +373,7 @@ export async function generatePlan(ctx, instructions = '', answers = null) {
 
 // Some models wrap the whole document in a ```markdown ... ``` fence; unwrap it
 // so it renders as a formatted plan, not a grey code block.
-function stripCodeFence(s) {
+export function stripCodeFence(s) {
   if (!s) return s;
   const t = s.trim();
   const m = t.match(/^```(?:markdown|md)?\s*\n([\s\S]*?)\n```$/i);

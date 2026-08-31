@@ -5,6 +5,7 @@ import { badRequest, notFound } from '../utils/httpError.js';
 import HTMLtoDOCX from 'html-to-docx';
 import { crudRouter } from './crudFactory.js';
 import { gatherClientContext, generatePlanSectioned, generateQuestions } from '../services/planGenerator.js';
+import { generateRiskSoa } from '../services/riskSoaGenerator.js';
 import { renderPlanHtml } from '../services/planRender.js';
 import { saveGeneratedDocument } from '../services/generatedDocs.js';
 
@@ -138,6 +139,57 @@ router.post(
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
     res.setHeader('Content-Disposition', `attachment; filename="${fname || 'financial-plan'}.docx"`);
     res.send(buffer);
+  })
+);
+
+/**
+ * POST /api/plans/generate-risk-soa
+ * Body: { clientId, title?, instructions?, save? }
+ * Insurance & Risk Planning — generates a risk-only Statement of Advice from
+ * the client's file, existing cover and the adviser's notes. Uses the firm's
+ * own SOA template when one has been imported; otherwise the standard
+ * Australian risk-advice section skeleton.
+ */
+router.post(
+  '/generate-risk-soa',
+  asyncHandler(async (req, res) => {
+    const { clientId, title, instructions = '', save = true } = req.body || {};
+    if (!clientId) throw badRequest('clientId is required');
+
+    const ctx = await gatherClientContext(clientId);
+    if (!ctx) throw notFound('Client not found');
+
+    const { text, ai, sections, usedTemplate } = await generateRiskSoa(ctx, instructions);
+    const soaTitle = title
+      || `Statement of Advice — ${ctx.client.first_name} ${ctx.client.last_name}`;
+
+    if (!save) {
+      return res.json({ content: text, ai, sections, usedTemplate, saved: false });
+    }
+
+    const { rows: [plan] } = await query(
+      `INSERT INTO financial_plans
+        (client_id, group_id, title, status, content, completeness, generated_by_ai, metadata)
+       VALUES ($1,$2,$3,'draft',$4,$5,$6,$7) RETURNING *`,
+      [
+        clientId, ctx.client.group_id || null, soaTitle, text,
+        ai ? 95 : 60, ai,
+        JSON.stringify({ doc_type: 'risk_soa', sections, used_template: usedTemplate || null }),
+      ]
+    );
+
+    // File it into the client's Documents as well.
+    const document = await saveGeneratedDocument({
+      clientId,
+      groupId: ctx.client.group_id || null,
+      title: soaTitle,
+      docType: 'soa',
+      text,
+    });
+
+    res.status(201).json({
+      ...plan, content: text, ai, sections, usedTemplate, saved: true, document,
+    });
   })
 );
 
