@@ -72,11 +72,17 @@ archive/lakeside/  Previous practice — reference only, not loaded at runtime
 
 ```bash
 createdb fpgod                       # or: docker-compose up -d db
+createdb fpgod_test                  # tests run here, never against fpgod
 cd server
 cp .env.example .env                 # set DATABASE_URL + ANTHROPIC_API_KEY
 npm install
 npm run db:migrate                   # creates tables
 ```
+
+`npm test` writes real rows, so it points at `fpgod_test` (override with
+`TEST_DATABASE_URL`). It applies `schema.sql` itself, so the database only needs
+to exist. Never point it at the working database — its fixtures land in
+`training_data`, which the generators read as reference material.
 
 ### 2. Backend (port 4000)
 
