@@ -34,3 +34,6 @@ logs/
 coverage/
 .cache/
 .vite/
+
+# Test artefacts (vitest UPLOAD_DIR)
+server/uploads-test/

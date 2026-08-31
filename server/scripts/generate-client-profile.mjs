@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * Generate a Lakeside Client Profile (.docx) from a filled profile JSON.
+ * Generate a firm Client Profile (.docx) from a filled profile JSON.
  *
  * Strategy (same as generate-insurance-report.mjs): we DO NOT rebuild the
  * document. We open the firm's approved Word template
- * (templates/Lakeside Client Profile Summary 2026.docx), clone it, and fill the
+ * (legacy/templates/Client Profile.docx), clone it, and fill the
  * empty table cells in place — preserving the logo, fonts, brand colours and
  * layout byte-for-byte. This is the firm's "Client Profile — Client Information
  * & Consent Form", kept SEPARATE from the financial-plan generators.
@@ -13,14 +13,15 @@
  *   adviser → yourDetails → estatePlanning → goals → assets → debts →
  *   netWealth → familyProtection → consent → signature
  *
- * Data shape: templates/client-profile.template.json (blank). Copy it, fill the
+ * Data shape: a blank profile JSON (the archived Lakeside one is at
+ * archive/lakeside/templates/client-profile.template.json for reference). Copy it, fill the
  * values, and run this. Empty values are left as blank cells — nothing is ever
  * guessed. Asset/debt/net-wealth TOTALS are computed here from the row values so
  * the arithmetic is always internally consistent.
  *
  * Usage (from server/):
  *   node scripts/generate-client-profile.mjs <filled.json> ["<output.docx>"]
- *   node scripts/generate-client-profile.mjs ../templates/client-profile.template.json  # blank form
+ *   node scripts/generate-client-profile.mjs <filled.json>
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -28,8 +29,13 @@ import { dirname, resolve } from 'node:path';
 import JSZip from 'jszip';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const TEMPLATE = resolve(__dirname, '../../templates/Lakeside Client Profile Summary 2026.docx');
-const OUT_DIR = resolve(__dirname, '../../generated-profiles'); // NOT generated-plans
+// The Lakeside template this was built against is archived and no longer in use.
+// Drop the Legacy Risk Advice client profile template at the path below — the
+// clone-and-fill logic is template-agnostic, but the cell coordinates it fills
+// are derived from the template's table layout, so a new template needs its
+// mapping checked once.
+const TEMPLATE = resolve(__dirname, '../../legacy/templates/Client Profile.docx');
+const OUT_DIR = resolve(__dirname, '../../legacy/client-profiles');
 
 // ---- xml / table helpers ----------------------------------------------------
 const xmlEscape = (s) => String(s ?? '')
@@ -325,6 +331,12 @@ function fillSignature(doc, d) {
 
 // ============================================================================
 export async function generateClientProfile(data, outPath) {
+  if (!existsSync(TEMPLATE)) {
+    throw new Error(
+      `Client profile template not found at ${TEMPLATE}. `
+      + 'The Lakeside template was archived; drop the Legacy Risk Advice one at that path.'
+    );
+  }
   const zip = await JSZip.loadAsync(readFileSync(TEMPLATE));
   let doc = await zip.file('word/document.xml').async('string');
 

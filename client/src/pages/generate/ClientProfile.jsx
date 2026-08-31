@@ -11,7 +11,7 @@ export default function GenerateClientProfile() {
       ready={false}
       readyNote={
         'Awaiting the Legacy Risk Advice client profile Word template. The clone-and-fill generator already works — ' +
-        'drop the Legacy template into templates/ and this button gets wired to it.'
+        'drop the Legacy template into legacy/templates/ and this button gets wired to it.'
       }
     />
   );

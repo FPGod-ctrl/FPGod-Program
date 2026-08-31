@@ -22,6 +22,10 @@ export default defineConfig({
       // Create it once with:  CREATE DATABASE fpgod_test;
       DATABASE_URL: process.env.TEST_DATABASE_URL
         || 'postgres://postgres:@localhost:5432/fpgod_test',
+      // Generation tests also file a document, which writes a real file through
+      // the storage driver. Left at the default they accumulate in
+      // server/uploads alongside genuine client paperwork.
+      UPLOAD_DIR: './uploads-test',
     },
   },
 });

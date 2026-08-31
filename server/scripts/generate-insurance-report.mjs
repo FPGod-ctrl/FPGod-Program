@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * Generate a Lakeside-format Insurance Report (.docx) from structured data.
+ * Generate a firm-format Risk Report (.docx) from structured data.
  *
  * Strategy: we DO NOT rebuild the document. We open the original firm template
- * (templates/Lakeside Insurance Report - 2026.docx), clone it, and fill the
+ * (legacy/templates/Risk Report.docx), clone it, and fill the
  * table cells in-place. That keeps the logo, fonts (Playfair Display / Lato),
  * brand colours (#3F5147 banner, #EDEAE3 rows) and all layout byte-for-byte
  * identical to the firm's approved template.
@@ -11,7 +11,7 @@
  * Usage:
  *   node scripts/generate-insurance-report.mjs <data.json> [output.docx]
  *
- * Data shape (see templates/insurance-report.sample.json):
+ * Data shape:
  *   {
  *     "adviser": "Tristan Biro",
  *     "date": "30th of June 2026",
@@ -31,13 +31,17 @@
  *     "replace": "No"                      // CURRENT table only; ignored for indicative
  *   }
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import JSZip from 'jszip';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const TEMPLATE = resolve(__dirname, '../../templates/Lakeside Insurance Report - 2026.docx');
+// The Lakeside template this was built against is archived and no longer in use.
+// Drop the Legacy Risk Advice risk report template at the path below. The
+// clone-and-fill logic locates tables by their marker rows, so a new template
+// needs those markers confirmed once.
+const TEMPLATE = resolve(__dirname, '../../legacy/templates/Risk Report.docx');
 
 // ---- column order per table ----
 const CURRENT_COLS    = ['type','startDate','product','lifeInsured','sumInsured','owner','premium','premiumType','replace'];
@@ -95,6 +99,12 @@ function textOf(xml) {
 }
 
 export async function generateInsuranceReport(data, outPath) {
+  if (!existsSync(TEMPLATE)) {
+    throw new Error(
+      `Risk report template not found at ${TEMPLATE}. `
+      + 'The Lakeside template was archived; drop the Legacy Risk Advice one at that path.'
+    );
+  }
   const buf = readFileSync(TEMPLATE);
   const zip = await JSZip.loadAsync(buf);
   let doc = await zip.file('word/document.xml').async('string');

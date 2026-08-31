@@ -62,7 +62,7 @@ misrepresentation* rather than the superseded duty of disclosure.
 ```
 server/          Express + PostgreSQL API, Anthropic integration, document extraction
 client/          React + Vite single-page app
-templates/       Firm Word templates driving the clone-and-fill generators
+legacy/          Current practice: templates, drop folder, and produced documents
 archive/lakeside/  Previous practice — reference only, not loaded at runtime
 ```
 
