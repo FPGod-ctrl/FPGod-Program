@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { RISK_GUARDRAILS, DEFAULT_SECTIONS } from '../services/riskSoaGenerator.js';
+import { RISK_GUARDRAILS } from '../services/riskSoaGenerator.js';
+import { LEGACY_SECTIONS, HOUSE_WORDING, houseWordingFor } from '../services/legacySoaStructure.js';
 
 /**
- * The guardrails are a prompt string, so nothing but a test stops a rule being
- * dropped by an unrelated edit. Each rule below exists because getting it wrong
- * produces advice that reads as correct but is not compliant — the failure mode
- * is silent, which is exactly what makes it worth pinning.
+ * The guardrails and the house structure are prompt data, so nothing but a test
+ * stops a rule being dropped by an unrelated edit. Each rule below exists
+ * because getting it wrong produces advice that reads as correct but is not
+ * compliant — the failure mode is silent, which is what makes it worth pinning.
  */
 describe('risk SOA guardrails', () => {
   const has = (re) => expect(RISK_GUARDRAILS).toMatch(re);
@@ -13,10 +14,6 @@ describe('risk SOA guardrails', () => {
   it('forbids stating premiums that were not supplied', () => {
     has(/NEVER state a premium/i);
     has(/\[ADVISOR TO CONFIRM\]/);
-  });
-
-  it('requires the needs analysis to add up', () => {
-    has(/MUST sum to the stated recommendation/i);
   });
 
   it('keeps trauma cover outside superannuation', () => {
@@ -36,20 +33,7 @@ describe('risk SOA guardrails', () => {
   it('uses the current duty, not the superseded duty of disclosure', () => {
     has(/duty to take reasonable care not to make a misrepresentation/i);
     has(/5 October 2021/);
-    // The old wording may only appear as the thing being ruled out.
     expect(RISK_GUARDRAILS).toMatch(/NOT the superseded "duty of disclosure" wording/i);
-  });
-
-  it('names the advising firm and forbids reusing another licensee', () => {
-    // Reference material carries the previous practice's letterhead and AFSL.
-    // Copying it would issue advice under another licensee.
-    has(/FIRM IDENTITY/);
-    has(/NEVER reproduce another firm's name, licensee, AR number, AFSL/i);
-    has(/another licensee's AFSL is a compliance breach/i);
-  });
-
-  it('forbids carrying client details across from reference material', () => {
-    has(/Never carry a client name, figure, policy or personal detail/i);
   });
 
   it('rules out US terminology', () => {
@@ -57,27 +41,92 @@ describe('risk SOA guardrails', () => {
   });
 });
 
-describe('default risk SOA sections', () => {
-  it('covers the sections a risk SOA cannot ship without', () => {
-    const titles = DEFAULT_SECTIONS.map((s) => s.title.toLowerCase()).join(' | ');
-    for (const required of [
-      'scope', 'about you', 'existing insurance', 'how much cover you need',
-      'recommendations', 'why i am recommending', 'ownership', 'replacing',
-      'cost', 'risks', 'fees, commissions', 'next steps',
-    ]) {
-      expect(titles).toContain(required);
-    }
+describe('firm identity', () => {
+  const has = (re) => expect(RISK_GUARDRAILS).toMatch(re);
+
+  it('names the licensee and the firm separately', () => {
+    // Legacy Risk Advice is a corporate Authorised Representative. The AFSL is
+    // Synchron's. Attributing the AFSL to the firm would be wrong on every page.
+    has(/Synchron Advice Pty Ltd/);
+    has(/AFSL 243313/);
+    has(/Legacy Risk Advice Pty Ltd/);
+    has(/corporate Authorised Representative/i);
+    has(/Never describe the firm as holding an AFSL/i);
   });
 
-  it('numbers every section exactly once, in order', () => {
-    const numbers = DEFAULT_SECTIONS.map((s) => Number(s.title.match(/^(\d+)\./)?.[1]));
-    expect(numbers).toEqual(numbers.map((_, i) => i + 1));
+  it('forbids reusing another adviser or licensee', () => {
+    has(/Never reproduce another adviser's name, AR number or contact details/i);
+    has(/issuing advice under the wrong licensee is a compliance breach/i);
   });
 
-  it('gives every section a brief for the model to work from', () => {
-    for (const s of DEFAULT_SECTIONS) {
+  it('leaves an unknown adviser AR number as a placeholder', () => {
+    // Tristan's own AR number is pending. It must never fall back to another
+    // adviser's, which is exactly what copying an example would produce.
+    has(/Authorised Representative No\. (\d+|\[ADVISOR TO CONFIRM\])/);
+  });
+});
+
+describe('needs analysis position', () => {
+  it('requires the analysis to be done but not printed as arithmetic', () => {
+    // The 32 inherited SOAs all record that the client DECLINED a needs
+    // analysis. That is not the standard this practice adopts: the analysis is
+    // always done in the background and the SOA presents the reasoning.
+    expect(RISK_GUARDRAILS).toMatch(/a full needs analysis is completed for every client/i);
+    expect(RISK_GUARDRAILS).toMatch(/NEVER state or imply that a needs analysis was declined/i);
+  });
+
+  it('does not wire the inherited "declined" wording into any section', () => {
+    const used = new Set(LEGACY_SECTIONS.flatMap((s) => s.wording || []));
+    expect(used.has('needs-analysis-position')).toBe(false);
+  });
+});
+
+describe('Legacy house structure', () => {
+  it('matches the section order found in all 32 source documents', () => {
+    expect(LEGACY_SECTIONS.map((s) => s.title)).toEqual([
+      'About this document',
+      'Executive summary',
+      'Scope of our advice',
+      'Your objectives',
+      'Where you are now',
+      'Insurance recommendations',
+      'Alternatives',
+      'Important information',
+      'Fees and disclosures',
+      'Actions required',
+      'Authority to proceed',
+      'Appendix: Insurance quotes',
+    ]);
+  });
+
+  it('gives every section a brief substantial enough to write from', () => {
+    for (const s of LEGACY_SECTIONS) {
       expect(s.brief, `${s.title} has no brief`).toBeTruthy();
-      expect(s.brief.length).toBeGreaterThan(80);
+      expect(s.brief.length, `${s.title} brief is too thin`).toBeGreaterThan(120);
     }
+  });
+
+  it('resolves every house-wording key it references', () => {
+    for (const s of LEGACY_SECTIONS) {
+      for (const key of s.wording || []) {
+        expect(HOUSE_WORDING.sections[key], `${s.title} references missing key "${key}"`)
+          .toBeTruthy();
+      }
+    }
+  });
+
+  it('supplies verbatim wording to the sections that carry compliance language', () => {
+    for (const title of ['Important information', 'Fees and disclosures', 'About this document']) {
+      const sec = LEGACY_SECTIONS.find((s) => s.title === title);
+      expect(houseWordingFor(sec.wording).length, `${title} has no house wording`)
+        .toBeGreaterThan(0);
+    }
+  });
+
+  it('carries no template errors or client data in the house wording', () => {
+    const all = Object.values(HOUSE_WORDING.sections).flat().map((b) => b.text).join('\n');
+    expect(all).not.toMatch(/Err: Handling|include_schedules|Docnote:/);
+    expect(all).not.toMatch(/Joshua Davidson|Luke Fisher/);
+    expect(all).not.toMatch(/\$[\d,]+/);
   });
 });
