@@ -49,7 +49,7 @@ export async function refine({ targetType, targetId, message }) {
   });
 
   const { text, ai } = await completeOrStub(
-    { messages, temperature: 0.4, json: true, maxTokens: 8000 },
+    { messages, json: true, maxTokens: 12000, effort: 'medium' },
     stub
   );
 

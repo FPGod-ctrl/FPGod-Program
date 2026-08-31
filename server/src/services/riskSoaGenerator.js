@@ -170,21 +170,34 @@ async function writeSection(sec, contextText, instructions, today, templateTitle
     ? `TEMPLATE SECTION (follow its structure, headings, tables and depth):\n"""\n${excerpt(sec.text, 9000)}\n"""`
     : `WHAT THIS SECTION MUST COVER:\n${sec.brief}`;
 
-  const userContent =
-    `${guidance}\n\n`
-    + `CLIENT / HOUSEHOLD FILE:\n${contextText}\n\n`
+  // Every section of one SOA sends the same system prompt and the same client
+  // file — only the section ask differs. Caching is a prefix match, so the
+  // stable content must come FIRST and carry the breakpoint; the per-section
+  // guidance goes last. Across a 14-section SOA that turns 14 full-price reads
+  // of the client file into one write and 13 cache reads.
+  const stable =
+    `CLIENT / HOUSEHOLD FILE:\n${contextText}\n\n`
     + `Date of advice (use for any preparation date): ${today}.`
-    + (instructions ? `\n\nADVISER NOTES — these reflect the advice actually given and take precedence over inference: ${instructions}` : '')
-    + `\n\nNow write the section "${sec.title}" for this client.`;
+    + (instructions ? `\n\nADVISER NOTES — these reflect the advice actually given and take precedence over inference: ${instructions}` : '');
+
+  const volatile = `${guidance}\n\nNow write the section "${sec.title}" for this client.`;
 
   const { text } = await completeOrStub(
     {
       messages: [
-        { role: 'system', content: SECTION_SYSTEM_PROMPT(templateTitle) },
-        { role: 'user', content: userContent },
+        { role: 'system', content: SECTION_SYSTEM_PROMPT(templateTitle), cache: true },
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: stable, cache_control: { type: 'ephemeral' } },
+            { type: 'text', text: volatile },
+          ],
+        },
       ],
-      temperature: 0.4,
-      maxTokens: 4000,
+      // Thinking tokens count toward max_tokens, so a section needs real
+      // headroom — at 4000 an SOA section with tables gets truncated.
+      maxTokens: 12000,
+      effort: 'high',
     },
     () => `## ${sec.title}\n\n_[Offline stub — set ANTHROPIC_API_KEY for AI generation.]_`
   );

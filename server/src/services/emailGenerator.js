@@ -43,8 +43,9 @@ export async function generateEmail({ transcript, client }, instructions = '') {
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: userContent },
       ],
-      temperature: 0.6,
-      maxTokens: 700,
+      // Thinking tokens count toward max_tokens; 700 left no room for output.
+      maxTokens: 8000,
+      effort: 'medium',
     },
     stub
   );

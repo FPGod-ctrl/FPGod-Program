@@ -50,7 +50,7 @@ export async function scanDocument(text) {
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: `Document text:\n${trimmed}` },
       ],
-      temperature: 0,
+      effort: 'low', // structured extraction from a document — no depth needed
       json: true,
     },
     stub

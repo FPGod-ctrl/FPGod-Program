@@ -35,7 +35,7 @@ export const env = {
 
   anthropic: {
     apiKey: process.env.ANTHROPIC_API_KEY || '',
-    model: process.env.ANTHROPIC_MODEL || 'claude-opus-4-8',
+    model: process.env.ANTHROPIC_MODEL || 'claude-opus-5',
     get enabled() {
       return Boolean(process.env.ANTHROPIC_API_KEY);
     },

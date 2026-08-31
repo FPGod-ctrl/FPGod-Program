@@ -14,7 +14,7 @@ function ageFrom(dob) {
 
 /** All financial rows owned individually by one client. */
 async function personFinancials(clientId) {
-  const [current, recommended, assets, liabilities, income, expenses, insurance, goals, estate] = await Promise.all([
+  const [current, recommended, assets, liabilities, income, expenses, insurance, goals, estate, family] = await Promise.all([
     query('SELECT * FROM current_investments WHERE client_id = $1 ORDER BY balance DESC', [clientId]).then((r) => r.rows),
     query('SELECT * FROM recommended_investments WHERE client_id = $1', [clientId]).then((r) => r.rows),
     query('SELECT * FROM assets WHERE client_id = $1 ORDER BY value DESC', [clientId]).then((r) => r.rows),
@@ -24,8 +24,11 @@ async function personFinancials(clientId) {
     query('SELECT * FROM insurance_policies WHERE client_id = $1', [clientId]).then((r) => r.rows),
     query('SELECT * FROM financial_goals WHERE client_id = $1', [clientId]).then((r) => r.rows),
     query('SELECT * FROM estate_plans WHERE client_id = $1', [clientId]).then((r) => r.rows[0] || null),
+    // Dependants drive the life and TPD needs analysis — without them the
+    // generator concludes there are no children and zeroes out education costs.
+    query('SELECT * FROM family_members WHERE client_id = $1 ORDER BY date_of_birth ASC', [clientId]).then((r) => r.rows),
   ]);
-  return { current, recommended, assets, liabilities, income, expenses, insurance, goals, estate };
+  return { current, recommended, assets, liabilities, income, expenses, insurance, goals, estate, family };
 }
 
 /**
@@ -46,12 +49,13 @@ export async function gatherClientContext(clientId) {
     const { rows } = await query('SELECT * FROM clients WHERE group_id = $1 ORDER BY created_at ASC', [client.group_id]);
     if (rows.length) members = rows;
     const jq = (t, o) => query(`SELECT * FROM ${t} WHERE group_id = $1 AND client_id IS NULL ORDER BY ${o}`, [client.group_id]).then((r) => r.rows);
-    const [assets, liabilities, income, expenses, insurance, goals, current] = await Promise.all([
+    const [assets, liabilities, income, expenses, insurance, goals, current, family] = await Promise.all([
       jq('assets', 'value DESC'), jq('liabilities', 'balance DESC'), jq('income_sources', 'amount DESC'),
       jq('expenses', 'amount DESC'), jq('insurance_policies', 'cover_amount DESC NULLS LAST'),
       jq('financial_goals', 'target_date ASC NULLS LAST'), jq('current_investments', 'balance DESC'),
+      jq('family_members', 'date_of_birth ASC'),
     ]);
-    joint = { assets, liabilities, income, expenses, insurance, goals, current };
+    joint = { assets, liabilities, income, expenses, insurance, goals, current, family };
   }
 
   const people = await Promise.all(members.map(async (m) => ({ client: m, ...(await personFinancials(m.id)) })));
@@ -82,6 +86,14 @@ function section(lines, title, rows, fmt) {
 }
 
 function financialsToLines(L, p) {
+  // Family first: for risk advice, who depends on this income is the single
+  // most important fact in the file.
+  section(L, 'Family & dependants', p.family, (r) => {
+    const name = [r.first_name, r.last_name].filter(Boolean).join(' ') || 'Unnamed';
+    const yrs = ageFrom(r.date_of_birth);
+    return `${name} - ${r.relationship}${yrs != null ? `, age ${yrs}` : ''}`
+      + `${r.is_dependent ? ' [DEPENDENT]' : ''}${r.notes ? ` (${r.notes})` : ''}`;
+  });
   section(L, 'Assets', p.assets, (r) => `${r.name} (${r.category}) ${money(r.value)}${r.owner ? ` [${r.owner}]` : ''}`);
   section(L, 'Investments', p.current, (r) => `${r.fund_name} ${r.account_type || ''} ${money(r.balance)} ${r.allocation_pct ?? '?'}% fee ${r.fee_pct ?? '?'}%`);
   section(L, 'Liabilities', p.liabilities, (r) => `${r.name} (${r.liability_type}) ${money(r.balance)}${r.interest_rate ? ` @ ${r.interest_rate}%` : ''}${r.monthly_payment ? `, ${money(r.monthly_payment)}/mo` : ''}`);
@@ -128,7 +140,7 @@ export function contextToText(ctx) {
 
   if (ctx.joint) {
     const j = ctx.joint;
-    const any = ['assets', 'liabilities', 'income', 'expenses', 'insurance', 'goals', 'current'].some((k) => j[k]?.length);
+    const any = ['assets', 'liabilities', 'income', 'expenses', 'insurance', 'goals', 'current', 'family'].some((k) => j[k]?.length);
     if (any) {
       L.push('\n### Joint / Household');
       financialsToLines(L, j);
@@ -304,9 +316,9 @@ export async function generateQuestions(ctx, instructions = '') {
         { role: 'system', content: QUESTION_SYSTEM_PROMPT },
         { role: 'user', content: userContent },
       ],
-      temperature: 0.3,
+      effort: 'low', // short JSON extraction — depth is wasted here
       json: true,
-      maxTokens: 1500,
+      maxTokens: 8000,
     },
     stub
   );
@@ -363,7 +375,7 @@ export async function generatePlan(ctx, instructions = '', answers = null) {
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: userContent },
       ],
-      temperature: 0.4,
+      effort: 'high',
       maxTokens: 14000,
     },
     () => buildStubPlan(ctx)
@@ -440,8 +452,8 @@ async function generateSection(sec, contextText, instructions, today, tplTitle) 
         { role: 'system', content: sectionSystemPrompt(tplTitle) },
         { role: 'user', content: userContent },
       ],
-      temperature: 0.4,
-      maxTokens: 4000,
+      maxTokens: 12000,
+      effort: 'high',
     },
     () => `## ${sec.title}\n\n_[Offline stub — set ANTHROPIC_API_KEY for AI generation.]_`
   );
