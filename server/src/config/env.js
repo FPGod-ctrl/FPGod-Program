@@ -33,6 +33,15 @@ export const env = {
     ssl: bool(process.env.PGSSL) ? { rejectUnauthorized: false } : false,
   },
 
+  // The advising firm. Reference material imported from the previous practice
+  // carries ITS letterhead, licensee, AR number and AFSL. Generators are told
+  // this name explicitly and told never to reproduce the one in the examples —
+  // issuing advice under another licensee's AFSL is a compliance breach, and
+  // it is exactly the kind of error that reads as correct at a glance.
+  firm: {
+    name: process.env.FIRM_NAME || 'Legacy Risk Advice',
+  },
+
   anthropic: {
     apiKey: process.env.ANTHROPIC_API_KEY || '',
     model: process.env.ANTHROPIC_MODEL || 'claude-opus-5',

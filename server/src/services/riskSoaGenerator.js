@@ -1,6 +1,7 @@
 import { query } from '../config/db.js';
 import { aiEnabled, completeOrStub } from './ai.js';
 import { contextToText, stripCodeFence } from './planGenerator.js';
+import { env } from '../config/env.js';
 
 /**
  * Risk-only Statement of Advice generator (Legacy Risk Advice).
@@ -36,7 +37,9 @@ export const RISK_GUARDRAILS =
   + '7. Cover is not in force until the insurer accepts the application and confirms it. Underwriting may result in loadings, exclusions or decline — state this; never present acceptance as certain.\n'
   + '8. Disclose remuneration: adviser service fee and/or insurance commission (upfront and ongoing), in dollars where known, otherwise [ADVISOR TO CONFIRM]. Mark clearly where a figure is illustrative.\n'
   + '9. Use Australian terminology and AUD throughout. NEVER use US concepts (401k, IRA, Roth, HSA) or US insurance terms.\n'
-  + '10. Never fabricate the client\'s personal details — name, date of birth, address, occupation, income, health or smoker status, existing policy numbers. If not supplied, write [ADVISOR TO CONFIRM].';
+  + '10. Never fabricate the client\'s personal details — name, date of birth, address, occupation, income, health or smoker status, existing policy numbers. If not supplied, write [ADVISOR TO CONFIRM].\n'
+  + `11. FIRM IDENTITY: the advising firm is ${env.firm.name}. Reference documents and templates imported into this system were written at a PREVIOUS practice and carry ITS letterhead, licensee, Authorised Representative number, AFSL and contact details. Use them for structure and tone ONLY. NEVER reproduce another firm's name, licensee, AR number, AFSL number, address or phone number in this document — issuing advice under another licensee's AFSL is a compliance breach. Where a licensee or AFSL detail is needed and not supplied, write [ADVISOR TO CONFIRM].\n`
+  + '12. Never carry a client name, figure, policy or personal detail across from a reference document or template example into this client\'s advice.';
 
 // ---------------------------------------------------------------------------
 // Default section skeleton — used until the firm's own template is imported.
@@ -251,7 +254,7 @@ export async function generateRiskSoa(ctx, instructions = '', { onProgress } = {
 
   const c = ctx.client;
   const header = `# Statement of Advice — ${c.first_name} ${c.last_name}\n\n`
-    + `**Risk insurance advice** · Prepared ${today} · Legacy Risk Advice\n\n---\n`;
+    + `**Risk insurance advice** · Prepared ${today} · ${env.firm.name}\n\n---\n`;
 
   return {
     text: header + parts.filter(Boolean).join('\n\n'),
