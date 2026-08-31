@@ -7,16 +7,13 @@ const NAV = [
   { to: '/', label: 'Dashboard', icon: '◈', end: true },
   { to: '/clients', label: 'Clients', icon: '👥' },
   { to: '/calendar', label: 'Calendar', icon: '📅' },
-  { section: 'Advisory' },
+  { section: 'Advice' },
+  { to: '/generate/soa', label: 'Insurance & Risk Planning', icon: '📄' },
   { to: '/generate/client-profile', label: 'Client Profile', icon: '🧾' },
   { to: '/generate/insurance-report', label: 'Insurance Report', icon: '🛡️' },
   { to: '/generate/follow-ups', label: 'Follow-on & Phone Email', icon: '✉️' },
-  { to: '/generate/soa', label: 'SOA', icon: '📄' },
-  { to: '/generate/financial-plan', label: 'Financial Plan', icon: '📈' },
-  { section: 'Tools' },
-  { to: '/cfs', label: 'CFS Book', icon: '🏦', end: true },
-  { to: '/cfs/campaign', label: 'Review Campaign', icon: '📇' },
-  { to: '/investments', label: 'Investments', icon: '📊' },
+  { section: 'Practice' },
+  { to: '/plans', label: 'Advice Documents', icon: '📁' },
   { to: '/meetings', label: 'Meetings & Emails', icon: '💬' },
   { section: 'System' },
   { to: '/settings', label: 'Settings', icon: '⚙️' },
@@ -26,10 +23,10 @@ function Sidebar({ meta, theme, onToggleTheme }) {
   return (
     <aside className="sidebar">
       <div className="brand">
-        <div className="brand-logo">F</div>
+        <div className="brand-logo">L</div>
         <div>
-          <div className="brand-name">FPGod</div>
-          <div className="brand-sub">Financial Planning</div>
+          <div className="brand-name">Legacy Risk Advice</div>
+          <div className="brand-sub">Insurance &amp; Risk Planning</div>
         </div>
       </div>
       <nav className="nav">

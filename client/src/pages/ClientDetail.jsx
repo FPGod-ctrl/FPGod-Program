@@ -171,8 +171,7 @@ export default function ClientDetail() {
               <DataTable columns={invCols} rows={current} empty={<Empty icon="📊" title="No holdings recorded" />} />
             </div>
             <div className="card">
-              <div className="card-head"><h3>Recommended Investments</h3>
-                <Link to="/investments" className="btn sm ghost">Comparison view →</Link></div>
+              <div className="card-head"><h3>Recommended Investments</h3></div>
               <DataTable
                 columns={[
                   { key: 'fund_name', header: 'Fund', render: (r) => <span className="t-strong">{r.fund_name}</span> },

@@ -19,29 +19,24 @@ function Stat({ label, value, foot, tone }) {
 // Each generator area, styled as a launch card. `accent`/`soft` drive the card colour.
 const TOOLS = [
   {
-    to: '/generate/client-profile', icon: '🧾', title: 'Client Profile',
-    desc: 'Generate the Lakeside client information & consent profile for a household, ready to review and export.',
+    to: '/generate/soa', icon: '📄', title: 'Insurance & Risk Planning',
+    desc: 'Draft a risk-only Statement of Advice — life, TPD, trauma and income protection — from the client file, existing cover and your notes.',
     cta: 'Pick a client', accent: 'var(--accent-2)', soft: 'var(--accent-soft)', featured: true, pill: 'Featured',
+  },
+  {
+    to: '/generate/client-profile', icon: '🧾', title: 'Client Profile',
+    desc: 'Generate the client information & consent profile for a household, ready to review and export.',
+    cta: 'Pick a client', accent: 'var(--accent-2)', soft: 'var(--accent-soft)',
   },
   {
     to: '/generate/insurance-report', icon: '🛡️', title: 'Insurance Report',
     desc: 'Build the current / indicative cover summary — clone-and-fill from the firm’s insurance report template.',
-    cta: 'Pick a client', accent: 'var(--accent-2)', soft: 'var(--accent-soft)', featured: true, pill: 'Featured',
-  },
-  {
-    to: '/generate/soa', icon: '📝', title: 'SOA & Financial Plan',
-    desc: 'Draft a Statement of Advice or full financial plan from the house template, client data and your strategy notes.',
-    cta: 'Open generator', accent: '#6366f1', soft: 'rgba(99,102,241,0.16)',
+    cta: 'Pick a client', accent: 'var(--green)', soft: 'var(--green-soft)',
   },
   {
     to: '/generate/follow-ups', icon: '✉️', title: 'Follow-up Emails',
     desc: 'Turn a meeting transcript or call note into a follow-on-from-meeting or phone-call email in your voice.',
     cta: 'Open emails', accent: 'var(--primary)', soft: 'var(--primary-soft)',
-  },
-  {
-    to: '/investments', icon: '📊', title: 'Investments & Fund Summaries',
-    desc: 'Summarise products and holdings — e.g. wholesale fund IMs and super statements — into client-ready notes.',
-    cta: 'Open investments', accent: 'var(--green)', soft: 'var(--green-soft)',
   },
   {
     to: '/clients', icon: '📥', title: 'Client Documents',
@@ -79,11 +74,11 @@ export default function Dashboard() {
         <div className="stack">
           {/* Hero */}
           <div className="hub-hero">
-            <div className="eyebrow">Lakeside Financial · AI Toolkit</div>
+            <div className="eyebrow">Legacy Risk Advice · Insurance &amp; Risk Planning</div>
             <h1>What would you like to generate today?</h1>
             <p>
-              Pick a tool below to draft client-ready documents in your house style — profiles, insurance
-              reports, SOAs, follow-up emails and fund summaries — all from the data and templates you already hold.
+              Pick a tool below to draft client-ready documents in your house style — Statements of Advice,
+              client profiles, insurance reports and follow-up emails — all from the data and templates you already hold.
             </p>
           </div>
 
