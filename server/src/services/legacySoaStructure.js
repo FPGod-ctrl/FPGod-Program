@@ -63,6 +63,7 @@ export const LEGACY_SECTIONS = [
     brief:
       'Two sub-headings, both client-specific and written fresh every time.\n'
       + '"Why are you seeking advice" — the client\'s situation in their own terms and what prompted them to come in now. Two to five short paragraphs, addressed to them by first name. This is the most personal writing in the document.\n'
+      + 'DRAW THIS FROM THE MEETING NOTES AND CORRESPONDENCE, not from the financial data. The numbers say what the client has; only the meeting says why they came in, what worries them, what they said in their own words and what they have already been told. Use their phrasing and their reasons where the notes give them. If a concern, life event or constraint is recorded in the notes — a new baby, a job change, a health scare, a budget limit, a bad claims experience — it belongs here. Where the notes are thin, say less rather than inventing motivation.\n'
       + '"Summary of our advice to you" — one line stating the advice has been prepared from recent discussions and the Fact Find, then "At this time, you have asked me to provide advice on:" followed by a short list of the advice areas.',
   },
   {

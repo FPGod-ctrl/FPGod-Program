@@ -72,7 +72,26 @@ export async function gatherClientContext(clientId) {
     [memberIds, client.group_id || null]
   );
 
-  return { client, group, people, joint, documents };
+  // What was actually said, and what has actually been sent. The structure of an
+  // SOA can be derived from a template; this is the only source for why THIS
+  // client is seeking advice and what was agreed with them, which is the most
+  // personal writing in the document.
+  const { rows: transcripts } = await query(
+    `SELECT title, meeting_date, content, summary, action_items
+       FROM meeting_transcripts
+      WHERE client_id = ANY($1) OR group_id = $2
+      ORDER BY meeting_date DESC NULLS LAST, created_at DESC`,
+    [memberIds, client.group_id || null]
+  );
+  const { rows: correspondence } = await query(
+    `SELECT subject, body, status, created_at
+       FROM followup_emails
+      WHERE client_id = ANY($1) OR group_id = $2
+      ORDER BY created_at DESC`,
+    [memberIds, client.group_id || null]
+  );
+
+  return { client, group, people, joint, documents, transcripts, correspondence };
 }
 
 // ---------------------------------------------------------------------------
@@ -182,6 +201,42 @@ export function contextToText(ctx) {
     totExp += annual(p.expenses);
   }
   L.push(`\nHousehold totals — Assets ${money(totA)}, Liabilities ${money(totL)}, Net worth ${money(totA - totL)}, Annual income ${money(totInc)}, Annual expenses ${money(totExp)}, Surplus ${money(totInc - totExp)}.`);
+
+  // Meeting notes first — ahead of uploaded documents, because when the two
+  // disagree the meeting is the more current record of what the client wants.
+  if (ctx.transcripts && ctx.transcripts.length) {
+    L.push('\n### Meeting notes and file notes (what was actually discussed)');
+    let budget = 14000;
+    for (const t of ctx.transcripts) {
+      if (budget <= 0) { L.push('\n- …(earlier meetings omitted for length)'); break; }
+      const when = t.meeting_date ? String(t.meeting_date).slice(0, 10) : 'undated';
+      L.push(`\n**${t.title || 'Meeting'}** (${when}):`);
+      if (t.summary) L.push(`Summary: ${t.summary}`);
+      const body = (t.content || '').slice(0, Math.min(6000, budget)).trim();
+      budget -= body.length;
+      if (body) L.push(`"""\n${body}\n"""`);
+      const items = Array.isArray(t.action_items) ? t.action_items : [];
+      if (items.length) {
+        L.push('Action items:');
+        items.forEach((a) => L.push(`   • ${typeof a === 'string' ? a : (a.task || JSON.stringify(a))}`
+          + `${a && a.owner ? ` [${a.owner}]` : ''}${a && a.due ? ` due ${a.due}` : ''}`));
+      }
+    }
+  }
+
+  // Correspondence already sent — what the client has been told in writing, so
+  // the advice does not contradict it.
+  if (ctx.correspondence && ctx.correspondence.length) {
+    L.push('\n### Correspondence already sent to this client');
+    let budget = 6000;
+    for (const e of ctx.correspondence) {
+      if (budget <= 0) { L.push('\n- …(earlier correspondence omitted for length)'); break; }
+      const body = (e.body || '').slice(0, Math.min(2000, budget)).trim();
+      budget -= body.length;
+      L.push(`\n**${e.subject || 'Email'}** (${String(e.created_at).slice(0, 10)}, ${e.status || 'draft'}):`);
+      if (body) L.push(`"""\n${body}\n"""`);
+    }
+  }
 
   // Extracts from the actual uploaded client documents (capped for length).
   if (ctx.documents && ctx.documents.length) {
