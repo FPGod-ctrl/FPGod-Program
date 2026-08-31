@@ -45,7 +45,11 @@ router.use('/expenses', crudRouter({
 router.use('/insurance', crudRouter({
   table: 'insurance_policies',
   columns: ['client_id', 'group_id', 'policy_type', 'provider', 'cover_amount',
-    'premium', 'frequency', 'policy_number', 'notes'],
+    'premium', 'frequency', 'policy_number', 'notes',
+    // Detail the house SOA's portfolio table and per-policy write-ups require.
+    'product', 'owner', 'life_insured', 'inside_super', 'premium_structure',
+    'waiting_period', 'benefit_period', 'definition', 'features', 'exclusions',
+    'loading', 'start_date', 'action'],
   required: ['policy_type'],
   orderBy: 'cover_amount DESC NULLS LAST',
   filters: ['client_id', 'group_id'],

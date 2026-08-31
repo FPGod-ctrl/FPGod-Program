@@ -99,7 +99,30 @@ function financialsToLines(L, p) {
   section(L, 'Liabilities', p.liabilities, (r) => `${r.name} (${r.liability_type}) ${money(r.balance)}${r.interest_rate ? ` @ ${r.interest_rate}%` : ''}${r.monthly_payment ? `, ${money(r.monthly_payment)}/mo` : ''}`);
   section(L, 'Income', p.income, (r) => `${r.name} (${r.income_type}) ${money(r.amount)}/${r.frequency} = ${money(toAnnual(r.amount, r.frequency))}/yr`);
   section(L, 'Expenses', p.expenses, (r) => `${r.name} (${r.category}) ${money(r.amount)}/${r.frequency} = ${money(toAnnual(r.amount, r.frequency))}/yr`);
-  section(L, 'Insurance', p.insurance, (r) => `${r.policy_type}${r.provider ? ` - ${r.provider}` : ''} cover ${money(r.cover_amount)}${r.premium ? `, premium ${money(r.premium)}/${r.frequency}` : ''}`);
+  // Rendered in full: the house SOA's portfolio table needs every one of these,
+  // and anything missing here becomes [ADVISOR TO CONFIRM] in the document.
+  section(L, 'Insurance', p.insurance, (r) => {
+    const bits = [
+      `${r.policy_type}${r.product ? ` - ${r.product}` : ''}${r.provider ? ` (${r.provider})` : ''}`,
+      `cover ${money(r.cover_amount)}`,
+      r.premium ? `premium ${money(r.premium)}/${r.frequency || 'annual'}` : null,
+      r.premium_structure ? `${r.premium_structure} premiums` : null,
+      r.owner ? `owner: ${r.owner}` : null,
+      r.life_insured ? `life insured: ${r.life_insured}` : null,
+      r.inside_super === true ? 'INSIDE super' : r.inside_super === false ? 'outside super' : null,
+      r.waiting_period ? `waiting ${r.waiting_period}` : null,
+      r.benefit_period ? `benefit period ${r.benefit_period}` : null,
+      r.definition ? `definition: ${r.definition}` : null,
+      r.features ? `features: ${r.features}` : null,
+      r.exclusions ? `EXCLUSIONS: ${r.exclusions}` : null,
+      r.loading ? `LOADING: ${r.loading}` : null,
+      r.start_date ? `commenced ${String(r.start_date).slice(0, 10)}` : null,
+      r.policy_number ? `policy ${r.policy_number}` : null,
+      r.action ? `ACTION: ${r.action.toUpperCase()}` : null,
+      r.notes ? `note: ${r.notes}` : null,
+    ].filter(Boolean);
+    return bits.join(', ');
+  });
   section(L, 'Goals', p.goals, (r) => `${r.name}${r.target_amount ? ` target ${money(r.target_amount)}` : ''}${r.target_date ? ` by ${String(r.target_date).slice(0, 10)}` : ''}`);
   if (p.estate) {
     const e = p.estate; const bits = [];

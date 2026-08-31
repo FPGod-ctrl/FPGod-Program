@@ -577,3 +577,34 @@ BEGIN
     END IF;
   END LOOP;
 END$$;
+
+-- ---------------------------------------------------------------------------
+-- Risk policy detail (Legacy Risk Advice house SOA).
+--
+-- The house SOA carries a portfolio table with columns Description | Owner |
+-- Life Insured | Type | Cover | Inside Super | Outside Super | Premium |
+-- Features | Action, and per-policy detail for waiting and benefit periods,
+-- premium structure and TPD definition. Every one of those appears in the
+-- firm's completed SOAs; none of them had anywhere to live in this table, so
+-- the generator could only write [ADVISOR TO CONFIRM] for most of the table.
+-- ---------------------------------------------------------------------------
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS product           TEXT;
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS owner             TEXT;
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS life_insured      TEXT;
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS inside_super      BOOLEAN DEFAULT FALSE;
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS premium_structure TEXT;
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS waiting_period    TEXT;
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS benefit_period    TEXT;
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS definition        TEXT;
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS features          TEXT;
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS exclusions        TEXT;
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS loading           TEXT;
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS start_date        DATE;
+-- What the SOA recommends doing with this policy.
+ALTER TABLE insurance_policies ADD COLUMN IF NOT EXISTS action            TEXT;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'insurance_policies_action_check') THEN
+    ALTER TABLE insurance_policies ADD CONSTRAINT insurance_policies_action_check
+      CHECK (action IS NULL OR action IN ('retain', 'replace', 'cancel', 'new', 'reduce', 'increase'));
+  END IF;
+END$$;
