@@ -25,6 +25,7 @@ export default function GeneratorScaffold({
   const [clientId, setClientId] = useState('');
   const [instructions, setInstructions] = useState('');
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState(null);
   const [result, setResult] = useState('');
   const [savedNote, setSavedNote] = useState('');
   const [newClient, setNewClient] = useState(false);
@@ -49,9 +50,9 @@ export default function GeneratorScaffold({
 
   const run = async () => {
     if (clientSelect && requireClient && !clientId) { toast('Please pick a client first', 'error'); return; }
-    setBusy(true); setResult(''); setSavedNote('');
+    setBusy(true); setResult(''); setSavedNote(''); setProgress(null);
     try {
-      const out = await onGenerate({ clientId, client, instructions });
+      const out = await onGenerate({ clientId, client, instructions, onProgress: setProgress });
       const text = typeof out === 'string' ? out : out?.text || '';
       const filed = typeof out === 'object' && out?.saved;
       setResult(text);
@@ -61,7 +62,7 @@ export default function GeneratorScaffold({
       toast(text ? 'Generated' : 'Nothing was returned', text ? 'success' : 'error');
     } catch (e) {
       toast(e?.message || 'Generation failed', 'error');
-    } finally { setBusy(false); }
+    } finally { setBusy(false); setProgress(null); }
   };
 
   const copy = async () => {
@@ -118,9 +119,27 @@ export default function GeneratorScaffold({
             />
 
             {ready ? (
-              <button className="btn primary lg" onClick={run} disabled={busy}>
-                {busy ? <><Spinner /> Generating…</> : generateLabel}
-              </button>
+              <>
+                <button className="btn primary lg" onClick={run} disabled={busy}>
+                  {busy ? <><Spinner /> Generating…</> : generateLabel}
+                </button>
+                {busy && progress?.total > 0 && (
+                  <div style={{ marginTop: 12 }}>
+                    <div style={{ height: 6, borderRadius: 999, background: 'var(--border)', overflow: 'hidden' }}>
+                      <div style={{
+                        height: '100%',
+                        width: `${Math.round((progress.done / progress.total) * 100)}%`,
+                        background: accent,
+                        transition: 'width 300ms ease',
+                      }} />
+                    </div>
+                    <div className="hint" style={{ marginTop: 6 }}>
+                      Section {progress.done} of {progress.total}
+                      {progress.title ? ` — ${progress.title.replace(/^\d+\.\s*/, '')}` : ''}
+                    </div>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="md" style={{ marginTop: 4 }}>
                 <blockquote>{readyNote || 'This generator is being wired up next.'}</blockquote>

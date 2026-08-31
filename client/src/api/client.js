@@ -34,6 +34,56 @@ export const api = {
   upload: (p, formData) => request('POST', p, formData, true),
   // Direct download URL (for links / window.open).
   downloadUrl: (docId) => `${BASE}/api/documents/${docId}/download`,
+  /**
+   * POST that reads a newline-delimited JSON stream, calling `onEvent` for each
+   * event as it arrives. Used for generations that run for minutes so the UI can
+   * show real progress. Resolves with the final `done` event's payload.
+   *
+   * Note the buffering: a chunk can split a line anywhere, so only complete
+   * lines are parsed and the remainder is carried to the next chunk.
+   */
+  async postStream(p, body, onEvent) {
+    const res = await fetch(`${BASE}/api${p}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {}),
+    });
+    if (!res.ok) {
+      let message = `Request failed (${res.status})`;
+      try { message = (await res.json())?.error?.message || message; } catch { /* non-JSON */ }
+      const err = new Error(message);
+      err.status = res.status;
+      throw err;
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let final = null;
+
+    const handle = (line) => {
+      if (!line.trim()) return;
+      let evt;
+      try { evt = JSON.parse(line); } catch { return; } // ignore a malformed line
+      if (evt.type === 'error') throw new Error(evt.message || 'Generation failed');
+      if (evt.type === 'done') final = evt;
+      onEvent?.(evt);
+    };
+
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? ''; // last element is an incomplete line
+      lines.forEach(handle);
+    }
+    handle(buffer); // flush whatever the stream ended on
+
+    if (!final) throw new Error('The generation ended without returning a document');
+    return final;
+  },
+
   // POST that returns a binary Blob (e.g. a generated .docx) for download.
   async postForBlob(p, body) {
     const res = await fetch(`${BASE}/api${p}`, {

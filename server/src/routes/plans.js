@@ -153,18 +153,46 @@ router.post(
 router.post(
   '/generate-risk-soa',
   asyncHandler(async (req, res) => {
-    const { clientId, title, instructions = '', save = true } = req.body || {};
+    const { clientId, title, instructions = '', save = true, stream = false } = req.body || {};
     if (!clientId) throw badRequest('clientId is required');
 
     const ctx = await gatherClientContext(clientId);
     if (!ctx) throw notFound('Client not found');
 
-    const { text, ai, sections, usedTemplate } = await generateRiskSoa(ctx, instructions);
+    // A 14-section SOA runs for minutes. When the caller asks to stream, emit
+    // newline-delimited JSON as each section lands so the UI can show real
+    // progress instead of an indefinite spinner. Once headers are sent the
+    // normal error handler can no longer write a status, so failures after
+    // that point are reported as a final `error` event.
+    let onProgress;
+    if (stream) {
+      res.setHeader('Content-Type', 'application/x-ndjson; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-transform');
+      res.setHeader('X-Accel-Buffering', 'no'); // don't let a proxy buffer the stream
+      res.flushHeaders?.();
+      onProgress = (p) => res.write(`${JSON.stringify({ type: 'progress', ...p })}\n`);
+    }
+
+    let generated;
+    try {
+      generated = await generateRiskSoa(ctx, instructions, { onProgress });
+    } catch (err) {
+      if (!stream) throw err;
+      res.write(`${JSON.stringify({ type: 'error', message: err.message })}\n`);
+      return res.end();
+    }
+    const { text, ai, sections, usedTemplate } = generated;
     const soaTitle = title
       || `Statement of Advice — ${ctx.client.first_name} ${ctx.client.last_name}`;
 
+    const finish = (payload) => {
+      if (!stream) return res.status(payload.saved ? 201 : 200).json(payload);
+      res.write(`${JSON.stringify({ type: 'done', ...payload })}\n`);
+      return res.end();
+    };
+
     if (!save) {
-      return res.json({ content: text, ai, sections, usedTemplate, saved: false });
+      return finish({ content: text, ai, sections, usedTemplate, saved: false });
     }
 
     const { rows: [plan] } = await query(
@@ -187,7 +215,7 @@ router.post(
       text,
     });
 
-    res.status(201).json({
+    return finish({
       ...plan, content: text, ai, sections, usedTemplate, saved: true, document,
     });
   })

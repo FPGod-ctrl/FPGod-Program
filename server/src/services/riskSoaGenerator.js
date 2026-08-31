@@ -149,14 +149,21 @@ function splitTemplateSections(content) {
   return sections;
 }
 
-/** Run async work with a concurrency cap, so a 14-section SOA stays affordable. */
-async function mapLimit(items, limit, fn) {
+/**
+ * Run async work with a concurrency cap, so a 14-section SOA stays affordable.
+ * `onDone` fires as each item finishes — sections complete out of order at
+ * concurrency 5, so it reports a running count rather than a position.
+ */
+async function mapLimit(items, limit, fn, onDone) {
   const out = new Array(items.length);
   let next = 0;
+  let finished = 0;
   const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
     while (next < items.length) {
       const idx = next; next += 1;
       out[idx] = await fn(items[idx], idx);
+      finished += 1;
+      if (onDone) onDone({ done: finished, total: items.length, title: items[idx].title });
     }
   });
   await Promise.all(workers);
@@ -170,6 +177,14 @@ async function writeSection(sec, contextText, instructions, today, templateTitle
     ? `TEMPLATE SECTION (follow its structure, headings, tables and depth):\n"""\n${excerpt(sec.text, 9000)}\n"""`
     : `WHAT THIS SECTION MUST COVER:\n${sec.brief}`;
 
+  // Front matter must not open its own 1..N sequence: the numbered sections
+  // follow it, and two competing outlines in one document reads as a fault.
+  const frontMatterRule = sec.isFrontMatter
+    ? '\n\nThis is the document FRONT MATTER (cover page, addressee, purpose, contents). '
+      + 'Do NOT introduce your own numbered sections — the numbered sections come later in '
+      + 'the document and your numbering would collide with theirs. Use unnumbered headings only.'
+    : '';
+
   // Every section of one SOA sends the same system prompt and the same client
   // file — only the section ask differs. Caching is a prefix match, so the
   // stable content must come FIRST and carry the breakpoint; the per-section
@@ -180,7 +195,7 @@ async function writeSection(sec, contextText, instructions, today, templateTitle
     + `Date of advice (use for any preparation date): ${today}.`
     + (instructions ? `\n\nADVISER NOTES — these reflect the advice actually given and take precedence over inference: ${instructions}` : '');
 
-  const volatile = `${guidance}\n\nNow write the section "${sec.title}" for this client.`;
+  const volatile = `${guidance}\n\nNow write the section "${sec.title}" for this client.${frontMatterRule}`;
 
   const { text } = await completeOrStub(
     {
@@ -209,9 +224,12 @@ async function writeSection(sec, contextText, instructions, today, templateTitle
  *
  * @param {object} ctx           client context from gatherClientContext()
  * @param {string} instructions  adviser notes describing the advice actually given
+ * @param {{onProgress?: (p:{done:number,total:number,title:string}) => void}} [opts]
+ *        onProgress fires as each section lands, so the caller can stream
+ *        progress to the UI — a 14-section SOA takes minutes.
  * @returns {Promise<{text:string, ai:boolean, sections:number, usedTemplate:string|null}>}
  */
-export async function generateRiskSoa(ctx, instructions = '') {
+export async function generateRiskSoa(ctx, instructions = '', { onProgress } = {}) {
   const tpl = await loadRiskTemplate();
   const templateSections = tpl ? splitTemplateSections(tpl.content) : [];
   const usingTemplate = templateSections.length >= 3;
@@ -225,8 +243,11 @@ export async function generateRiskSoa(ctx, instructions = '') {
   const today = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
   const contextText = contextToText(ctx);
 
-  const parts = await mapLimit(sections, 5, (sec) =>
-    writeSection(sec, contextText, instructions, today, templateTitle));
+  const parts = await mapLimit(
+    sections, 5,
+    (sec) => writeSection(sec, contextText, instructions, today, templateTitle),
+    onProgress
+  );
 
   const c = ctx.client;
   const header = `# Statement of Advice — ${c.first_name} ${c.last_name}\n\n`
