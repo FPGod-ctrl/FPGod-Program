@@ -8,24 +8,15 @@ standard this practice actually requires.
 | Folder | What goes in it |
 |--------|-----------------|
 | `templates/` | The firm's **blank** SOA template(s). The master document with headings, fixed wording and empty fields. |
-| `examples/` | **Completed** SOAs written for real clients, filed by case type. |
-| `examples/new-cover/` | Straightforward new cover, nothing being replaced. |
-| `examples/replacement/` | Existing cover being replaced or cancelled. |
-| `examples/inside-super/` | Cover held inside superannuation. |
+| `examples/` | **Completed** SOAs written for real clients. |
 
-Keep templates and examples separate: a blank template defines the required
-structure, while a completed SOA shows how the structure gets filled and how
-much depth each section carries. They are read differently.
+Two folders, no further nesting. Templates and examples stay separate because
+they are read differently: a blank template defines the required structure and
+the fixed wording, while a completed SOA shows how that structure gets filled
+and how much depth each section carries.
 
-Filing an example by case type saves me inferring it, and the three types
-genuinely differ — a replacement SOA carries comparison tables and the
-do-not-cancel warning that a new-cover SOA has no reason to include. If a
-document does not fit any of them, or spans two, leave it at the `examples/`
-root and I will work it out.
-
-Nest further whenever it helps — `examples/replacement/business-owner/`, or a
-`superseded/` folder beside a template when a newer version arrives. Depth is
-free; ambiguity is not.
+Case type — new cover, replacement, cover inside super — is read out of the
+documents themselves, so there is no need to file by it.
 
 ## Most useful, in order
 

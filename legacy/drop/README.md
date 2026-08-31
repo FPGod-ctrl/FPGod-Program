@@ -22,12 +22,11 @@ another.
 type — `soa-build`, not `soas`. The document-type folders live one level up
 (`../soa/`, `../client-profiles/`) and hold finished work, not inputs.
 
-**Nesting:** go as deep as is useful. A task folder splits by input kind
-(`templates/` vs `examples/`), and those split again where the distinction
-changes how the document is read — `examples/replacement/` carries comparison
-tables and the do-not-cancel warning that `examples/new-cover/` has no reason
-to. Every folder that is not self-evident gets a line in its parent's README.
-Depth is free; ambiguity is not.
+**Nesting:** go as deep as is useful, and no deeper. A task folder splits by
+input kind — `templates/` versus `examples/` — because those are read
+differently. Split further only where a distinction actually changes how a
+document is handled, and give any non-obvious folder a line in its parent's
+README.
 
 ## Formats — applies to every subfolder
 
