@@ -1,0 +1,16 @@
+[
+  {
+    "id": "a318d6ee-8b25-4517-a650-e3ce3da179c0",
+    "filename": "cfs non fee paying client review",
+    "source": "pdf",
+    "as_at_date": "2026-06-30",
+    "account_count": 258,
+    "holding_count": 1300,
+    "total_fum": 43657195.64,
+    "total_fees": 0.01,
+    "column_map": {},
+    "notes": null,
+    "created_at": "2026-07-26T11:45:09.406Z",
+    "updated_at": "2026-07-26T11:45:09.406Z"
+  }
+]

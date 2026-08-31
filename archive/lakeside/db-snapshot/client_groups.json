@@ -1,0 +1,18 @@
+[
+  {
+    "id": "c7967ceb-c8e5-41da-ab4f-f1592dcb3188",
+    "name": "The Harrison Household",
+    "group_type": "couple",
+    "notes": "Joint retirement planning, two dependents.",
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "c6935491-7636-467b-a24a-7f6d8aced917",
+    "name": "The Test Household (Demo)",
+    "group_type": "couple",
+    "notes": "Demonstration file — every field populated with fictional data. Safe to edit or delete.",
+    "created_at": "2026-07-26T11:22:49.837Z",
+    "updated_at": "2026-07-26T11:22:49.837Z"
+  }
+]

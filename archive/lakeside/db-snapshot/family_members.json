@@ -1,0 +1,80 @@
+[
+  {
+    "id": "e1635a0e-c08c-4cf7-bbf9-1883a201048d",
+    "client_id": "5c1b63df-8d45-41d9-b41b-fecd3cf9d057",
+    "group_id": null,
+    "first_name": "Ella",
+    "last_name": "Whitfield",
+    "relationship": "child",
+    "date_of_birth": "2011-06-08",
+    "is_dependent": true,
+    "notes": null,
+    "created_at": "2026-07-24T22:45:07.076Z",
+    "updated_at": "2026-07-24T22:45:07.076Z"
+  },
+  {
+    "id": "b98b3959-1162-4be0-a836-8f9f0f923540",
+    "client_id": "5c1b63df-8d45-41d9-b41b-fecd3cf9d057",
+    "group_id": null,
+    "first_name": "Noah",
+    "last_name": "Whitfield",
+    "relationship": "child",
+    "date_of_birth": "2014-01-22",
+    "is_dependent": true,
+    "notes": null,
+    "created_at": "2026-07-24T22:45:07.082Z",
+    "updated_at": "2026-07-24T22:45:07.082Z"
+  },
+  {
+    "id": "3d8bcd2c-c7ee-471c-9ef7-2e1353daff87",
+    "client_id": "5c1b63df-8d45-41d9-b41b-fecd3cf9d057",
+    "group_id": null,
+    "first_name": "Margaret",
+    "last_name": "Whitfield",
+    "relationship": "parent",
+    "date_of_birth": "1949-11-03",
+    "is_dependent": false,
+    "notes": "Jim's mother",
+    "created_at": "2026-07-24T22:45:07.085Z",
+    "updated_at": "2026-07-24T22:45:07.085Z"
+  },
+  {
+    "id": "66a52861-d742-4bbb-8428-ccf4adf18537",
+    "client_id": "70e7a802-7bf7-4b29-b1de-6ef1ed841da3",
+    "group_id": "c6935491-7636-467b-a24a-7f6d8aced917",
+    "first_name": "Ella",
+    "last_name": "Test",
+    "relationship": "child",
+    "date_of_birth": "2010-06-18",
+    "is_dependent": true,
+    "notes": "Year 10 at Marsden High. Wants to study veterinary science — university funding target set for 2029.",
+    "created_at": "2026-07-26T11:22:49.837Z",
+    "updated_at": "2026-07-26T11:22:49.837Z"
+  },
+  {
+    "id": "0de1e552-ae04-4a25-8ce0-132d5b93690d",
+    "client_id": "70e7a802-7bf7-4b29-b1de-6ef1ed841da3",
+    "group_id": "c6935491-7636-467b-a24a-7f6d8aced917",
+    "first_name": "Harry",
+    "last_name": "Test",
+    "relationship": "child",
+    "date_of_birth": "2013-02-27",
+    "is_dependent": true,
+    "notes": "Year 7 at Marsden High. Mild asthma (preventer only). Plays representative football — $2,400/yr in fees and travel.",
+    "created_at": "2026-07-26T11:22:49.837Z",
+    "updated_at": "2026-07-26T11:22:49.837Z"
+  },
+  {
+    "id": "0cf6c6a6-1318-49ea-b33c-10f9d2250035",
+    "client_id": "70e7a802-7bf7-4b29-b1de-6ef1ed841da3",
+    "group_id": "c6935491-7636-467b-a24a-7f6d8aced917",
+    "first_name": "Patricia",
+    "last_name": "Doyle",
+    "relationship": "parent",
+    "date_of_birth": "1953-09-09",
+    "is_dependent": false,
+    "notes": "Mary's mother, lives 10 minutes away in Carlingford. Financially independent (own home, ~$240k super) but likely to need aged-care support within 5-7 years.",
+    "created_at": "2026-07-26T11:22:49.837Z",
+    "updated_at": "2026-07-26T11:22:49.837Z"
+  }
+]

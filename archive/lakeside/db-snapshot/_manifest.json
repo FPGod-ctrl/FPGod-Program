@@ -1,0 +1,28 @@
+{
+  "takenAt": "2026-08-31T04:48:12.745Z",
+  "tables": [
+    "assets",
+    "cfs_accounts",
+    "cfs_allocations",
+    "cfs_holdings",
+    "cfs_imports",
+    "chat_messages",
+    "client_groups",
+    "clients",
+    "current_investments",
+    "documents",
+    "estate_plans",
+    "expenses",
+    "family_members",
+    "financial_goals",
+    "financial_plans",
+    "followup_emails",
+    "income_sources",
+    "insurance_policies",
+    "liabilities",
+    "meeting_transcripts",
+    "recommended_investments",
+    "training_data"
+  ],
+  "totalRows": 3007
+}

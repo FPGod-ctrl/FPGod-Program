@@ -1,0 +1,1294 @@
+[
+  {
+    "id": "beaf9050-617b-4c91-9822-79709d1e18aa",
+    "kind": "email",
+    "title": "Historical email #1 — tax-loss harvesting",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply tax-loss harvesting to improve your outcome. Next steps attached.",
+    "tags": [
+      "taxloss",
+      "harvesting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "a78d6fa0-5af9-42ac-affb-70947d9079f1",
+    "kind": "plan",
+    "title": "Historical plan #2 — Roth conversion ladder",
+    "content": "# Historical plan #2 — Roth conversion ladder\n\nClient sought retirement readiness. Strategy applied: Roth conversion ladder. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "Roth",
+      "conversion",
+      "ladder"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "c461819e-602f-45e0-a62b-8d104128e690",
+    "kind": "plan",
+    "title": "Historical plan #3 — bond tent glide path",
+    "content": "# Historical plan #3 — bond tent glide path\n\nClient sought retirement readiness. Strategy applied: bond tent glide path. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bond",
+      "tent",
+      "glide",
+      "path"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "4e1415fa-3fb7-4984-ab3c-2fb321cc610a",
+    "kind": "plan",
+    "title": "Historical plan #4 — dividend growth tilt",
+    "content": "# Historical plan #4 — dividend growth tilt\n\nClient sought retirement readiness. Strategy applied: dividend growth tilt. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dividend",
+      "growth",
+      "tilt"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "3a0cef9c-f3ad-4c8d-84d2-172435f85a4e",
+    "kind": "plan",
+    "title": "Historical plan #5 — factor diversification",
+    "content": "# Historical plan #5 — factor diversification\n\nClient sought retirement readiness. Strategy applied: factor diversification. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "factor",
+      "diversification"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "10d65ac5-8e17-4fb9-8415-a54b03f8d727",
+    "kind": "email",
+    "title": "Historical email #6 — liability-driven investing",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply liability-driven investing to improve your outcome. Next steps attached.",
+    "tags": [
+      "liabilitydriven",
+      "investing"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "398586fa-33d9-49fb-9641-9ad862fde372",
+    "kind": "plan",
+    "title": "Historical plan #7 — bucket strategy",
+    "content": "# Historical plan #7 — bucket strategy\n\nClient sought retirement readiness. Strategy applied: bucket strategy. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bucket",
+      "strategy"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "0294c43d-eaa5-425e-b458-4089fb00fa0f",
+    "kind": "plan",
+    "title": "Historical plan #8 — dynamic withdrawal",
+    "content": "# Historical plan #8 — dynamic withdrawal\n\nClient sought retirement readiness. Strategy applied: dynamic withdrawal. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dynamic",
+      "withdrawal"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "2dad97e4-d17d-4de1-b96a-96bc0723df1b",
+    "kind": "plan",
+    "title": "Historical plan #9 — estate gifting",
+    "content": "# Historical plan #9 — estate gifting\n\nClient sought retirement readiness. Strategy applied: estate gifting. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "estate",
+      "gifting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "885a4ce4-71fb-4f6e-bf6f-92d7db460aae",
+    "kind": "plan",
+    "title": "Historical plan #10 — HSA maximization",
+    "content": "# Historical plan #10 — HSA maximization\n\nClient sought retirement readiness. Strategy applied: HSA maximization. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "HSA",
+      "maximization"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "e6b5fbfa-02bb-488c-b376-91cda0bbb3a0",
+    "kind": "email",
+    "title": "Historical email #11 — tax-loss harvesting",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply tax-loss harvesting to improve your outcome. Next steps attached.",
+    "tags": [
+      "taxloss",
+      "harvesting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "a7519a73-28d6-4899-9d74-95ee17bbca60",
+    "kind": "plan",
+    "title": "Historical plan #12 — Roth conversion ladder",
+    "content": "# Historical plan #12 — Roth conversion ladder\n\nClient sought retirement readiness. Strategy applied: Roth conversion ladder. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "Roth",
+      "conversion",
+      "ladder"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "44d08e51-f328-46c8-8a24-082eb83fb6da",
+    "kind": "plan",
+    "title": "Historical plan #13 — bond tent glide path",
+    "content": "# Historical plan #13 — bond tent glide path\n\nClient sought retirement readiness. Strategy applied: bond tent glide path. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bond",
+      "tent",
+      "glide",
+      "path"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "60f2780a-cd40-4e51-bc25-d336fed12059",
+    "kind": "plan",
+    "title": "Historical plan #14 — dividend growth tilt",
+    "content": "# Historical plan #14 — dividend growth tilt\n\nClient sought retirement readiness. Strategy applied: dividend growth tilt. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dividend",
+      "growth",
+      "tilt"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "341c600c-f9a4-4229-ac06-9c759f8c0910",
+    "kind": "plan",
+    "title": "Historical plan #15 — factor diversification",
+    "content": "# Historical plan #15 — factor diversification\n\nClient sought retirement readiness. Strategy applied: factor diversification. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "factor",
+      "diversification"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "94762049-9e9f-4e33-bd60-52d6a028631a",
+    "kind": "email",
+    "title": "Historical email #16 — liability-driven investing",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply liability-driven investing to improve your outcome. Next steps attached.",
+    "tags": [
+      "liabilitydriven",
+      "investing"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "369d4226-a8eb-4c43-aed7-e6152714d517",
+    "kind": "plan",
+    "title": "Historical plan #17 — bucket strategy",
+    "content": "# Historical plan #17 — bucket strategy\n\nClient sought retirement readiness. Strategy applied: bucket strategy. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bucket",
+      "strategy"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "49eb2407-b82c-4c77-9ef4-6b6025af5c70",
+    "kind": "plan",
+    "title": "Historical plan #18 — dynamic withdrawal",
+    "content": "# Historical plan #18 — dynamic withdrawal\n\nClient sought retirement readiness. Strategy applied: dynamic withdrawal. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dynamic",
+      "withdrawal"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "0dbe5fd7-1258-4f26-89bd-899e1f14d8d4",
+    "kind": "plan",
+    "title": "Historical plan #19 — estate gifting",
+    "content": "# Historical plan #19 — estate gifting\n\nClient sought retirement readiness. Strategy applied: estate gifting. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "estate",
+      "gifting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "e0af182f-8761-4079-ba4a-82997e5171be",
+    "kind": "plan",
+    "title": "Historical plan #20 — HSA maximization",
+    "content": "# Historical plan #20 — HSA maximization\n\nClient sought retirement readiness. Strategy applied: HSA maximization. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "HSA",
+      "maximization"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "221801a2-8da8-40c0-af1c-fb4acf111d47",
+    "kind": "email",
+    "title": "Historical email #21 — tax-loss harvesting",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply tax-loss harvesting to improve your outcome. Next steps attached.",
+    "tags": [
+      "taxloss",
+      "harvesting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "4d795ed7-e598-4a5f-a274-5fe83b9621c2",
+    "kind": "plan",
+    "title": "Historical plan #22 — Roth conversion ladder",
+    "content": "# Historical plan #22 — Roth conversion ladder\n\nClient sought retirement readiness. Strategy applied: Roth conversion ladder. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "Roth",
+      "conversion",
+      "ladder"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "25056b81-168c-41de-8014-c596543f28f2",
+    "kind": "plan",
+    "title": "Historical plan #23 — bond tent glide path",
+    "content": "# Historical plan #23 — bond tent glide path\n\nClient sought retirement readiness. Strategy applied: bond tent glide path. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bond",
+      "tent",
+      "glide",
+      "path"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "f6ac8eac-02c4-404e-b0fe-87e44e57c5c5",
+    "kind": "plan",
+    "title": "Historical plan #24 — dividend growth tilt",
+    "content": "# Historical plan #24 — dividend growth tilt\n\nClient sought retirement readiness. Strategy applied: dividend growth tilt. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dividend",
+      "growth",
+      "tilt"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "8c3c0018-a879-4702-953f-884f2323506b",
+    "kind": "plan",
+    "title": "Historical plan #25 — factor diversification",
+    "content": "# Historical plan #25 — factor diversification\n\nClient sought retirement readiness. Strategy applied: factor diversification. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "factor",
+      "diversification"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "c8a267e0-8bb8-4b28-91dc-6cdcd8fe42ec",
+    "kind": "email",
+    "title": "Historical email #26 — liability-driven investing",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply liability-driven investing to improve your outcome. Next steps attached.",
+    "tags": [
+      "liabilitydriven",
+      "investing"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "94587b68-6eef-486f-8fff-70e66483490b",
+    "kind": "plan",
+    "title": "Historical plan #27 — bucket strategy",
+    "content": "# Historical plan #27 — bucket strategy\n\nClient sought retirement readiness. Strategy applied: bucket strategy. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bucket",
+      "strategy"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "ce21638e-e481-47dc-857a-b2be494f303a",
+    "kind": "plan",
+    "title": "Historical plan #28 — dynamic withdrawal",
+    "content": "# Historical plan #28 — dynamic withdrawal\n\nClient sought retirement readiness. Strategy applied: dynamic withdrawal. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dynamic",
+      "withdrawal"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "8a74be29-9d59-493d-93d2-7e9cfc14c724",
+    "kind": "plan",
+    "title": "Historical plan #29 — estate gifting",
+    "content": "# Historical plan #29 — estate gifting\n\nClient sought retirement readiness. Strategy applied: estate gifting. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "estate",
+      "gifting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "53a634b3-b851-4da0-8f1c-fd9510d9bcd8",
+    "kind": "plan",
+    "title": "Historical plan #30 — HSA maximization",
+    "content": "# Historical plan #30 — HSA maximization\n\nClient sought retirement readiness. Strategy applied: HSA maximization. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "HSA",
+      "maximization"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "1d6e386b-a0fa-443d-a6f9-df16abafddc3",
+    "kind": "email",
+    "title": "Historical email #31 — tax-loss harvesting",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply tax-loss harvesting to improve your outcome. Next steps attached.",
+    "tags": [
+      "taxloss",
+      "harvesting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "842c7bd5-5118-4c00-aff3-ce8573a69f93",
+    "kind": "plan",
+    "title": "Historical plan #32 — Roth conversion ladder",
+    "content": "# Historical plan #32 — Roth conversion ladder\n\nClient sought retirement readiness. Strategy applied: Roth conversion ladder. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "Roth",
+      "conversion",
+      "ladder"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "070aff90-670a-4664-8527-c8c36ef6a779",
+    "kind": "plan",
+    "title": "Historical plan #33 — bond tent glide path",
+    "content": "# Historical plan #33 — bond tent glide path\n\nClient sought retirement readiness. Strategy applied: bond tent glide path. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bond",
+      "tent",
+      "glide",
+      "path"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "1aa57f01-1d0e-47c2-9fde-1d0bc5de1f65",
+    "kind": "plan",
+    "title": "Historical plan #34 — dividend growth tilt",
+    "content": "# Historical plan #34 — dividend growth tilt\n\nClient sought retirement readiness. Strategy applied: dividend growth tilt. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dividend",
+      "growth",
+      "tilt"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "77642f9c-c52b-40ed-b670-3f11dec5689e",
+    "kind": "plan",
+    "title": "Historical plan #35 — factor diversification",
+    "content": "# Historical plan #35 — factor diversification\n\nClient sought retirement readiness. Strategy applied: factor diversification. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "factor",
+      "diversification"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "e4edba63-6390-463b-897f-af9f565fa166",
+    "kind": "email",
+    "title": "Historical email #36 — liability-driven investing",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply liability-driven investing to improve your outcome. Next steps attached.",
+    "tags": [
+      "liabilitydriven",
+      "investing"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "5e665ccc-9be2-48ca-8d9c-79936d8b5185",
+    "kind": "plan",
+    "title": "Historical plan #37 — bucket strategy",
+    "content": "# Historical plan #37 — bucket strategy\n\nClient sought retirement readiness. Strategy applied: bucket strategy. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bucket",
+      "strategy"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "b8fad755-c770-4ae0-ac3d-a209d6369572",
+    "kind": "plan",
+    "title": "Historical plan #38 — dynamic withdrawal",
+    "content": "# Historical plan #38 — dynamic withdrawal\n\nClient sought retirement readiness. Strategy applied: dynamic withdrawal. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dynamic",
+      "withdrawal"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "d4a1eb6a-8eef-4f6a-aa1c-e05d6718d36c",
+    "kind": "plan",
+    "title": "Historical plan #39 — estate gifting",
+    "content": "# Historical plan #39 — estate gifting\n\nClient sought retirement readiness. Strategy applied: estate gifting. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "estate",
+      "gifting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "0304f6ae-8926-4de3-b109-79b204283d9b",
+    "kind": "plan",
+    "title": "Historical plan #40 — HSA maximization",
+    "content": "# Historical plan #40 — HSA maximization\n\nClient sought retirement readiness. Strategy applied: HSA maximization. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "HSA",
+      "maximization"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "ddfbc5af-864e-4eba-a05b-0a484bed6718",
+    "kind": "email",
+    "title": "Historical email #41 — tax-loss harvesting",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply tax-loss harvesting to improve your outcome. Next steps attached.",
+    "tags": [
+      "taxloss",
+      "harvesting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "7b648d68-5fca-4222-8776-daba28ab94b6",
+    "kind": "plan",
+    "title": "Historical plan #42 — Roth conversion ladder",
+    "content": "# Historical plan #42 — Roth conversion ladder\n\nClient sought retirement readiness. Strategy applied: Roth conversion ladder. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "Roth",
+      "conversion",
+      "ladder"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "166a3356-00c6-4c2e-8edb-7e7c0baa7a23",
+    "kind": "plan",
+    "title": "Historical plan #43 — bond tent glide path",
+    "content": "# Historical plan #43 — bond tent glide path\n\nClient sought retirement readiness. Strategy applied: bond tent glide path. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bond",
+      "tent",
+      "glide",
+      "path"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "8e9b2b61-585a-4379-ac82-f5fe50fde59e",
+    "kind": "plan",
+    "title": "Historical plan #44 — dividend growth tilt",
+    "content": "# Historical plan #44 — dividend growth tilt\n\nClient sought retirement readiness. Strategy applied: dividend growth tilt. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dividend",
+      "growth",
+      "tilt"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "8d6f2206-6425-4877-8393-87dc67b80fdd",
+    "kind": "plan",
+    "title": "Historical plan #45 — factor diversification",
+    "content": "# Historical plan #45 — factor diversification\n\nClient sought retirement readiness. Strategy applied: factor diversification. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "factor",
+      "diversification"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "fec8aa87-7865-4925-b8ed-3f91ad051b10",
+    "kind": "email",
+    "title": "Historical email #46 — liability-driven investing",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply liability-driven investing to improve your outcome. Next steps attached.",
+    "tags": [
+      "liabilitydriven",
+      "investing"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "d9a8c14f-ffb6-492b-b40c-ab43a5828006",
+    "kind": "plan",
+    "title": "Historical plan #47 — bucket strategy",
+    "content": "# Historical plan #47 — bucket strategy\n\nClient sought retirement readiness. Strategy applied: bucket strategy. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bucket",
+      "strategy"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "b6db120f-4cc5-47f8-95cc-e04eb970d701",
+    "kind": "plan",
+    "title": "Historical plan #48 — dynamic withdrawal",
+    "content": "# Historical plan #48 — dynamic withdrawal\n\nClient sought retirement readiness. Strategy applied: dynamic withdrawal. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dynamic",
+      "withdrawal"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "425bf61a-b975-448e-8881-a1aaba8b4be3",
+    "kind": "plan",
+    "title": "Historical plan #49 — estate gifting",
+    "content": "# Historical plan #49 — estate gifting\n\nClient sought retirement readiness. Strategy applied: estate gifting. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "estate",
+      "gifting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "6b9b1734-ff5d-42ee-a82a-9b1ffaf697f0",
+    "kind": "plan",
+    "title": "Historical plan #50 — HSA maximization",
+    "content": "# Historical plan #50 — HSA maximization\n\nClient sought retirement readiness. Strategy applied: HSA maximization. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "HSA",
+      "maximization"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "eba9dc2b-ca89-4827-a9a8-c3bf55e631c6",
+    "kind": "email",
+    "title": "Historical email #51 — tax-loss harvesting",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply tax-loss harvesting to improve your outcome. Next steps attached.",
+    "tags": [
+      "taxloss",
+      "harvesting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "c7b0c222-1207-4128-9e73-8278fe7b9af3",
+    "kind": "plan",
+    "title": "Historical plan #52 — Roth conversion ladder",
+    "content": "# Historical plan #52 — Roth conversion ladder\n\nClient sought retirement readiness. Strategy applied: Roth conversion ladder. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "Roth",
+      "conversion",
+      "ladder"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "462c7fb1-7c66-4a6e-be01-ca821430bca9",
+    "kind": "plan",
+    "title": "Historical plan #53 — bond tent glide path",
+    "content": "# Historical plan #53 — bond tent glide path\n\nClient sought retirement readiness. Strategy applied: bond tent glide path. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bond",
+      "tent",
+      "glide",
+      "path"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "285ec176-328c-4981-a8bc-cdffc7b5e671",
+    "kind": "plan",
+    "title": "Historical plan #54 — dividend growth tilt",
+    "content": "# Historical plan #54 — dividend growth tilt\n\nClient sought retirement readiness. Strategy applied: dividend growth tilt. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dividend",
+      "growth",
+      "tilt"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "d89219eb-c423-4760-a344-634cf3ac712e",
+    "kind": "plan",
+    "title": "Historical plan #55 — factor diversification",
+    "content": "# Historical plan #55 — factor diversification\n\nClient sought retirement readiness. Strategy applied: factor diversification. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "factor",
+      "diversification"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "1fc15590-d6a3-4f0a-8ff5-6d6d9061f932",
+    "kind": "email",
+    "title": "Historical email #56 — liability-driven investing",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply liability-driven investing to improve your outcome. Next steps attached.",
+    "tags": [
+      "liabilitydriven",
+      "investing"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "b8e263c3-df81-4bad-b853-a4ba89126000",
+    "kind": "plan",
+    "title": "Historical plan #57 — bucket strategy",
+    "content": "# Historical plan #57 — bucket strategy\n\nClient sought retirement readiness. Strategy applied: bucket strategy. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bucket",
+      "strategy"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "d0779e5a-3225-4ca0-a0fc-d2bab8a9206d",
+    "kind": "plan",
+    "title": "Historical plan #58 — dynamic withdrawal",
+    "content": "# Historical plan #58 — dynamic withdrawal\n\nClient sought retirement readiness. Strategy applied: dynamic withdrawal. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dynamic",
+      "withdrawal"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "39997a9a-9899-4eeb-91e3-9cb78ea243b2",
+    "kind": "plan",
+    "title": "Historical plan #59 — estate gifting",
+    "content": "# Historical plan #59 — estate gifting\n\nClient sought retirement readiness. Strategy applied: estate gifting. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "estate",
+      "gifting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "6e2f5b9d-a77a-406a-aa1f-215008e702b4",
+    "kind": "plan",
+    "title": "Historical plan #60 — HSA maximization",
+    "content": "# Historical plan #60 — HSA maximization\n\nClient sought retirement readiness. Strategy applied: HSA maximization. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "HSA",
+      "maximization"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "af5ac10f-0930-4874-b832-3d9e13c39ef9",
+    "kind": "email",
+    "title": "Historical email #61 — tax-loss harvesting",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply tax-loss harvesting to improve your outcome. Next steps attached.",
+    "tags": [
+      "taxloss",
+      "harvesting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "a2129fe2-b4e2-44fd-a484-212f4072e4d0",
+    "kind": "plan",
+    "title": "Historical plan #62 — Roth conversion ladder",
+    "content": "# Historical plan #62 — Roth conversion ladder\n\nClient sought retirement readiness. Strategy applied: Roth conversion ladder. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "Roth",
+      "conversion",
+      "ladder"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "dd44334b-e3f7-4f25-88f1-3d2287708118",
+    "kind": "plan",
+    "title": "Historical plan #63 — bond tent glide path",
+    "content": "# Historical plan #63 — bond tent glide path\n\nClient sought retirement readiness. Strategy applied: bond tent glide path. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bond",
+      "tent",
+      "glide",
+      "path"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "41887007-5462-46a8-b514-dd88906f6c76",
+    "kind": "plan",
+    "title": "Historical plan #64 — dividend growth tilt",
+    "content": "# Historical plan #64 — dividend growth tilt\n\nClient sought retirement readiness. Strategy applied: dividend growth tilt. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dividend",
+      "growth",
+      "tilt"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "b0f83a23-c885-4ea8-a43e-be319bc1dfcb",
+    "kind": "plan",
+    "title": "Historical plan #65 — factor diversification",
+    "content": "# Historical plan #65 — factor diversification\n\nClient sought retirement readiness. Strategy applied: factor diversification. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "factor",
+      "diversification"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "89ae957f-e94d-41e2-b610-c24eb510bc39",
+    "kind": "email",
+    "title": "Historical email #66 — liability-driven investing",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply liability-driven investing to improve your outcome. Next steps attached.",
+    "tags": [
+      "liabilitydriven",
+      "investing"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "963a96c2-72bd-4ac6-b4ba-46da7bddf18a",
+    "kind": "plan",
+    "title": "Historical plan #67 — bucket strategy",
+    "content": "# Historical plan #67 — bucket strategy\n\nClient sought retirement readiness. Strategy applied: bucket strategy. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bucket",
+      "strategy"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "d15fde8e-2cbe-4fb4-99bc-7a3b0ef350fc",
+    "kind": "plan",
+    "title": "Historical plan #68 — dynamic withdrawal",
+    "content": "# Historical plan #68 — dynamic withdrawal\n\nClient sought retirement readiness. Strategy applied: dynamic withdrawal. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dynamic",
+      "withdrawal"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "dbc2896d-0bfe-4e65-8ba3-a35d16d7e52c",
+    "kind": "plan",
+    "title": "Historical plan #69 — estate gifting",
+    "content": "# Historical plan #69 — estate gifting\n\nClient sought retirement readiness. Strategy applied: estate gifting. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "estate",
+      "gifting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "204acc3f-6ae7-4f1f-97e8-4c3b7b11cd28",
+    "kind": "plan",
+    "title": "Historical plan #70 — HSA maximization",
+    "content": "# Historical plan #70 — HSA maximization\n\nClient sought retirement readiness. Strategy applied: HSA maximization. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "HSA",
+      "maximization"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "3bf41c72-5707-4c3e-b79e-8d1558c899aa",
+    "kind": "email",
+    "title": "Historical email #71 — tax-loss harvesting",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply tax-loss harvesting to improve your outcome. Next steps attached.",
+    "tags": [
+      "taxloss",
+      "harvesting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "f79dca39-14de-4555-8845-d8af67a46041",
+    "kind": "plan",
+    "title": "Historical plan #72 — Roth conversion ladder",
+    "content": "# Historical plan #72 — Roth conversion ladder\n\nClient sought retirement readiness. Strategy applied: Roth conversion ladder. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "Roth",
+      "conversion",
+      "ladder"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "041d300e-290d-473f-af85-9eb5246470ab",
+    "kind": "plan",
+    "title": "Historical plan #73 — bond tent glide path",
+    "content": "# Historical plan #73 — bond tent glide path\n\nClient sought retirement readiness. Strategy applied: bond tent glide path. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bond",
+      "tent",
+      "glide",
+      "path"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "9cba8827-040e-4d9f-9b20-18525cc41a75",
+    "kind": "plan",
+    "title": "Historical plan #74 — dividend growth tilt",
+    "content": "# Historical plan #74 — dividend growth tilt\n\nClient sought retirement readiness. Strategy applied: dividend growth tilt. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dividend",
+      "growth",
+      "tilt"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "7a4571b5-001f-441f-bef9-81ca1877d398",
+    "kind": "plan",
+    "title": "Historical plan #75 — factor diversification",
+    "content": "# Historical plan #75 — factor diversification\n\nClient sought retirement readiness. Strategy applied: factor diversification. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "factor",
+      "diversification"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "47d7939d-2de4-4eea-b670-3186e7de953f",
+    "kind": "email",
+    "title": "Historical email #76 — liability-driven investing",
+    "content": "Subject: Recap & next steps\n\nThank you for the meeting. As discussed we will apply liability-driven investing to improve your outcome. Next steps attached.",
+    "tags": [
+      "liabilitydriven",
+      "investing"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "685fe642-863e-4183-ac14-57dd1648a78e",
+    "kind": "plan",
+    "title": "Historical plan #77 — bucket strategy",
+    "content": "# Historical plan #77 — bucket strategy\n\nClient sought retirement readiness. Strategy applied: bucket strategy. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "bucket",
+      "strategy"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "64e642d8-8d8a-49fd-a7c1-127a7fd3ad27",
+    "kind": "plan",
+    "title": "Historical plan #78 — dynamic withdrawal",
+    "content": "# Historical plan #78 — dynamic withdrawal\n\nClient sought retirement readiness. Strategy applied: dynamic withdrawal. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "dynamic",
+      "withdrawal"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "acb34ac1-7fb0-49d4-9323-ab264b195441",
+    "kind": "plan",
+    "title": "Historical plan #79 — estate gifting",
+    "content": "# Historical plan #79 — estate gifting\n\nClient sought retirement readiness. Strategy applied: estate gifting. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "estate",
+      "gifting"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "58db7f03-5248-47a1-8bda-dd174701869c",
+    "kind": "plan",
+    "title": "Historical plan #80 — HSA maximization",
+    "content": "# Historical plan #80 — HSA maximization\n\nClient sought retirement readiness. Strategy applied: HSA maximization. Outcome: improved after-tax return and clearer glide path.",
+    "tags": [
+      "HSA",
+      "maximization"
+    ],
+    "metadata": {},
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "203749e1-aeb7-4a89-b660-de4946c86c65",
+    "kind": "plan",
+    "title": "plan-a",
+    "content": "Plan A: bond tent glide path.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:09:24.107Z",
+    "updated_at": "2026-07-26T11:09:24.107Z"
+  },
+  {
+    "id": "cbb514b0-eba5-475b-ac93-8b13c568e9cd",
+    "kind": "plan",
+    "title": "plan-b",
+    "content": "Plan B: Roth conversion ladder.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:09:24.124Z",
+    "updated_at": "2026-07-26T11:09:24.124Z"
+  },
+  {
+    "id": "76dc2540-45aa-424f-afa2-fd922ad3f2ef",
+    "kind": "plan",
+    "title": "plan-a",
+    "content": "Plan A: bond tent glide path.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:10:22.843Z",
+    "updated_at": "2026-07-26T11:10:22.843Z"
+  },
+  {
+    "id": "3069f01c-09d5-4e35-8bfb-18158d7c81a1",
+    "kind": "plan",
+    "title": "plan-b",
+    "content": "Plan B: Roth conversion ladder.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:10:22.844Z",
+    "updated_at": "2026-07-26T11:10:22.844Z"
+  },
+  {
+    "id": "df04238a-16f6-4c7f-9f5f-27c957787da8",
+    "kind": "plan",
+    "title": "plan-a",
+    "content": "Plan A: bond tent glide path.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:11:23.541Z",
+    "updated_at": "2026-07-26T11:11:23.541Z"
+  },
+  {
+    "id": "042b6aa0-d473-4883-a145-7cf15a101249",
+    "kind": "plan",
+    "title": "plan-b",
+    "content": "Plan B: Roth conversion ladder.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:11:23.543Z",
+    "updated_at": "2026-07-26T11:11:23.543Z"
+  },
+  {
+    "id": "c3197db2-fb4e-4e92-b44a-62b1a3957579",
+    "kind": "plan",
+    "title": "plan-a",
+    "content": "Plan A: bond tent glide path.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:17:18.747Z",
+    "updated_at": "2026-07-26T11:17:18.747Z"
+  },
+  {
+    "id": "57c975fa-0abe-42bc-be4c-a3f6c10571e5",
+    "kind": "plan",
+    "title": "plan-b",
+    "content": "Plan B: Roth conversion ladder.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:17:18.748Z",
+    "updated_at": "2026-07-26T11:17:18.748Z"
+  },
+  {
+    "id": "e27bf39e-38a8-4618-8ee1-bbf9642209da",
+    "kind": "plan",
+    "title": "plan-a",
+    "content": "Plan A: bond tent glide path.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:17:34.523Z",
+    "updated_at": "2026-07-26T11:17:34.523Z"
+  },
+  {
+    "id": "9ea0ef41-2659-45e7-bd29-ffe014b17265",
+    "kind": "plan",
+    "title": "plan-b",
+    "content": "Plan B: Roth conversion ladder.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:17:34.524Z",
+    "updated_at": "2026-07-26T11:17:34.524Z"
+  },
+  {
+    "id": "bf0d0b17-7041-47a5-abc4-c04d1e46b49d",
+    "kind": "plan",
+    "title": "plan-a",
+    "content": "Plan A: bond tent glide path.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:27:41.881Z",
+    "updated_at": "2026-07-26T11:27:41.881Z"
+  },
+  {
+    "id": "329e41e4-a711-41cf-8e56-31de0524471b",
+    "kind": "plan",
+    "title": "plan-b",
+    "content": "Plan B: Roth conversion ladder.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:27:41.883Z",
+    "updated_at": "2026-07-26T11:27:41.883Z"
+  },
+  {
+    "id": "5c81be61-0cb3-469b-9c4f-1f7b369bcd7c",
+    "kind": "plan",
+    "title": "plan-a",
+    "content": "Plan A: bond tent glide path.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:29:16.337Z",
+    "updated_at": "2026-07-26T11:29:16.337Z"
+  },
+  {
+    "id": "70fa43bb-f6f0-4c88-bff1-5997b11760a4",
+    "kind": "plan",
+    "title": "plan-b",
+    "content": "Plan B: Roth conversion ladder.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:29:16.338Z",
+    "updated_at": "2026-07-26T11:29:16.338Z"
+  },
+  {
+    "id": "169b46d6-9e44-4cbd-981d-d44d7c75dc2c",
+    "kind": "plan",
+    "title": "plan-a",
+    "content": "Plan A: bond tent glide path.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:50:55.428Z",
+    "updated_at": "2026-07-26T11:50:55.428Z"
+  },
+  {
+    "id": "47b63d49-8ce9-4bec-b4f6-e85924150e4c",
+    "kind": "plan",
+    "title": "plan-b",
+    "content": "Plan B: Roth conversion ladder.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:50:55.430Z",
+    "updated_at": "2026-07-26T11:50:55.430Z"
+  },
+  {
+    "id": "cc5eeea6-bba2-4a3d-81f8-7bcd45054202",
+    "kind": "plan",
+    "title": "plan-a",
+    "content": "Plan A: bond tent glide path.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:53:39.405Z",
+    "updated_at": "2026-07-26T11:53:39.405Z"
+  },
+  {
+    "id": "e8294429-b575-4365-8a02-e4ad25d34838",
+    "kind": "plan",
+    "title": "plan-b",
+    "content": "Plan B: Roth conversion ladder.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T11:53:39.406Z",
+    "updated_at": "2026-07-26T11:53:39.406Z"
+  },
+  {
+    "id": "d41fa40a-61fc-4436-a073-983520dc4e78",
+    "kind": "plan",
+    "title": "plan-a",
+    "content": "Plan A: bond tent glide path.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T12:12:54.257Z",
+    "updated_at": "2026-07-26T12:12:54.257Z"
+  },
+  {
+    "id": "e6b80956-1911-49f3-ae85-629de60f88be",
+    "kind": "plan",
+    "title": "plan-b",
+    "content": "Plan B: Roth conversion ladder.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-07-26T12:12:54.259Z",
+    "updated_at": "2026-07-26T12:12:54.259Z"
+  },
+  {
+    "id": "56d97728-3015-4c44-af73-2dec09d621af",
+    "kind": "plan",
+    "title": "plan-a",
+    "content": "Plan A: bond tent glide path.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-08-31T04:46:41.815Z",
+    "updated_at": "2026-08-31T04:46:41.815Z"
+  },
+  {
+    "id": "74177ecb-f2d9-40e8-9f0f-80c84c31b2c1",
+    "kind": "plan",
+    "title": "plan-b",
+    "content": "Plan B: Roth conversion ladder.",
+    "tags": [],
+    "metadata": {},
+    "created_at": "2026-08-31T04:46:41.826Z",
+    "updated_at": "2026-08-31T04:46:41.826Z"
+  }
+]

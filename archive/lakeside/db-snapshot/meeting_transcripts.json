@@ -1,0 +1,118 @@
+[
+  {
+    "id": "7e0c1d98-1c5e-49fc-98d7-e1093d380937",
+    "client_id": "539d88e6-0f90-4e83-a378-c8f9943d3d0a",
+    "group_id": "c7967ceb-c8e5-41da-ab4f-f1592dcb3188",
+    "title": "Q2 Review — Harrison Household",
+    "meeting_date": "2026-05-20",
+    "content": "Advisor: Thanks for joining. Alice: We are worried about the cash sitting idle. Bob: And we want to start the kids' college funds this year. Advisor: Understood, I'll propose a bond ladder and two 529 plans.",
+    "summary": "Couple wants idle cash deployed and college funds started this year.",
+    "action_items": [],
+    "created_at": "2026-06-04T01:57:17.318Z",
+    "updated_at": "2026-06-04T01:57:17.318Z"
+  },
+  {
+    "id": "bb6e3acb-53a5-4af8-a022-11f07db2d934",
+    "client_id": "70e7a802-7bf7-4b29-b1de-6ef1ed841da3",
+    "group_id": "c6935491-7636-467b-a24a-7f6d8aced917",
+    "title": "Discovery Meeting — John & Mary Test",
+    "meeting_date": "2026-06-11",
+    "content": "[00:00] Adviser: Thanks for coming in, both of you. Stephen speaks very highly of you, John.\n\n[00:12] John: He's been telling me for two years I should sort this out, so here we are.\n\n[00:20] Adviser: Let's start with what prompted the call rather than the numbers.\n\n[00:31] Mary: Honestly? The insurance. We took it out over the phone in 2019, we pay about\n$780 a month between us, and neither of us could tell you what it actually covers.\n\n[00:52] John: And I've got an old super account I've never dealt with. Colonial First State.\nThere's about $24,000 in it. I left it because I think there's insurance attached and I didn't\nwant to cancel something by accident.\n\n[01:20] Adviser: That's the right instinct — never close a fund with cover attached until the\nreplacement is in force. We'll confirm it in writing before we touch it. Mary, what about you?\n\n[01:38] Mary: HESTA. Whatever the default is. I've never chosen anything.\n\n[02:05] Adviser: Do you have income protection, Mary?\n\n[02:09] Mary: No. Should I?\n\n[02:11] Adviser: You earn $96,000. If you were off for six months that's around $48,000 gone —\nwhich comes straight out of your emergency savings. That's the biggest single gap I can see so far.\n\n[02:34] John: We hadn't thought about it that way. She's the one on her feet all day too.\n\n[02:48] Adviser: Let's talk about the goals. If we're sitting here in fifteen years, what does\ngood look like?\n\n[03:02] John: Retire around 62 with roughly $2m so we're not relying on the pension. And the\nhouse paid off before Ella starts university — that's 2029.\n\n[03:24] Mary: And knowing the kids are covered. That's the one that keeps me up.\n\n[03:35] Adviser: Understood. Anything off the table?\n\n[03:41] John: No gearing. We've got the Newcastle place and that's enough borrowing for me.\n\n[03:52] Adviser: Noted. Tell me about Newcastle.\n\n[04:01] John: Bought it in 2021 for $525,000. It's worth about $610,000 now. Rented at $600 a week.\n\n[04:18] Adviser: And the loan is interest only?\n\n[04:20] John: Yes.\n\n[04:22] Adviser: Do you know when the interest-only period ends?\n\n[04:26] John: ... No. Should I?\n\n[04:29] Adviser: March 2027 by the look of the statement. Your repayments will go up by roughly\n$780 a month at that point. It's manageable on your surplus, but it needs to be in the plan\nrather than a surprise.\n\n[04:52] Mary: That's exactly the sort of thing we don't know about.\n\n[05:10] Adviser: One more — your wills. When were they done?\n\n[05:14] Mary: 2021, with Harrington & Cole.\n\n[05:18] Adviser: Before or after Newcastle?\n\n[05:22] Mary: ... Before. August, I think. We bought in the August too.\n\n[05:31] Adviser: We'll check the dates. And I'll want to look at both your super beneficiary\nnominations — super doesn't pass under your will, it follows the nomination you've made with\nthe fund, and they lapse after three years unless they're non-lapsing.\n\n[05:58] John: Mine's fine, I did it in 2024.\n\n[06:02] Mary: I have absolutely no idea about mine.\n\n[06:06] Adviser: We'll find out. If it's lapsed, your balance and your default life cover would\nbe paid at the trustee's discretion instead of straight to John. It's a five-minute fix, but it\nmatters.\n\n[06:30] Adviser: I'll send an authority to contact your fund and your accountant, and we'll get\nstatements in. Give me three weeks and I'll come back with a strategy.",
+    "summary": "First meeting. Trigger was unreviewed 2019 insurance (~$780/month, never analysed) and a legacy Colonial First State super account John was afraid to close. Identified: Mary has no income protection at all (largest gap), Mary's HESTA nomination status unknown, the Newcastle interest-only period ends March 2027 (+$780/month) which the clients were unaware of, and the 2021 wills predate the Newcastle purchase. Goals: retire at 62 with ~$2m, home loan cleared before Ella starts university in 2029, children protected. No gearing beyond the existing property.",
+    "action_items": [
+      {
+        "due": "2026-06-13",
+        "done": true,
+        "task": "Send authority to contact ART, HESTA, CFS and the accountant",
+        "owner": "Adviser"
+      },
+      {
+        "due": "2026-06-20",
+        "done": true,
+        "task": "Confirm in writing whether insurance is attached to the CFS account",
+        "owner": "Adviser"
+      },
+      {
+        "due": "2026-06-20",
+        "done": true,
+        "task": "Confirm the status of Mary's HESTA binding nomination",
+        "owner": "Adviser"
+      },
+      {
+        "due": "2026-06-20",
+        "done": true,
+        "task": "Confirm the Newcastle interest-only expiry date with ING",
+        "owner": "Adviser"
+      },
+      {
+        "due": "2026-06-18",
+        "done": true,
+        "task": "Send through the last two payslips each and the 2025 tax returns",
+        "owner": "Client"
+      },
+      {
+        "due": "2026-06-18",
+        "done": true,
+        "task": "Complete the risk profile questionnaire (both)",
+        "owner": "Client"
+      }
+    ],
+    "created_at": "2026-07-26T11:22:49.837Z",
+    "updated_at": "2026-07-26T11:22:49.837Z"
+  },
+  {
+    "id": "c1708cfa-3e0d-477b-9965-c7f43e35a3c9",
+    "client_id": "70e7a802-7bf7-4b29-b1de-6ef1ed841da3",
+    "group_id": "c6935491-7636-467b-a24a-7f6d8aced917",
+    "title": "Strategy Presentation — John & Mary Test",
+    "meeting_date": "2026-07-16",
+    "content": "[00:00] Adviser: I've got the full picture now. Before the recommendations — the four\nthings I said I'd check.\n\n[00:14] Adviser: One, the Colonial First State account. Confirmed in writing: no insurance\nattached. It's safe to consolidate, and it's costing you about $457 a year more than ART for\nthe same exposure.\n\n[00:38] John: So that's just money gone.\n\n[00:41] Adviser: Every year, yes. Two — Mary, your HESTA nomination lapsed in 2023.\n\n[00:52] Mary: Meaning what, exactly?\n\n[00:55] Adviser: Meaning your $268,400 and the $350,000 of default life cover in that fund\nwould be paid at the trustee's discretion, not automatically to John. It would very likely\nend up with him, but it could take months and it isn't guaranteed. The form is in the pack —\nit takes five minutes.\n\n[01:22] Mary: I'll do it tonight.\n\n[01:26] Adviser: Three — Newcastle. ING confirmed March 2027, and the repayment goes from\n$2,010 to about $2,790 a month. It's in the cash flow.\n\n[01:44] Adviser: Four — your wills were signed 12 August 2021 and you settled on Newcastle\nthat same month. The wills don't mention the property.\n\n[02:05] John: What's the actual risk there?\n\n[02:08] Adviser: Low, because everything passes to the survivor anyway. But if you both died,\nwith two minor children and an estate over $3m once insurance pays out, the money would be\nheld for the kids in a way that gets taxed at penalty rates. A testamentary trust fixes that.\nI'd send you back to Harrington & Cole for it — it's their work, not mine.\n\n[02:40] Mary: Fine. Book it.\n\n[02:44] Adviser: Now the insurance, which is why you came in. You're paying $780 a month.\nI'm not going to tell you to pay less — I'm going to tell you it's pointed at the wrong things.\n\n[03:05] Adviser: John, your life cover is $900,000. My analysis says you need $1.35m —\nthat clears both loans, replaces your income until Harry turns 21, funds both kids through\nuniversity and leaves a $50,000 buffer. So you're short by about $450,000.\n\n[03:34] John: I assumed $900,000 was a lot.\n\n[03:38] Adviser: It sounds like a lot until you subtract $858,000 of debt. Mary — you have no\nincome protection. That's the one I want fixed first. $6,000 a month, 90-day wait, to age 65.\nThere's a two-year exclusion on the left knee from the 2024 surgery, which I can't avoid.\n\n[04:12] Mary: I'd take that.\n\n[04:16] John: What's all this going to cost us?\n\n[04:19] Adviser: Adding Mary's IP and increasing your life cover adds roughly $210 a month.\nThe super fee savings — the CFS consolidation plus switching Mary to HESTA's indexed option —\ncome to about $1,930 a year, which is $160 a month. So the net cost is around $50 a month for\n$450,000 more cover and income protection Mary doesn't currently have.\n\n[04:52] John: Put like that it's not really a decision.\n\n[05:00] Adviser: Then the surplus. You're running about $63,000 a year spare. Right now it's\njust sitting in the everyday account. In order: $350 a month kills the credit card by\nDecember — 20.99% is the most expensive dollar you own. Then $1,250 a month takes the buffer\nfrom $45,000 to $60,000, which is six months of expenses, by June next year. Everything left\ngoes into the offset.\n\n[05:38] John: And that gets the house paid off when?\n\n[05:41] Adviser: Late 2033. Ella starts in 2029, so you're not there by then — but you're\nclose, and you'd be debt-free on the home five years before you retire.\n\n[05:58] Mary: I can live with that.\n\n[06:05] Adviser: Last one, and it's the one that does the most work. Salary sacrifice $12,000\na year from John's pay into super. It costs you $7,140 of take-home to put $10,200 into super\nafter contributions tax. That's about $3,060 a year you're currently handing to the ATO.\n\n[06:34] John: Why has nobody ever told me that?\n\n[06:37] Adviser: Because nobody was looking. With that running, the projection has you at\n$2.19m at 62 — about eighteen months ahead of your target.\n\n[06:55] John: Send it through. We'll read it properly and come back to you.\n\n[07:02] Adviser: I'll have the statement of advice to you by the end of next week.",
+    "summary": "Presented the strategy. Confirmed: no insurance attached to the CFS account (safe to consolidate, ~$457/yr saving), Mary's HESTA nomination lapsed 2023 (form issued, she agreed to return it that night), Newcastle IO expires March 2027 (+$780/month, now in the cash flow), and the 2021 wills predate the Newcastle purchase. Recommendations accepted in principle: increase John's life cover to $1.35m, add $6,000/month IP for Mary (24-month left-knee exclusion), consolidate and re-index both super accounts, $12,000/yr salary sacrifice, and direct the $63,270 surplus at the card, then the buffer, then the offset. Net insurance cost after fee savings is roughly $50/month. Clients want to read the SOA before signing. Testamentary trust referral agreed.",
+    "action_items": [
+      {
+        "due": "2026-07-17",
+        "done": false,
+        "task": "Return the HESTA binding nomination form",
+        "owner": "Client (Mary)"
+      },
+      {
+        "due": "2026-07-24",
+        "done": false,
+        "task": "Issue the statement of advice",
+        "owner": "Adviser"
+      },
+      {
+        "due": "2026-07-22",
+        "done": true,
+        "task": "Obtain quotes: John life $1.35m, TPD own-occupation $600k, Mary IP $6,000/month",
+        "owner": "Adviser"
+      },
+      {
+        "due": "2026-08-15",
+        "done": false,
+        "task": "Lodge the CFS consolidation once cover is confirmed in force",
+        "owner": "Adviser"
+      },
+      {
+        "due": "2026-08-01",
+        "done": false,
+        "task": "Set up the $12,000 p.a. salary sacrifice with Harbourline payroll",
+        "owner": "Client (John)"
+      },
+      {
+        "due": "2026-08-08",
+        "done": false,
+        "task": "Refer to Harrington & Cole for will update + testamentary trust",
+        "owner": "Adviser"
+      },
+      {
+        "due": "2026-07-30",
+        "done": false,
+        "task": "Book the SOA presentation meeting",
+        "owner": "Adviser"
+      }
+    ],
+    "created_at": "2026-07-26T11:22:49.837Z",
+    "updated_at": "2026-07-26T11:22:49.837Z"
+  }
+]

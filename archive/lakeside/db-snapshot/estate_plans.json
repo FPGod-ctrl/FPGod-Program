@@ -1,0 +1,40 @@
+[
+  {
+    "client_id": "5c1b63df-8d45-41d9-b41b-fecd3cf9d057",
+    "has_will": true,
+    "will_date": "2021-05-12",
+    "will_location": "Nolan & Price Lawyers",
+    "executor": "Sarah Whitfield",
+    "has_poa": true,
+    "poa_type": "both",
+    "poa_attorney": "Sarah Whitfield",
+    "has_testamentary_trust": true,
+    "trust_details": "Testamentary trust established for the children.",
+    "beneficiaries": "Sarah Whitfield (primary), Ella and Noah Whitfield equally",
+    "notes": null,
+    "created_at": "2026-07-24T22:45:07.091Z",
+    "updated_at": "2026-07-24T22:45:07.091Z",
+    "has_binding_nomination": false,
+    "binding_nomination": null,
+    "death_income_goal": null
+  },
+  {
+    "client_id": "70e7a802-7bf7-4b29-b1de-6ef1ed841da3",
+    "has_will": true,
+    "will_date": "2021-08-12",
+    "will_location": "Originals held by Harrington & Cole Solicitors, Parramatta. Certified copies in the home safe; scanned copies on file.",
+    "executor": "Mary Test (primary). Substitute: Daniel Test — John's brother, Brisbane.",
+    "has_poa": true,
+    "poa_type": "both",
+    "poa_attorney": "John and Mary appointed for each other, jointly and severally. Substitute attorney: Daniel Test. Enduring guardianship documents signed at the same time.",
+    "has_testamentary_trust": false,
+    "trust_details": "No testamentary trust in place. Recommended: with two minor children and a projected estate above $3m including insurance proceeds, a testamentary trust would allow income to be distributed to the children at minor-beneficiary tax rates rather than the penalty rates that otherwise apply. Raised with the clients on 16 July 2026 — they have agreed to a referral back to Harrington & Cole.",
+    "beneficiaries": "Everything to the surviving spouse. If both die, the estate is held for Ella and Harry equally with capital released at age 25 and Daniel Test appointed guardian.",
+    "notes": "Wills predate the Newcastle purchase (Aug 2021) and do not mention the property. Neither will contemplates the current insurance proceeds. Estate review is a plan action item, not urgent — but the lapsed HESTA nomination is.",
+    "created_at": "2026-07-26T11:22:49.837Z",
+    "updated_at": "2026-07-26T11:22:49.837Z",
+    "has_binding_nomination": true,
+    "binding_nomination": "ART: Mary Test 100% — binding non-lapsing, signed 02/05/2024, current. HESTA: Mary's nomination LAPSED in 2023 and has not been renewed — her $268,400 balance plus $350,000 of default life cover would currently be paid at the trustee's discretion. Renewal form issued 17 July 2026, not yet returned.",
+    "death_income_goal": 110000
+  }
+]
