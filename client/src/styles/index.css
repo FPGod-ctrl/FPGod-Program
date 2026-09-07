@@ -324,6 +324,14 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.55; }
 /* ---------- Misc ---------- */
 .muted { color: var(--text-muted); }
 .faint { color: var(--text-faint); }
+.small { font-size: 11.5px; line-height: 1.45; }
+.alert {
+  padding: 11px 14px; border-radius: var(--radius-sm); font-size: 13px;
+  border: 1px solid var(--border); background: var(--surface-2); margin-bottom: 16px;
+}
+.alert.red { border-color: var(--red); background: var(--red-soft); color: var(--red); }
+.alert.amber { border-color: var(--amber); background: var(--amber-soft); color: var(--amber); }
+.alert.green { border-color: var(--green); background: var(--green-soft); color: var(--green); }
 .empty { text-align: center; padding: 50px 20px; color: var(--text-muted); }
 .empty .e-ico { font-size: 40px; opacity: 0.4; }
 .page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; gap: 16px; flex-wrap: wrap; }
@@ -346,7 +354,12 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.55; }
 @keyframes slideup { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
 
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
-.tab { padding: 9px 15px; font-size: 13.5px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
+/* Reset the native chrome so a <button class="tab"> matches the <div> version. */
+.tab {
+  padding: 9px 15px; font: inherit; font-size: 13.5px; font-weight: 600;
+  color: var(--text-muted); cursor: pointer; background: none;
+  border: none; border-bottom: 2px solid transparent;
+}
 .tab:hover { color: var(--text); }
 .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
 
@@ -507,3 +520,111 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.55; }
   font-size: 12.5px; color: var(--text); margin-bottom: 18px; cursor: pointer;
 }
 @media (max-width: 900px) { .cfs-filters { grid-template-columns: 1fr 1fr; } }
+
+/* ============ Task tracker ============ */
+/* Summary band across the top, filters under it, then the task sheet at full
+   width — the page reads top down. */
+.tasks-banner {
+  position: relative;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 14px 28px;
+  padding: 16px 22px;
+  background: linear-gradient(120deg, var(--surface-2) 0%, var(--surface) 65%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.tasks-banner::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 45%, transparent 100%);
+}
+
+.tb-stats { display: flex; flex-wrap: wrap; align-items: center; }
+.tb-stat {
+  display: flex; flex-direction: column; gap: 1px;
+  padding: 2px 26px; border-left: 1px solid var(--border);
+}
+.tb-stat:first-child { border-left: none; padding-left: 2px; }
+.tb-val { font-size: 25px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.tb-label { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); }
+.tb-stat.red .tb-val { color: var(--red); }
+.tb-stat.amber .tb-val { color: var(--amber); }
+.tb-meta { font-size: 11.5px; color: var(--text-faint); text-align: right; line-height: 1.5; }
+
+.filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 14px; }
+.filter-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 8px 7px 14px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-muted);
+  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.filter-pill:hover { border-color: var(--border-strong); color: var(--text); }
+.filter-pill.active { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+.pill-count {
+  min-width: 22px; padding: 1px 7px; border-radius: 999px;
+  background: var(--surface-2); color: var(--text-faint);
+  font-size: 11.5px; font-weight: 700; text-align: center; font-variant-numeric: tabular-nums;
+}
+.filter-pill.active .pill-count { background: var(--accent); color: #fff; }
+
+.list-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  margin-bottom: 10px; padding: 0 2px;
+}
+.list-head h2 { margin: 0; font-size: 17px; }
+.list-head .blurb { color: var(--text-muted); font-size: 12.5px; margin-top: 2px; }
+
+.task-sheet {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-sm);
+  padding: 4px 22px 18px;
+}
+
+/* ---------- Task rows ---------- */
+.tg { margin-top: 4px; }
+.tg-head {
+  position: sticky; top: 62px; z-index: 2;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 0 6px; background: var(--surface);
+}
+.tg-name { font-size: 12.5px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--text); }
+.tg-rule { flex: 1; height: 1px; background: var(--border); }
+.tg-count { font-size: 11.5px; color: var(--text-faint); font-variant-numeric: tabular-nums; }
+
+.task-list { list-style: none; margin: 0; padding: 0; }
+.task-row {
+  display: grid;
+  grid-template-columns: 3px minmax(0, 1fr) auto 150px;
+  align-items: center; gap: 0 14px;
+  padding: 11px 0; border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+}
+.task-row:last-child { border-bottom: none; }
+.task-row:hover { background: var(--surface-2); }
+.task-pri { align-self: stretch; border-radius: 3px; background: var(--border-strong); }
+.task-pri.p-high { background: var(--red); }
+.task-pri.p-medium { background: var(--primary); }
+.task-pri.p-low { background: var(--accent); }
+.task-main { min-width: 0; }
+.task-name { font-size: 13.5px; font-weight: 550; line-height: 1.4; }
+.task-due { white-space: nowrap; }
+select.task-status {
+  width: 150px; padding: 5px 9px; font-size: 12px;
+  background: var(--surface-2); border-color: var(--border);
+}
+.task-row.is-done { opacity: 0.55; }
+.task-row.is-done .task-name { text-decoration: line-through; }
+
+@media (max-width: 900px) {
+  .tb-stat { padding: 2px 16px; }
+  .tb-val { font-size: 21px; }
+}
+@media (max-width: 720px) {
+  .tasks-banner { padding: 14px 16px; }
+  .tb-stat { padding: 2px 12px; }
+  .task-sheet { padding: 4px 14px 14px; }
+  .task-row { grid-template-columns: 3px minmax(0, 1fr); row-gap: 8px; }
+  .task-due, select.task-status { grid-column: 2; }
+}
