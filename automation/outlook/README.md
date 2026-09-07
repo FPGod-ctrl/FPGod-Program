@@ -6,7 +6,7 @@ cloud — it runs entirely locally against Outlook.
 
 - **Read-only** against Outlook: never sends, deletes, moves or marks mail.
 - Works because Outlook desktop (Microsoft 365) is installed and authenticated here.
-- Mailbox: `Tristan.Biro@lakesidefinancial.com.au`.
+- Mailbox: the **Legacy Risk Advice** account. (Was `Tristan.Biro@lakesidefinancial.com.au` at the previous firm — that address is stale; do not scan it.)
 
 ## Usage
 

@@ -15,6 +15,7 @@ import chat from './chat.js';
 import financials from './financials.js';
 import family from './family.js';
 import outlook from './outlook.js';
+import tasks from './tasks.js';
 
 const router = Router();
 
@@ -30,6 +31,7 @@ router.get('/meta', (req, res) => {
   });
 });
 
+router.use('/tasks', tasks);
 router.use('/dashboard', dashboard);
 router.use('/clients', clients);
 router.use('/client-groups', clientGroups);

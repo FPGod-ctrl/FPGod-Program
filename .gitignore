@@ -44,3 +44,21 @@ legacy/drop/**/*.docx
 legacy/drop/**/*.pdf
 legacy/drop/**/*.doc
 legacy/drop/**/.extracted/
+
+# Transcripts and meeting notes arrive as plain text, so text formats in the
+# drop folder are PII too. Ignore them, keeping the task READMEs tracked.
+legacy/drop/**/*.txt
+legacy/drop/**/*.md
+!legacy/drop/README.md
+!legacy/drop/**/README.md
+
+# Produced client documents — file notes, fact finds, SOAs, profiles, reports.
+# These are finished work about real people. Keep the folders, not the contents.
+legacy/file-notes/*
+legacy/fact-finds/*
+legacy/client-profiles/*
+legacy/risk-reports/*
+legacy/soa/*
+legacy/templates/*
+!legacy/**/.gitkeep
+!legacy/**/README.md

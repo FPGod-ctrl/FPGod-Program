@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import { ToastProvider } from './components/ui/Toast.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import Tasks from './pages/Tasks.jsx';
 import Clients from './pages/Clients.jsx';
 import ClientDetail from './pages/ClientDetail.jsx';
 import Calendar from './pages/Calendar.jsx';
@@ -21,6 +22,7 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<Dashboard />} />
+          <Route path="tasks" element={<Tasks />} />
           <Route path="clients" element={<Clients />} />
           <Route path="clients/:id" element={<ClientDetail />} />
           <Route path="calendar" element={<Calendar />} />

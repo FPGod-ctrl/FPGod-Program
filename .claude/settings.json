@@ -1,4 +1,15 @@
 {
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(tasklist //FI \"IMAGENAME eq OUTLOOK.EXE\")",
+      "Bash(tasklist //FI \"IMAGENAME eq EXCEL.EXE\")",
+      "Bash(echo \"=== mail-drop ===\"; ls \"C:/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/mail-drop\"/*.json 2>/dev/null | wc -l *)",
+      "Read(//c/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/mail-drop/**)",
+      "Read(//c/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/sent-drop/**)",
+      "Read(//c/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/mail-drop/processed/**)"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {

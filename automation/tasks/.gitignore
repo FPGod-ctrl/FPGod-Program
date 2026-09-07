@@ -1,0 +1,9 @@
+# Task state and scan output carry client names, senders and email subjects.
+state/
+logs/
+
+# The workbook itself, if anyone points -Workbook back into the repo.
+*.xlsx
+
+# Installed by automation/tasks/package.json
+node_modules/

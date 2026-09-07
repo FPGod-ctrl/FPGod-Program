@@ -628,3 +628,24 @@ select.task-status {
   .task-row { grid-template-columns: 3px minmax(0, 1fr); row-gap: 8px; }
   .task-due, select.task-status { grid-column: 2; }
 }
+
+/* Editable due date on the task tracker. A native date input, styled to sit in
+   the row like plain text until you interact with it — the colouring carries the
+   same meaning the read-only badge used to. */
+.task-date {
+  font: inherit;
+  color: var(--muted, #616d7b);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+.task-date:hover:not(:disabled) { border-color: var(--rule, #dce1e7); }
+.task-date:focus { outline: 2px solid var(--primary, #2563eb); outline-offset: 1px; }
+.task-date:disabled { opacity: .5; cursor: default; }
+/* An assumed 24-hour turnaround is not a real deadline — show it as lighter. */
+.task-date.assumed { font-style: italic; opacity: .75; }
+.task-date.today { color: #a86800; font-weight: 600; }
+.task-date.overdue { color: #a32e1d; font-weight: 600; }
+.task-row.is-done .task-date { opacity: .5; font-weight: 400; }

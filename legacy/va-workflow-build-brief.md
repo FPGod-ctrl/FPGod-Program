@@ -64,12 +64,94 @@ client file end to end and hand the VA a complete pack — not to write advice.
 3. A brief-pack assembler built on `gatherClientContext()`, output as a document
    the VA can work from.
 
-## Ask before building
+## Answers from Tristan (2026-09-01)
 
-- The real stages of a file, in his words, from enquiry to policy in force.
-- How work reaches a VA today — email? shared drive? a tool?
-- How many VAs, and do they need their own logins, or does he hand off?
-- What "ad hoc admin" actually covers.
+- **Work reaches the VA by email + shared drive.** Instructions by email, files
+  on the drive. This split is exactly why assembling a pack is slow, and it
+  means the brief pack must be *exportable and sendable*, not just a screen.
+- **4+ VAs, each needing their own login.** This is the big one: there is
+  currently **no auth in the app at all** — no `jsonwebtoken`/`bcrypt`/
+  `passport` dependency, no middleware, every route open. Users, roles and
+  authentication have to be built from zero before VAs can touch it. A real
+  queue with multiple workers also needs workload visibility.
+- **"Ad hoc admin" covers all four categories asked about:** underwriting
+  chasing, policy servicing, XPLAN data entry, and client correspondence.
+  So the task model is NOT just SOA drafting — it must carry standalone admin
+  items with a category, not only work hanging off a case.
+
+### Still open
+
+- **The real stages of a file.** He is walking through them himself, along with
+  the different types of input that arrive at each stage. Do not invent a stage
+  list — capture his and record it here.
+
+## Working through the process, stage by stage
+
+Rather than design the whole workflow up front, Tristan is walking through each
+step and saying what he wants from it. Build them in the order he raises them.
+
+### 1. Initial meeting — ACTIVE
+
+One transcript in, **two documents** out: the **Client Details Summary** (what
+the firm calls initial meeting notes) and the **fact find**. His words, so use
+them — an earlier guess called this "file notes" and that folder was renamed.
+
+Output is a **Word document** each; **one format** each; he writes them today
+and a **VA takes over**, making these the first VA-assigned task type.
+
+Intake folder and the full brief:
+[`drop/initial-meeting-build/`](drop/initial-meeting-build/).
+
+**The Client Details Summary generator is working and signed off by Tristan**
+(2026-09-01) — `server/scripts/generate-client-details-summary.mjs`, first run
+against the archived Gary AUG03 transcript. Do not redesign it. What made it
+land, and what to preserve in any future document generator:
+
+- **Clone-and-fill his real template**, never rebuild the document.
+- **De-garble the transcript the way he does** — the raw text renders ZEISS as
+  "ziz", Mount Evelyn Christian School as "Makes maneville and Christian
+  school", NEOS as "the neon stuff". Fix the obvious mangling; cross-check
+  names against any follow-up email in `archive/lakeside/follow-ups/`.
+- **Flag, never invent.** Anything the transcript does not cover is marked
+  `[CONFIRM]` and collected into an outstanding list. On these documents the
+  gaps are the value — they are the chase list.
+- **Reconcile the numbers as a self-check.** The premium components summed to
+  the totals Tristan quoted in the meeting, which is what confirmed the
+  individual figures had been heard correctly.
+
+### Verifying a generated .docx — do this, not the XML check
+
+Valid XML is **not** sufficient. Word enforces the WordprocessingML schema on
+top of it and rejects a schema-invalid file outright with "Word experienced an
+error trying to open the file", naming no offending part. A file can pass an
+`[xml]` parse, a relationship-integrity check and a `mammoth` extract and still
+be unopenable — that happened twice here before it was caught.
+
+Word is installed on this machine, so open the document in it:
+
+```powershell
+$word = New-Object -ComObject Word.Application
+$word.Visible = $false; $word.DisplayAlerts = 0
+$doc = $word.Documents.Open($path, $false, $true)
+$doc.ComputeStatistics(2)  # pages
+$doc.Tables.Count
+$doc.Close(0); $word.Quit()
+```
+
+**`html-to-docx` is the library that produced the broken output. Do not use it.**
+`markdown-to-docx.mjs` is built on `docx` instead; the same source produced a
+15 KB working file where html-to-docx emitted 303 KB of unopenable padding.
+
+Reuses: `meeting_transcripts` (input already modelled), and the clone-and-fill
+`.docx` machinery from `server/scripts/generate-client-profile.mjs`. These are
+a **separate type from the follow-up email** in `emailGenerator.js` — same
+transcript, different document, different audience. Do not merge them.
+
+**The fact find should also write structured data back to the client file**
+(`family_members`, `income_sources`, `expenses`, `assets`, `liabilities`,
+`insurance_policies`), not just produce a document. Those are precisely the
+tables `gatherClientContext()` reads, so a fact find done at the initial meeting
+populates the SOA brief pack for free rather than being re-keyed later.
 
 ## Outstanding from the SOA workstream — do not chase in this session
 

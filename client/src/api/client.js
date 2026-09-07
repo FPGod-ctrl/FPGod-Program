@@ -30,6 +30,7 @@ export const api = {
   get: (p) => request('GET', p),
   post: (p, body) => request('POST', p, body),
   put: (p, body) => request('PUT', p, body),
+  patch: (p, body) => request('PATCH', p, body),
   del: (p) => request('DELETE', p),
   upload: (p, formData) => request('POST', p, formData, true),
   // Direct download URL (for links / window.open).

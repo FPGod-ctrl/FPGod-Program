@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "xplan": {
+      "command": "node",
+      "args": ["automation/xplan/src/mcp.mjs"],
+      "env": {}
+    }
+  }
+}

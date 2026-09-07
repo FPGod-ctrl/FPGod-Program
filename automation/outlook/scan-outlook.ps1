@@ -23,6 +23,7 @@ param(
   [string] $Subject = "",           # optional substring match on subject
   [int]    $MaxItems = 200,         # safety cap
   [switch] $IncludeBody,            # include a short body preview (sensitive — off by default)
+  [int]    $BodyChars = 600,        # body preview length when -IncludeBody is set
   [string] $SaveAttachments = "",   # dir to save attachments into (created if missing)
   [string] $Out = ""                # write JSON here instead of stdout
 )
@@ -87,7 +88,7 @@ foreach ($m in $items) {
   if ($IncludeBody) {
     $b = ""; try { $b = $m.Body } catch {}
     $row.bodyPreview = ($b -replace '\s+',' ').Trim()
-    if ($row.bodyPreview.Length -gt 600) { $row.bodyPreview = $row.bodyPreview.Substring(0,600) }
+    if ($row.bodyPreview.Length -gt $BodyChars) { $row.bodyPreview = $row.bodyPreview.Substring(0,$BodyChars) }
   }
   [void]$results.Add($row)
   $n++

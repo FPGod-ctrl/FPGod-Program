@@ -1,0 +1,17 @@
+{
+  "name": "fpgod-tasks",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Live task list — scans the Microsoft 365 mailbox via Graph and keeps an Excel task list current",
+  "scripts": {
+    "setup": "node setup-graph.mjs",
+    "scan": "node scan-graph.mjs"
+  },
+  "dependencies": {
+    "@azure/msal-node": "^2.16.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

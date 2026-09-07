@@ -4,7 +4,9 @@
       "PowerShell(Get-NetTCPConnection -LocalPort 4000,5173 -State Listen -ErrorAction SilentlyContinue)",
       "PowerShell(Get-NetTCPConnection -LocalPort 4000 -State Listen -ErrorAction SilentlyContinue)",
       "PowerShell(\"--- PORT CHECK ---\")",
-      "PowerShell($ports = 5173,4000; foreach \\($p in $ports\\) { $c = Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { \"Port $p : LISTENING\" } else { \"Port $p : not running\" } })"
+      "PowerShell($ports = 5173,4000; foreach \\($p in $ports\\) { $c = Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { \"Port $p : LISTENING\" } else { \"Port $p : not running\" } })",
+      "Bash(powershell -NoProfile -Command \"Get-Service *postgres* -ErrorAction SilentlyContinue | Select-Object Name,Status | Format-Table -AutoSize\")",
+      "Bash(powershell -NoProfile -Command \"if \\(Test-NetConnection -ComputerName localhost -Port 5432 -InformationLevel Quiet -WarningAction SilentlyContinue\\) {'YES - Postgres reachable'} else {'NO - nothing on 5432'}\")"
     ]
   }
 }

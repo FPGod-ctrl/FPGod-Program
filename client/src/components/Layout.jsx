@@ -5,6 +5,7 @@ import { api } from '../api/client.js';
 const NAV = [
   { section: 'Overview' },
   { to: '/', label: 'Dashboard', icon: '◈', end: true },
+  { to: '/tasks', label: 'Task Tracker', icon: '✅' },
   { to: '/clients', label: 'Clients', icon: '👥' },
   { to: '/calendar', label: 'Calendar', icon: '📅' },
   { section: 'Advice' },

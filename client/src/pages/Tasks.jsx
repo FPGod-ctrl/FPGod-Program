@@ -2,19 +2,44 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '../api/client.js';
 import PageHeader from '../components/PageHeader.jsx';
 import { Loading } from '../components/ui/Loading.jsx';
-import Badge from '../components/ui/Badge.jsx';
 
 const STATUSES = ['Open', 'In Progress', 'Waiting', 'Done', 'Cancelled'];
 const isOpen = (t) => t.status !== 'Done' && t.status !== 'Cancelled';
 const today = () => new Date().toISOString().slice(0, 10);
 
 /** Overdue and due-today are the only date states worth colouring. */
-function DueCell({ due, status }) {
-  if (!due) return <span className="faint">—</span>;
-  if (!isOpen({ status })) return <span className="faint">{due}</span>;
-  if (due < today()) return <Badge tone="red">Overdue · {due}</Badge>;
-  if (due === today()) return <Badge tone="amber">Today</Badge>;
-  return <span className="muted">{due}</span>;
+function dueTone(due, status) {
+  if (!due || !isOpen({ status })) return '';
+  if (due < today()) return 'overdue';
+  if (due === today()) return 'today';
+  return '';
+}
+
+/** Where the date came from, so an assumed turnaround is not mistaken for a deadline. */
+const DUE_ORIGIN = {
+  email: 'Deadline stated in the email',
+  user: 'You set this date',
+  default: 'Assumed 24-hour turnaround — no deadline was given',
+};
+
+/**
+ * Editable due date. A native date input keeps the keyboard and picker behaviour
+ * without a dependency, and the tone class carries the overdue/today colouring
+ * that the read-only badge used to.
+ */
+function DueCell({ task, disabled, onChange }) {
+  const tone = dueTone(task.due, task.status);
+  return (
+    <input
+      type="date"
+      className={`task-date ${tone} ${task.dueSource === 'default' ? 'assumed' : ''}`}
+      value={task.due || ''}
+      disabled={disabled}
+      title={DUE_ORIGIN[task.dueSource] || 'No due date'}
+      aria-label={`Due date for ${task.task}`}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  );
 }
 
 const FILTERS = [
@@ -60,13 +85,15 @@ export default function Tasks() {
     load();
   }, []);
 
-  async function setStatus(id, status) {
+  /**
+   * Save one field. Applied in place first so ticking something off or nudging a
+   * date feels instant; the reload that follows re-sorts it into the right group.
+   */
+  async function patchTask(id, patch) {
     setSaving(id);
-    // Update in place so ticking something off feels instant; the reload that
-    // follows re-sorts it into the right group.
-    setData((d) => ({ ...d, tasks: d.tasks.map((t) => (t.id === id ? { ...t, status } : t)) }));
+    setData((d) => ({ ...d, tasks: d.tasks.map((t) => (t.id === id ? { ...t, ...patch } : t)) }));
     try {
-      await api.patch(`/tasks/${id}`, { status });
+      await api.patch(`/tasks/${id}`, patch);
       await load();
     } catch (err) {
       setError(err.message);
@@ -75,6 +102,10 @@ export default function Tasks() {
       setSaving('');
     }
   }
+
+  const setStatus = (id, status) => patchTask(id, { status });
+  // Sent as dueSource 'user' by the API, so a later scan cannot overwrite it.
+  const setDue = (id, due) => patchTask(id, { due });
 
   const active = FILTERS.find((x) => x.key === filter) || FILTERS[0];
 
@@ -212,7 +243,11 @@ export default function Tasks() {
                         )}
                       </div>
                       <div className="task-due">
-                        <DueCell due={t.due} status={t.status} />
+                        <DueCell
+                          task={t}
+                          disabled={saving === t.id}
+                          onChange={(due) => setDue(t.id, due)}
+                        />
                       </div>
                       <select
                         className="task-status"

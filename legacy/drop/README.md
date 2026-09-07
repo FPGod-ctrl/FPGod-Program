@@ -11,7 +11,8 @@ belongs in it.
 
 | Folder | Task | Status |
 |--------|------|--------|
-| [`soa-build/`](soa-build/) | Building the Legacy Risk Advice SOA generator | **Active** |
+| [`soa-build/`](soa-build/) | Building the Legacy Risk Advice SOA generator | Paused |
+| [`initial-meeting-build/`](initial-meeting-build/) | Initial meeting transcript into the two house documents — Client Details Summary and fact find | **Active** |
 
 New folders get added here as new work starts — a client profile build, a fact
 find build, a risk report build, and so on. Keeping them separate means a
