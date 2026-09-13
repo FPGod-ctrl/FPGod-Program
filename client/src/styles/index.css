@@ -629,23 +629,170 @@ select.task-status {
   .task-due, select.task-status { grid-column: 2; }
 }
 
-/* Editable due date on the task tracker. A native date input, styled to sit in
-   the row like plain text until you interact with it — the colouring carries the
-   same meaning the read-only badge used to. */
+/* ============================================================
+   Task tracker — due date, manual entry, note log
+   Uses the real theme tokens (--text, --surface-2, --border …);
+   an earlier pass invented names that did not exist, so every
+   colour silently fell back to a pale light-theme grey.
+   ============================================================ */
+
+/* --- editable due date ------------------------------------- */
 .task-date {
   font: inherit;
-  color: var(--muted, #616d7b);
+  font-size: 13px;
+  color: var(--text-muted);
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  padding: 3px 6px;
   cursor: pointer;
 }
-.task-date:hover:not(:disabled) { border-color: var(--rule, #dce1e7); }
-.task-date:focus { outline: 2px solid var(--primary, #2563eb); outline-offset: 1px; }
+.task-date:hover:not(:disabled) {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+.task-date:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  color: var(--text);
+}
 .task-date:disabled { opacity: .5; cursor: default; }
-/* An assumed 24-hour turnaround is not a real deadline — show it as lighter. */
-.task-date.assumed { font-style: italic; opacity: .75; }
-.task-date.today { color: #a86800; font-weight: 600; }
-.task-date.overdue { color: #a32e1d; font-weight: 600; }
-.task-row.is-done .task-date { opacity: .5; font-weight: 400; }
+/* An assumed 24-hour turnaround is not a real deadline. */
+.task-date.assumed { font-style: italic; color: var(--text-faint); }
+.task-date.today { color: var(--amber); font-weight: 600; }
+.task-date.overdue { color: var(--red); font-weight: 600; }
+.task-row.is-done .task-date { color: var(--text-faint); font-weight: 400; }
+
+/* --- manual task form -------------------------------------- */
+.task-new {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.tn-grid {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(220px, 2fr);
+  gap: 12px 16px;
+}
+.tn-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.tn-field > span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+}
+.tn-wide { grid-column: 1 / -1; }
+.tn-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+/* --- note log ---------------------------------------------- */
+.note-log { margin-top: 8px; }
+
+.note-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 12px 4px 10px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  max-width: 100%;
+}
+.note-toggle:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.note-toggle[aria-expanded='true'] {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.caret {
+  width: 0; height: 0;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform .15s ease;
+  flex: 0 0 auto;
+}
+.caret.open { transform: rotate(90deg); }
+/* Peek at the latest entry while collapsed — dimmer than the count. */
+.note-peek {
+  color: var(--text-faint);
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.note-list {
+  list-style: none;
+  margin: 8px 0 2px;
+  padding: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.note-list li {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 14px;
+  padding: 9px 13px;
+  font-size: 13px;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--border);
+}
+.note-list li:last-child { border-bottom: 0; }
+/* Newest entry carries a left rule so the latest is findable at a glance. */
+.note-list li:last-child .note-when { color: var(--accent); }
+.note-when {
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.note-time { color: var(--text-faint); }
+.note-text { color: var(--text); }
+
+/* --- add a note -------------------------------------------- */
+.note-trigger {
+  background: none;
+  border: 0;
+  padding: 4px 0 0;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-faint);
+  cursor: pointer;
+}
+.note-trigger:hover { color: var(--accent); }
+.task-row:hover .note-trigger { color: var(--text-muted); }
+.note-add { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+.note-add .input { flex: 1 1 auto; min-width: 0; }
+.btn.small { padding: 5px 12px; font-size: 12px; }
+.btn.ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+.btn.ghost:hover { color: var(--text); border-color: var(--border-strong); }
+
+@media (max-width: 640px) {
+  .tn-grid { grid-template-columns: 1fr; }
+  .tn-wide { grid-column: auto; }
+  .note-list li { grid-template-columns: 1fr; gap: 2px; }
+}

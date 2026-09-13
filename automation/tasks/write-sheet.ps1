@@ -25,7 +25,11 @@ if (-not $TasksJson) { $TasksJson = Join-Path $PSScriptRoot "state\tasks.json" }
 if (-not $Workbook)  { $Workbook  = Join-Path ([Environment]::GetFolderPath("Desktop")) "Task List.xlsx" }
 
 if (-not (Test-Path $TasksJson)) { throw "No task state at $TasksJson — run a scan first." }
-$state = Get-Content $TasksJson -Raw | ConvertFrom-Json
+# -Encoding UTF8 is required. The state file is written WITHOUT a BOM (a BOM
+# breaks every JSON.parse downstream), and PowerShell 5.1 falls back to the ANSI
+# codepage when there is no BOM to sniff - silently turning an em dash into
+# "a€" and writing that corruption straight back to disk.
+$state = Get-Content $TasksJson -Raw -Encoding UTF8 | ConvertFrom-Json
 $tasks = @($state.tasks)
 
 $HEADERS = @("ID","Status","Priority","Due","Type","Who","Task","Notes","From","Received","Email Subject")

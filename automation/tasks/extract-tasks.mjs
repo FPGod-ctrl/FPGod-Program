@@ -77,6 +77,14 @@ RULES
 - FOLLOW-UPS: you are given the currently open tasks. If an email is a chaser or a
   reply about something already on that list, do NOT create a duplicate — return it
   under "updates" referencing the existing task id.
+- ALREADY COMPLETED: you are also given tasks he has finished. He has decided those
+  are done. NEVER create a task that repeats one of them, and never ask him to redo
+  one. A reply, thank-you, confirmation or piece of paperwork arriving about
+  completed work produces NO task at all.
+  Only create a task if the email asks for something genuinely NEW and different —
+  and then write it as the new thing being asked for, not as a repeat of the old
+  one. If it is merely more information about finished work, return it under
+  "updates" with the completed task's id; that records a note without reopening it.
 
 Return ONLY a JSON object, no prose and no markdown fence:
 {
@@ -185,23 +193,45 @@ function renderEmail(m, ref) {
  * whole file. Stripping on read covers any producer rather than chasing each one.
  */
 function readJson(file) {
-  return JSON.parse(fs.readFileSync(file, 'utf8').replace(/^﻿/, '') || 'null');
+  return JSON.parse(fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, '') || 'null');
+}
+
+/**
+ * The seen-email map lives in its own file, NOT in tasks.json.
+ *
+ * Graph message ids are base64url and case-sensitive, so `…Ki-BAAAA=` and
+ * `…Ki-BaAAA=` are different emails. PowerShell's ConvertFrom-Json builds a
+ * case-INSENSITIVE dictionary, treats them as duplicate keys and throws, which
+ * took write-sheet.ps1 down on every cycle once enough ids had accumulated.
+ * Keeping the map out of the file PowerShell parses removes the hazard entirely,
+ * and keeps tasks.json small and readable besides.
+ */
+function seenFile(stateFile) {
+  return path.join(path.dirname(stateFile), 'seen.json');
 }
 
 function loadState(file) {
-  if (!fs.existsSync(file)) {
-    return { version: 1, lastRun: null, nextId: 1, seenEmails: {}, tasks: [] };
-  }
-  const s = readJson(file);
-  s.seenEmails ||= {};
+  const base = { version: 1, lastRun: null, nextId: 1, seenEmails: {}, tasks: [] };
+  const s = fs.existsSync(file) ? readJson(file) : base;
   s.tasks ||= [];
   s.nextId ||= s.tasks.length + 1;
+
+  const sf = seenFile(file);
+  if (fs.existsSync(sf)) {
+    s.seenEmails = readJson(sf) || {};
+  } else if (!s.seenEmails) {
+    s.seenEmails = {};
+  }
+  // Legacy state kept the map inline; whatever is there is carried across on the
+  // next save and then dropped from tasks.json.
   return s;
 }
 
 function saveState(file, state) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, JSON.stringify(state, null, 2), 'utf8');
+  const { seenEmails, ...rest } = state;
+  fs.writeFileSync(file, JSON.stringify(rest, null, 2), 'utf8');
+  fs.writeFileSync(seenFile(file), JSON.stringify(seenEmails || {}, null, 2), 'utf8');
 }
 
 /** Seen-email records outlive the scan window; prune so the file stays small. */
@@ -214,13 +244,62 @@ function pruneSeen(state) {
 
 const isOpen = (t) => t.status !== 'Done' && t.status !== 'Cancelled';
 
-async function classify(batch, openTasks) {
+// How much finished work to show the model, and for how long. Enough that a reply
+// landing days after the job was done is still recognised as old news, without
+// sending the whole history on every call.
+const DONE_CONTEXT_DAYS = 60;
+const DONE_CONTEXT_MAX = 40;
+
+/**
+ * Append-only history of finished work, one JSON task per line.
+ *
+ * tasks.json is rewritten in full on every cycle, so it is the wrong place to
+ * trust with history — one reset and months of completed work is gone. The
+ * archive is only ever appended to, so a task that has been done stays readable
+ * whatever happens to the live state file.
+ */
+function archiveFile(stateFile) {
+  return path.join(path.dirname(stateFile), 'archive.jsonl');
+}
+
+/** Record newly-finished tasks. Idempotent: `archivedAt` marks what is already in. */
+function archiveCompleted(state, stateFile) {
+  const fresh = state.tasks.filter((t) => !isOpen(t) && !t.archivedAt);
+  if (!fresh.length) return 0;
+  const stamp = new Date().toISOString();
+  const lines = fresh
+    .map((t) => {
+      t.archivedAt = stamp;
+      return JSON.stringify(t);
+    })
+    .join('\n');
+  fs.mkdirSync(path.dirname(stateFile), { recursive: true });
+  fs.appendFileSync(archiveFile(stateFile), `${lines}\n`, 'utf8');
+  return fresh.length;
+}
+
+/** Recently completed tasks, newest first — the "do not recreate" list. */
+function recentlyDone(state) {
+  const cutoff = Date.now() - DONE_CONTEXT_DAYS * 864e5;
+  return state.tasks
+    .filter((t) => !isOpen(t))
+    .filter((t) => {
+      const when = Date.parse(t.completedAt || t.created || '');
+      return Number.isNaN(when) ? true : when >= cutoff;
+    })
+    .sort((a, b) => String(b.completedAt || '').localeCompare(String(a.completedAt || '')))
+    .slice(0, DONE_CONTEXT_MAX);
+}
+
+async function classify(batch, openTasks, doneTasks) {
   const emails = batch.map((m, i) => renderEmail(m, i + 1)).join('\n\n');
-  // Only open tasks are offered for dedupe — a closed task should not absorb a
-  // fresh request that happens to look similar.
-  const openList = openTasks.length
-    ? openTasks.map((t) => `${t.id} [${t.who}] ${t.task}`).join('\n')
-    : '(none)';
+  const line = (t) => `${t.id} [${t.who}] ${t.task}`;
+
+  const openList = openTasks.length ? openTasks.map(line).join('\n') : '(none)';
+  // Recently finished work has to be visible too. Showing only open tasks meant a
+  // reply on a thread the adviser had already dealt with looked like brand new
+  // work, and a second copy of a completed task appeared on the list.
+  const doneList = doneTasks.length ? doneTasks.map(line).join('\n') : '(none)';
 
   const raw = await complete({
     messages: [
@@ -231,6 +310,9 @@ async function classify(batch, openTasks) {
 
 CURRENTLY OPEN TASKS (for follow-up matching):
 ${openList}
+
+ALREADY COMPLETED — DO NOT RECREATE THESE:
+${doneList}
 
 NEW EMAILS:
 
@@ -370,7 +452,11 @@ async function main() {
   let bumped = 0;
   for (let i = 0; i < fresh.length; i += BATCH_SIZE) {
     const batch = fresh.slice(i, i + BATCH_SIZE);
-    const { tasks, updates } = await classify(batch, state.tasks.filter(isOpen));
+    const { tasks, updates } = await classify(
+      batch,
+      state.tasks.filter(isOpen),
+      recentlyDone(state)
+    );
 
     for (const t of tasks) {
       if (!t.task) continue;
@@ -403,12 +489,17 @@ async function main() {
 
     // A chaser bumps the existing task rather than cloning it.
     for (const u of updates) {
-      const task = state.tasks.find((t) => t.id === u.id && isOpen(t));
+      const task = state.tasks.find((t) => t.id === u.id);
       if (!task) continue;
       const stamp = localDate();
       if (u.note) {
         task.notes = appendNote(task.notes, `${stamp}: ${u.note}`);
       }
+      // A finished task takes the note and nothing else. Status is the human's
+      // call: once it is marked Done, no amount of later mail reopens it, moves
+      // its date or changes its priority.
+      if (!isOpen(task)) continue;
+
       if (['High', 'Medium', 'Low'].includes(u.priority)) task.priority = u.priority;
       if (RE_DATE.test(u.due || '') && task.dueSource !== 'user') {
         task.due = u.due;
@@ -433,7 +524,11 @@ async function main() {
     console.log(JSON.stringify(state.tasks.slice(-Math.max(added, 1)), null, 2));
     return;
   }
+  // Archive BEFORE saving, so the stamp that marks a task archived is part of the
+  // same write. Archiving after would risk recording it twice on a crash.
+  const archived = archiveCompleted(state, stateFile);
   saveState(stateFile, state);
+  if (archived) console.log(`[tasks] archived ${archived} completed task(s)`);
   console.log(
     `[tasks] +${added} new, ${bumped} updated, ${closed} closed from sent mail, ` +
       `${state.tasks.filter(isOpen).length} open total`

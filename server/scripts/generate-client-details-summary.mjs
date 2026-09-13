@@ -52,13 +52,24 @@ export async function generateClientDetailsSummary(data, outPath) {
   const zip = await JSZip.loadAsync(readFileSync(TEMPLATE));
   let doc = await zip.file('word/document.xml').async('string');
 
-  const paras = doc.match(/<w:p\b[\s\S]*?<\/w:p>/g) || [];
   const queue = [...(data.sections || [])];
   let filled = 0;
   const missed = [];
 
-  for (const p of paras) {
+  // Insertions are collected by POSITION and spliced in from the end.
+  //
+  // The obvious `doc.replace(p, p + content)` is wrong here: replace finds the
+  // FIRST occurrence of that paragraph's XML. Several labels repeat in this
+  // template, and the spouse header rows are byte-identical clones of the
+  // client's, so every insertion landed on the first copy and the header block
+  // came out interleaved and in reverse. Splicing from the end keeps the earlier
+  // offsets valid as we go.
+  const inserts = [];
+  const paraRe = /<w:p\b[\s\S]*?<\/w:p>/g;
+  let match;
+  while ((match = paraRe.exec(doc)) !== null) {
     if (!queue.length) break;
+    const p = match[0];
     const text = paraText(p);
     if (!text) continue;
     const next = queue[0];
@@ -68,9 +79,12 @@ export async function generateClientDetailsSummary(data, outPath) {
     const got = text.toLowerCase().replace(/[^a-z0-9]/g, '');
     if (got.startsWith(label) && label.length > 2) {
       queue.shift();
-      doc = doc.replace(p, p + contentParas(p, next.value));
+      inserts.push({ at: match.index + p.length, xml: contentParas(p, next.value) });
       filled += 1;
     }
+  }
+  for (let i = inserts.length - 1; i >= 0; i -= 1) {
+    doc = doc.slice(0, inserts[i].at) + inserts[i].xml + doc.slice(inserts[i].at);
   }
   while (queue.length) missed.push(queue.shift().label);
 

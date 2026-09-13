@@ -54,6 +54,7 @@ legacy/drop/**/*.md
 
 # Produced client documents — file notes, fact finds, SOAs, profiles, reports.
 # These are finished work about real people. Keep the folders, not the contents.
+legacy/follow-ups/*
 legacy/file-notes/*
 legacy/fact-finds/*
 legacy/client-profiles/*

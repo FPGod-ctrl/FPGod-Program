@@ -15,6 +15,35 @@ function dueTone(due, status) {
   return '';
 }
 
+/**
+ * Split the notes field into dated entries.
+ *
+ * Notes are stored as one pipe-delimited string so the spreadsheet's Notes column
+ * stays a single editable cell. Entries the app writes carry a date and time; the
+ * scanner's carry a date only, and anything without a leading stamp at all (a note
+ * typed straight into Excel) is kept as an undated entry rather than dropped.
+ */
+function parseNotes(notes) {
+  if (!notes) return [];
+  return notes
+    .split(' | ')
+    .map((chunk) => chunk.trim())
+    .filter(Boolean)
+    .map((chunk) => {
+      const m = chunk.match(/^(\d{4}-\d{2}-\d{2})(?:\s+(\d{2}:\d{2}))?:\s*([\s\S]*)$/);
+      if (!m) return { date: '', time: '', text: chunk };
+      return { date: m[1], time: m[2] || '', text: m[3] };
+    });
+}
+
+/** 2026-09-09 -> "Tue 9 Sep", which is what a person actually reads. */
+function prettyDate(iso) {
+  if (!iso) return '';
+  const d = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
 /** Where the date came from, so an assumed turnaround is not mistaken for a deadline. */
 const DUE_ORIGIN = {
   email: 'Deadline stated in the email',
@@ -66,11 +95,22 @@ const FILTERS = [
   { key: 'all', label: 'Everything', blurb: 'The whole tracker', match: () => true },
 ];
 
+// `who` is the name the task sits under; `task` is what actually has to be done.
+// Leaving due blank lets the API apply the same 24-hour turnaround the scanner does.
+const BLANK_TASK = { who: '', task: '', due: '', notes: '' };
+
 export default function Tasks() {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('open');
   const [saving, setSaving] = useState('');
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState(BLANK_TASK);
+  // Which row has its note box open, and the unsent text per row.
+  const [noting, setNoting] = useState('');
+  const [noteDraft, setNoteDraft] = useState({});
+  // Only one note log is open at a time - the list stays scannable.
+  const [expanded, setExpanded] = useState('');
 
   async function load() {
     try {
@@ -103,9 +143,34 @@ export default function Tasks() {
     }
   }
 
+  /** Appends a dated entry rather than replacing the field, so the scanner's log survives. */
+  async function addNote(id) {
+    const text = (noteDraft[id] || '').trim();
+    if (!text) return;
+    await patchTask(id, { addNote: text });
+    setNoteDraft((d) => ({ ...d, [id]: '' }));
+    setNoting('');
+  }
+
   const setStatus = (id, status) => patchTask(id, { status });
   // Sent as dueSource 'user' by the API, so a later scan cannot overwrite it.
   const setDue = (id, due) => patchTask(id, { due });
+
+  async function createTask(e) {
+    e.preventDefault();
+    if (!form.task.trim()) return;
+    setSaving('new');
+    try {
+      await api.post('/tasks', form);
+      setForm(BLANK_TASK);
+      setAdding(false);
+      await load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving('');
+    }
+  }
 
   const active = FILTERS.find((x) => x.key === filter) || FILTERS[0];
 
@@ -153,11 +218,16 @@ export default function Tasks() {
     <>
       <PageHeader
         title="Task Tracker"
-        sub="Built from your mailbox every 30 minutes"
+        sub="Built from your mailbox every hour"
         actions={
-          <button className="btn" onClick={load}>
-            Refresh
-          </button>
+          <>
+            <button className="btn primary" onClick={() => setAdding((v) => !v)}>
+              {adding ? 'Cancel' : '+ Add task'}
+            </button>
+            <button className="btn" onClick={load}>
+              Refresh
+            </button>
+          </>
         }
       />
 
@@ -203,6 +273,59 @@ export default function Tasks() {
           </span>
         </div>
 
+        {adding && (
+          <form className="task-new" onSubmit={createTask}>
+            <div className="tn-grid">
+              <label className="tn-field">
+                <span>Name</span>
+                <input
+                  className="input"
+                  placeholder="Client or organisation"
+                  value={form.who}
+                  onChange={(e) => setForm({ ...form, who: e.target.value })}
+                />
+              </label>
+              <label className="tn-field tn-wide">
+                <span>Description</span>
+                <input
+                  className="input"
+                  placeholder="What needs doing"
+                  required
+                  autoFocus
+                  value={form.task}
+                  onChange={(e) => setForm({ ...form, task: e.target.value })}
+                />
+              </label>
+              <label className="tn-field">
+                <span>Due</span>
+                <input
+                  type="date"
+                  className="input"
+                  value={form.due}
+                  onChange={(e) => setForm({ ...form, due: e.target.value })}
+                />
+              </label>
+              <label className="tn-field tn-wide">
+                <span>Notes</span>
+                <input
+                  className="input"
+                  placeholder="Optional"
+                  value={form.notes}
+                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                />
+              </label>
+            </div>
+            <div className="tn-actions">
+              <span className="faint small">
+                Leave the date blank for a 24-hour turnaround.
+              </span>
+              <button className="btn primary" type="submit" disabled={saving === 'new'}>
+                {saving === 'new' ? 'Adding…' : 'Add task'}
+              </button>
+            </div>
+          </form>
+        )}
+
         <div className="task-sheet">
           {!data?.tasks?.length ? (
             <div className="empty">
@@ -235,11 +358,73 @@ export default function Tasks() {
                       />
                       <div className="task-main">
                         <div className="task-name">{t.task}</div>
-                        {t.notes && <div className="muted small">{t.notes}</div>}
                         {t.source?.subject && (
                           <div className="faint small">
                             {t.source.from} — {t.source.subject}
                           </div>
+                        )}
+                        {(() => {
+                          const entries = parseNotes(t.notes);
+                          if (!entries.length) return null;
+                          const open = expanded === t.id;
+                          const latest = entries[entries.length - 1];
+                          return (
+                            <div className="note-log">
+                              <button
+                                className="note-toggle"
+                                aria-expanded={open}
+                                onClick={() => setExpanded(open ? '' : t.id)}
+                              >
+                                <span className={`caret ${open ? 'open' : ''}`} aria-hidden="true" />
+                                {entries.length} {entries.length === 1 ? 'note' : 'notes'}
+                                {!open && <span className="note-peek">{latest.text}</span>}
+                              </button>
+                              {open && (
+                                <ol className="note-list">
+                                  {entries.map((n, i) => (
+                                    <li key={i}>
+                                      <span className="note-when">
+                                        {prettyDate(n.date) || 'Undated'}
+                                        {n.time && <span className="note-time"> {n.time}</span>}
+                                      </span>
+                                      <span className="note-text">{n.text}</span>
+                                    </li>
+                                  ))}
+                                </ol>
+                              )}
+                            </div>
+                          );
+                        })()}
+                        {noting === t.id ? (
+                          <div className="note-add">
+                            <input
+                              className="input"
+                              autoFocus
+                              placeholder="Tried contacting, left voicemail…"
+                              value={noteDraft[t.id] || ''}
+                              onChange={(e) =>
+                                setNoteDraft({ ...noteDraft, [t.id]: e.target.value })
+                              }
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') addNote(t.id);
+                                if (e.key === 'Escape') setNoting('');
+                              }}
+                            />
+                            <button
+                              className="btn small"
+                              disabled={saving === t.id}
+                              onClick={() => addNote(t.id)}
+                            >
+                              Add
+                            </button>
+                            <button className="btn small ghost" onClick={() => setNoting('')}>
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button className="note-trigger" onClick={() => setNoting(t.id)}>
+                            + Note
+                          </button>
                         )}
                       </div>
                       <div className="task-due">
