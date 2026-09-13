@@ -9,7 +9,8 @@
       "Read(//c/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/sent-drop/**)",
       "Read(//c/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/mail-drop/processed/**)",
       "Bash(cp \"C:\\\\FPGod-Program\\\\legacy\\\\drop\\\\initial-meeting-build\\\\client-details-summary\\\\templates\\\\Initial meeting notes.docx\" tmpl.zip)",
-      "Bash(unzip -o -q tmpl.zip -d tmpl)"
+      "Bash(unzip -o -q tmpl.zip -d tmpl)",
+      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -in 3000,3001,4000,5173,5432,8080 } | Select-Object LocalAddress,LocalPort,OwningProcess | Sort-Object LocalPort -Unique)"
     ]
   },
   "hooks": {
