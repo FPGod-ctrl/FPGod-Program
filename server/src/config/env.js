@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -68,6 +69,31 @@ export const env = {
     get enabled() {
       return Boolean(process.env.ANTHROPIC_API_KEY);
     },
+  },
+
+  // ---------------------------------------------------------------------
+  // Client Library — the folders the ask-a-question page reads.
+  //
+  // `sharepointRoot` is the firm's SharePoint library as synced by OneDrive.
+  // It is READ-ONLY, without exception: services/library/fsGuard.js exposes no
+  // write operation and confines every path to the roots listed here. A local
+  // write there syncs firm-wide within minutes and would alter live client and
+  // compliance files.
+  //
+  // `repoRoot` is this repo's own legacy/ working folder, where a new prospect's
+  // notes live before they have a SharePoint client folder.
+  // ---------------------------------------------------------------------
+  library: {
+    sharepointRoot:
+      process.env.LEGACY_LIBRARY_ROOT ||
+      path.join(os.homedir(), 'Legacy Risk Advice', 'Legacy - Documents'),
+    // Subfolder of the above holding one folder per client ("Surname, First").
+    clientsDir: process.env.LEGACY_LIBRARY_CLIENTS_DIR || 'Clients',
+    repoRoot: process.env.LEGACY_REPO_ROOT || path.resolve(__dirname, '../../../legacy'),
+    // Guardrails for the on-demand text pass, which downloads placeholder files.
+    maxFilesPerAsk: num(process.env.LIBRARY_MAX_FILES, 25),
+    maxFileBytes: num(process.env.LIBRARY_MAX_FILE_MB, 12) * 1024 * 1024,
+    maxContextChars: num(process.env.LIBRARY_MAX_CONTEXT_CHARS, 420000),
   },
 
   storage: {

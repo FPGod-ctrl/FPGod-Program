@@ -8,13 +8,13 @@ import { badRequest, notFound } from '../utils/httpError.js';
 const router = Router();
 
 /**
- * The task list is owned by automation/tasks — the mail scanner writes it and
- * write-sheet.ps1 syncs the spreadsheet against it. The app reads and edits that
- * same file rather than keeping its own copy, so the sheet, the app and the
- * scanner can never disagree about what is outstanding.
+ * The task list now lives with the app. It was previously written by the mail
+ * scanner in automation/tasks; that scanner was archived on 2026-09-16 when mail
+ * access was stopped, so tasks are added and edited in the app by hand and this
+ * file is the only copy.
  */
 const STATE_FILE = fileURLToPath(
-  new URL('../../../automation/tasks/state/tasks.json', import.meta.url)
+  new URL('../../data/task-state/tasks.json', import.meta.url)
 );
 
 const STATUSES = ['Open', 'In Progress', 'Waiting', 'Done', 'Cancelled'];
@@ -33,7 +33,7 @@ function readState() {
 }
 
 const ARCHIVE_FILE = fileURLToPath(
-  new URL('../../../automation/tasks/state/archive.jsonl', import.meta.url)
+  new URL('../../data/task-state/archive.jsonl', import.meta.url)
 );
 
 /**

@@ -8,7 +8,6 @@ import Modal from '../components/ui/Modal.jsx';
 import { Loading, Empty, Spinner } from '../components/ui/Loading.jsx';
 import { Select } from '../components/ui/Field.jsx';
 import { useToast } from '../components/ui/Toast.jsx';
-import OutlookScan from '../components/OutlookScan.jsx';
 
 const DOC_TYPES = ['client_profile', 'statement', 'tax', 'identification', 'insurance', 'estate', 'plan', 'other'];
 
@@ -110,7 +109,6 @@ export default function Documents() {
           </div>
         </div>
 
-        <OutlookScan clientId={clientId} docType={docType} onIngested={load} />
 
         <div className="card">
           <div className="card-head"><h3>All Documents</h3><span className="muted">{docs?.length || 0} files</span></div>

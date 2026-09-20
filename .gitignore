@@ -52,6 +52,11 @@ legacy/drop/**/*.md
 !legacy/drop/README.md
 !legacy/drop/**/README.md
 
+# Whole client folders for SOA builds arrive in any format (xlsx, msg, images),
+# so ignore everything in them rather than listing extensions.
+legacy/drop/soa-build/cases/*
+!legacy/drop/soa-build/cases/README.md
+
 # Produced client documents — file notes, fact finds, SOAs, profiles, reports.
 # These are finished work about real people. Keep the folders, not the contents.
 legacy/follow-ups/*
@@ -63,3 +68,6 @@ legacy/soa/*
 legacy/templates/*
 !legacy/**/.gitkeep
 !legacy/**/README.md
+
+# Task tracker state: carries client names and (historically) email subjects.
+server/data/task-state/

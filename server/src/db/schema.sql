@@ -608,3 +608,65 @@ DO $$ BEGIN
       CHECK (action IS NULL OR action IN ('retain', 'replace', 'cancel', 'new', 'reduce', 'increase'));
   END IF;
 END$$;
+
+-- =====================================================================
+-- Client Library index (SharePoint + repo working folders)
+--
+-- The firm's SharePoint library syncs to this machine as Files On-Demand
+-- placeholders: listing names is instant, but READING a file downloads it.
+-- So the index is built in two passes — folder/file metadata for the whole
+-- library up front (no downloads), and extracted text only for the client
+-- actually being asked about, cached here so the download happens once.
+--
+-- The library itself is strictly read-only; everything below is a local
+-- copy in this database and never written back.
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS library_clients (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  -- 'sharepoint' = the synced firm library; 'repo' = legacy/ working folders,
+  -- which is where a new prospect lives before they have a client folder.
+  source        TEXT NOT NULL CHECK (source IN ('sharepoint', 'repo')),
+  folder_name   TEXT NOT NULL,   -- as filed, e.g. "Lau, Pauline"
+  display_name  TEXT NOT NULL,   -- as spoken, e.g. "Pauline Lau"
+  -- Normalised, order-independent name tokens used for matching a question
+  -- against the index ("lau pauline"). See services/library/match.js.
+  search_key    TEXT NOT NULL,
+  rel_path      TEXT NOT NULL,   -- relative to its root; never absolute
+  file_count    INT  NOT NULL DEFAULT 0,
+  latest_year   INT,             -- newest "[YYYY] Advice & Service" folder
+  files_indexed_at TIMESTAMPTZ,  -- null until the file pass has run
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (source, rel_path)
+);
+CREATE INDEX IF NOT EXISTS idx_library_clients_key ON library_clients(search_key);
+
+CREATE TABLE IF NOT EXISTS library_files (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id  UUID NOT NULL REFERENCES library_clients(id) ON DELETE CASCADE,
+  rel_path   TEXT NOT NULL,
+  name       TEXT NOT NULL,
+  ext        TEXT,
+  -- What the file is, inferred from its name and folder: soa-notes,
+  -- risk-checklist, cover-summary, fact-find, meeting-notes, soa, research,
+  -- schedule, product (a PDS — product literature, not client fact), other.
+  category   TEXT,
+  advice_year INT,
+  size_bytes BIGINT,
+  modified_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (client_id, rel_path)
+);
+CREATE INDEX IF NOT EXISTS idx_library_files_client ON library_files(client_id);
+
+CREATE TABLE IF NOT EXISTS library_file_text (
+  file_id     UUID PRIMARY KEY REFERENCES library_files(id) ON DELETE CASCADE,
+  text        TEXT,
+  chars       INT,
+  -- Size/mtime the text was extracted from, so an unchanged file is never
+  -- downloaded and re-parsed on the next question.
+  src_size    BIGINT,
+  src_modified TIMESTAMPTZ,
+  error       TEXT,
+  extracted_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);

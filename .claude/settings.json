@@ -2,15 +2,20 @@
   "permissions": {
     "allow": [
       "WebSearch",
-      "Bash(tasklist //FI \"IMAGENAME eq OUTLOOK.EXE\")",
       "Bash(tasklist //FI \"IMAGENAME eq EXCEL.EXE\")",
-      "Bash(echo \"=== mail-drop ===\"; ls \"C:/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/mail-drop\"/*.json 2>/dev/null | wc -l *)",
-      "Read(//c/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/mail-drop/**)",
-      "Read(//c/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/sent-drop/**)",
-      "Read(//c/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/mail-drop/processed/**)",
       "Bash(cp \"C:\\\\FPGod-Program\\\\legacy\\\\drop\\\\initial-meeting-build\\\\client-details-summary\\\\templates\\\\Initial meeting notes.docx\" tmpl.zip)",
       "Bash(unzip -o -q tmpl.zip -d tmpl)",
-      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -in 3000,3001,4000,5173,5432,8080 } | Select-Object LocalAddress,LocalPort,OwningProcess | Sort-Object LocalPort -Unique)"
+      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -in 3000,3001,4000,5173,5432,8080 } | Select-Object LocalAddress,LocalPort,OwningProcess | Sort-Object LocalPort -Unique)",
+      "Bash(git -C c:/FPGod-Program status --short)",
+      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -in 3000,3001,4000,5000,5173,5174,8080 } | Select-Object LocalAddress,LocalPort,OwningProcess | Format-Table -AutoSize)"
+    ],
+    "deny": [
+      "Bash(outlook*)",
+      "Bash(start outlook*)",
+      "PowerShell(Start-Process outlook*)",
+      "PowerShell(New-Object -ComObject Outlook.Application*)",
+      "Read(//c/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/mail-drop/**)",
+      "Read(//c/Users/TristanBiro/OneDrive - Legacy Risk Advice/FPGod/sent-drop/**)"
     ]
   },
   "hooks": {

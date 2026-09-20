@@ -34,11 +34,6 @@ const TOOLS = [
     cta: 'Pick a client', accent: 'var(--green)', soft: 'var(--green-soft)',
   },
   {
-    to: '/generate/follow-ups', icon: '✉️', title: 'Follow-up Emails',
-    desc: 'Turn a meeting transcript or call note into a follow-on-from-meeting or phone-call email in your voice.',
-    cta: 'Open emails', accent: 'var(--primary)', soft: 'var(--primary-soft)',
-  },
-  {
     to: '/clients', icon: '📥', title: 'Client Documents',
     desc: 'Drag & drop statements and paperwork into any client file — attributed to that client and AI-scanned to auto-fill their details.',
     cta: 'Open a client', accent: 'var(--amber)', soft: 'var(--amber-soft)',
@@ -78,7 +73,7 @@ export default function Dashboard() {
             <h1>What would you like to generate today?</h1>
             <p>
               Pick a tool below to draft client-ready documents in your house style — Statements of Advice,
-              client profiles, insurance reports and follow-up emails — all from the data and templates you already hold.
+              client profiles and insurance reports — all from the data and templates you already hold.
             </p>
           </div>
 
@@ -98,7 +93,7 @@ export default function Dashboard() {
                 <Stat tone="accent" label="Assets Under Management" value={currency(data.stats.aum)} foot="Across all current holdings" />
                 <Stat tone="blue" label="Clients" value={data.stats.clients} foot={`${data.stats.groups} household${data.stats.groups === 1 ? '' : 's'}`} />
                 <Stat tone="purple" label="Financial Plans" value={data.stats.plans} foot={`${data.stats.documents} documents on file`} />
-                <Stat tone="green" label="Training Examples" value={data.stats.training} foot="Historical plans & emails" />
+                <Stat tone="green" label="Training Examples" value={data.stats.training} foot="Historical plans &amp; advice documents" />
               </div>
 
               <div className="grid grid-2">
@@ -143,20 +138,6 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="card">
-                <div className="card-head"><h3>Recent Follow-up Emails</h3>
-                  <button className="btn sm ghost" onClick={() => nav('/meetings')}>Open →</button>
-                </div>
-                <div className="card-pad" style={{ paddingTop: 6 }}>
-                  {data.recent.emails.length === 0 ? <p className="muted">No emails yet.</p> :
-                    data.recent.emails.map((e) => (
-                      <div key={e.id} className="row between" style={{ padding: '9px 0', borderBottom: '1px solid var(--border)' }}>
-                        <div className="t-strong">{e.subject || '(no subject)'}</div>
-                        <div className="row"><span className="faint" style={{ fontSize: 12 }}>{dateTime(e.updated_at)}</span><Badge value={e.status} /></div>
-                      </div>
-                    ))}
-                </div>
-              </div>
             </>
           )}
         </div>

@@ -10,15 +10,17 @@ Both are written from the same initial meeting, so they are built as one task.
 
 ## House style — derived from Tristan's edits of generated drafts
 
-Two examples, each a generated draft **after he edited it**. The diff between draft and
+Three examples, each a generated draft **after he edited it**. The diff between draft and
 issued document is the real specification.
 
 | Example | Shape | Status |
 |---|---|---|
-| `client-details-summary/examples/Jayesh-Varghese-SEP10-EDITED-BY-TRISTAN.md` | Couple; adviser already held the client's details | **Current — follow this** (2026-09-10) |
-| `client-details-summary/examples/Verinder-Rai-SEP02-EDITED-BY-TRISTAN.md` | Single client, first-contact enquiry, most basics unknown | Superseded where the two disagree |
+| `client-details-summary/examples/Brett-Montgomery-SEP14-EDITED-BY-TRISTAN.md` | Couple; first-contact referral call, no cover details known | **Current — follow this** (2026-09-14) |
+| `client-details-summary/examples/Jayesh-Varghese-SEP10-EDITED-BY-TRISTAN.md` | Couple; adviser already held the client's details | Superseded where it disagrees with SEP14 |
+| `client-details-summary/examples/Verinder-Rai-SEP02-EDITED-BY-TRISTAN.md` | Single client, first-contact enquiry, most basics unknown | Superseded where the others disagree |
 
-The SEP10 file carries a full annotated diff. Rules, with the SEP10 edit taking precedence:
+The SEP10 and SEP14 files each carry a full annotated diff. Rules below are the SEP10 set;
+**read the SEP14 rules further down first — they take precedence where they overlap.**
 
 1. **Never write about the transcript.** Cut "came through unclearly", "figure unclear on
    the call", "[CONFIRM spelling]" scattered through prose. Either state the fact, or mark
@@ -95,6 +97,54 @@ The SEP10 file carries a full annotated diff. Rules, with the SEP10 edit taking 
 
 Net effect: **the draft is too wordy, too self-referential, and strays into advice.** Aim
 shorter and more declarative, keep the reasoning out, and stop at the client's circumstances.
+
+### SEP14 edit — these override the above where they overlap
+
+From `client-details-summary/examples/Brett-Montgomery-SEP14-EDITED-BY-TRISTAN.md`
+(2026-09-14). The draft was close — his words were "not many changes" — so these are the
+residue, and they are the sharpest signal available.
+
+14. **Never assert a negative as fact; record it as not disclosed.** "No investment
+    properties, shares, managed funds, cash or savings **are held**" became "**have been
+    disclosed**", and the same in the assets list. The client saying he holds nothing is
+    not evidence that he holds nothing. Every absence in the document is an absence *of
+    disclosure*.
+
+15. **Qualify the standing cover clause when no cover is confirmed.** "EXISTING COVER
+    REMAINS IN FORCE" becomes "**EXISTING COVER (IF ANY) REMAINS IN FORCE**" where nothing
+    has yet been confirmed to exist.
+
+16. **Financial circumstances does not repeat the header or About the client.** The whole
+    `Income` block and the dependants line were deleted — both incomes already sit on the
+    `Employer/self` header lines and the children are already in *About the client*. This
+    **replaces SEP10 rules 4 and 8**, which moved the children into this section. It now
+    reduces to: ASSETS, total, LIABILITIES, total, `Estimated net position approx. $X.`,
+    then any `NOT CAPTURED` line and the one-line driver sentence.
+
+17. **Delete any section with nothing real in it — `Goals` and `UNDERWRITING` included.**
+    SEP14 **ends at `Height / weight`**: `Hobbies / pets`, `UNDERWRITING`, `Insurance
+    needs`, `Goals` and the trailing repeated block all went. This **replaces SEP10 rule
+    10** ("the document ends at Goals") — SEP10 ended at Goals because that meeting had
+    goals. The test is **would this section exist if the draft could only use facts?** A
+    heading is not a reason to synthesise content, and a first-contact call usually has
+    nothing to underwrite and no goals yet explored.
+
+18. **A `TBC` field can carry a qualifying line** where something partial is known —
+    "Both to be explored further however, client has disclosed [a healthy] BMI for each."
+
+19. **A long `Employer/self` value moves to its own line**, leaving `Sex` and `Speciality`
+    on the row above. Short values keep all three on one line.
+
+20. **Name the school type where fees are in play** — "one child still at school" became
+    "one child still at **private** school".
+
+21. **"No binding death benefit nominations discussed." stays out of `Super`.** He cut the
+    same line from SEP10 and it came back in the SEP14 draft. It is a note about what the
+    meeting did not cover, which rule 1 already forbids — the recurrence is the point.
+
+22. **Stray empty labels are tolerated; invented content is not.** He left the empty
+    `Family / partner/ dependants:` heading standing and spent his edits on deleting
+    inferred prose instead. Do not pad a section to justify its heading.
 
 ### Generator gaps against this spec
 

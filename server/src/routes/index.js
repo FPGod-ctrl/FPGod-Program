@@ -9,13 +9,12 @@ import investments from './investments.js';
 import cfs from './cfs.js';
 import plans from './plans.js';
 import transcripts from './transcripts.js';
-import emails from './emails.js';
 import trainingData from './trainingData.js';
 import chat from './chat.js';
 import financials from './financials.js';
 import family from './family.js';
-import outlook from './outlook.js';
 import tasks from './tasks.js';
+import library from './library.js';
 
 const router = Router();
 
@@ -40,11 +39,11 @@ router.use('/investments', investments);
 router.use('/cfs', cfs);
 router.use('/plans', plans);
 router.use('/transcripts', transcripts);
-router.use('/emails', emails);
 router.use('/training-data', trainingData);
 router.use('/chat', chat);
-router.use('/outlook', outlook);
 router.use('/family', family);
+// Client Library: ask a question, read the client's own files (read-only).
+router.use('/library', library);
 // Financial breakdown: /api/assets, /liabilities, /income, /expenses, /insurance, /goals
 router.use('/', financials);
 
