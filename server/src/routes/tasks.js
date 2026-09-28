@@ -1,122 +1,40 @@
 import { Router } from 'express';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { query } from '../config/db.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { badRequest, notFound } from '../utils/httpError.js';
+import {
+  STATUSES, PRIORITIES, TYPES, DUE_RE, isOpen, stateExists, readState, readAllTasks,
+  readArchive, writeState, appendNote, noteStamp, sortTasks, addTask, applyStatus, localToday,
+} from '../services/taskStore.js';
+import { displayName, whoMatchesClient } from '../services/crm/names.js';
 
 const router = Router();
 
-/**
- * The task list now lives with the app. It was previously written by the mail
- * scanner in automation/tasks; that scanner was archived on 2026-09-16 when mail
- * access was stopped, so tasks are added and edited in the app by hand and this
- * file is the only copy.
- */
-const STATE_FILE = fileURLToPath(
-  new URL('../../data/task-state/tasks.json', import.meta.url)
-);
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const STATUSES = ['Open', 'In Progress', 'Waiting', 'Done', 'Cancelled'];
-const isOpen = (t) => t.status !== 'Done' && t.status !== 'Cancelled';
-
-function readState() {
-  if (!fs.existsSync(STATE_FILE)) {
-    return { version: 1, lastRun: null, nextId: 1, seenEmails: {}, tasks: [] };
-  }
-  // PowerShell's `Out-File -Encoding utf8` writes a UTF-8 BOM, so the state file
-  // starts with U+FEFF whenever write-sheet.ps1 last touched it. JSON.parse
-  // rejects that outright, which reads to the user as "no tasks".
-  const s = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8').replace(/^\uFEFF/, ''));
-  s.tasks ||= [];
-  return s;
-}
-
-const ARCHIVE_FILE = fileURLToPath(
-  new URL('../../data/task-state/archive.jsonl', import.meta.url)
-);
-
-/**
- * Completed work that is no longer in the live state file.
- *
- * The archive is append-only, so a task that was finished stays readable even
- * after tasks.json is reset. Anything still present in state wins — the live copy
- * carries any notes or status changes made since it was archived.
- */
-function readArchive(liveIds) {
-  if (!fs.existsSync(ARCHIVE_FILE)) return [];
-  const seen = new Set();
-  const out = [];
-  for (const line of fs.readFileSync(ARCHIVE_FILE, 'utf8').split('\n')) {
-    if (!line.trim()) continue;
-    let t;
-    try {
-      t = JSON.parse(line);
-    } catch {
-      continue; // a torn final line from an interrupted append
-    }
-    if (!t?.id || liveIds.has(t.id)) continue;
-    // Later lines supersede earlier ones for the same task.
-    if (seen.has(t.id)) out[out.findIndex((x) => x.id === t.id)] = { ...t, archived: true };
-    else {
-      seen.add(t.id);
-      out.push({ ...t, archived: true });
-    }
-  }
-  return out;
+/** The CRM contact a task is being linked to, or a 400 if there is no such contact. */
+async function contactFor(clientId) {
+  if (!UUID_RE.test(String(clientId))) throw badRequest('clientId must be a contact id');
+  const { rows } = await query(
+    'SELECT id, first_name, last_name, partner_first_name, partner_last_name FROM clients WHERE id = $1',
+    [clientId]
+  );
+  if (!rows[0]) throw badRequest(`No CRM contact ${clientId}`);
+  return rows[0];
 }
 
 /**
- * Write via a temp file and rename. The scanner rewrites this file on its own
- * schedule; a plain truncate-and-write could be read half-finished mid-cycle.
+ * The one contact a typed name unambiguously belongs to, or null. Needs a full
+ * first-and-last match, and exactly one candidate — a guess is worse than no link.
  */
-function writeState(state) {
-  fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
-  const tmp = `${STATE_FILE}.${process.pid}.tmp`;
-  fs.writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8');
-  fs.renameSync(tmp, STATE_FILE);
-}
-
-/**
- * Append a note, keeping the MOST RECENT text when the field overflows.
- *
- * Matches how extract-tasks.mjs writes notes, so the scanner's entries and the
- * adviser's read as one dated log rather than two competing formats. Trimming
- * from the front is deliberate: the newest entry is the one worth keeping.
- */
-function appendNote(existing, line) {
-  const joined = existing ? `${existing} | ${line}` : line;
-  return joined.length <= 500 ? joined : joined.slice(joined.length - 500);
-}
-
-/**
- * Timestamp for a note entry: local date AND time.
- *
- * Local, not toISOString - UTC is yesterday for most of an Australian workday.
- * The time matters here in a way it does not for the scanner's own notes: "tried
- * calling" three times in one afternoon is only legible with the hour attached.
- */
-function noteStamp() {
-  const d = new Date();
-  const p = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
-}
-
-const statusRank = { 'In Progress': 0, Open: 1, Waiting: 2, Done: 3, Cancelled: 4 };
-const prioRank = { High: 0, Medium: 1, Low: 2 };
-
-/** Same ordering the spreadsheet uses, so the two views read identically. */
-function sortTasks(tasks) {
-  return [...tasks].sort((a, b) => {
-    const s = (statusRank[a.status] ?? 1) - (statusRank[b.status] ?? 1);
-    if (s) return s;
-    const p = (prioRank[a.priority] ?? 1) - (prioRank[b.priority] ?? 1);
-    if (p) return p;
-    const ad = a.due || '9999-12-31';
-    const bd = b.due || '9999-12-31';
-    if (ad !== bd) return ad < bd ? -1 : 1;
-    return (b.source?.received || '') > (a.source?.received || '') ? 1 : -1;
-  });
+async function contactNamed(who) {
+  if (!who || !String(who).trim()) return null;
+  const { rows } = await query(
+    `SELECT id, first_name, last_name, preferred_name, partner_first_name, partner_last_name
+       FROM clients WHERE status <> 'archived'`
+  );
+  const hits = rows.filter((c) => whoMatchesClient(who, c));
+  return hits.length === 1 ? hits[0] : null;
 }
 
 /**
@@ -127,11 +45,9 @@ function sortTasks(tasks) {
 router.get(
   '/',
   asyncHandler(async (req, res) => {
-    const state = readState();
-    const liveIds = new Set(state.tasks.map((t) => t.id));
-    const archived = readArchive(liveIds);
-    const all = sortTasks([...state.tasks, ...archived]);
-    const today = new Date().toISOString().slice(0, 10);
+    const { state, all: unsorted } = readAllTasks();
+    const all = sortTasks(unsorted);
+    const today = localToday();
 
     const open = all.filter(isOpen);
     const counts = {
@@ -146,35 +62,24 @@ router.get(
 
     res.json({
       lastRun: state.lastRun,
-      configured: fs.existsSync(STATE_FILE),
+      configured: stateExists(),
       counts,
       tasks: req.query.open ? open : all,
     });
   })
 );
 
-const PRIORITIES = ['High', 'Medium', 'Low'];
-const TYPES = ['Client', 'Internal'];
-
-/** 24-hour turnaround, matching what the scanner assumes for mail with no deadline. */
-function tomorrow() {
-  const d = new Date();
-  d.setDate(d.getDate() + 1);
-  const p = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
-}
-
 /**
  * POST /api/tasks — add a task by hand.
  *
- * Manual tasks carry `origin: 'manual'` and no source email. The scanner keys
- * everything on message id, so it has no way to recreate or close one of these —
- * they live and die by hand, which is the point.
+ * `clientId` links it to a CRM contact. Without one, a name that matches exactly
+ * one contact links itself, so a task typed on the tracker still appears on the
+ * client's CRM record.
  */
 router.post(
   '/',
   asyncHandler(async (req, res) => {
-    const { task, who, type, priority, due, notes } = req.body || {};
+    const { task, who, type, priority, due, notes, clientId } = req.body || {};
     if (!task || !String(task).trim()) throw badRequest('task is required');
     if (type !== undefined && type !== '' && !TYPES.includes(type)) {
       throw badRequest(`type must be one of: ${TYPES.join(', ')}`);
@@ -182,42 +87,38 @@ router.post(
     if (priority !== undefined && priority !== '' && !PRIORITIES.includes(priority)) {
       throw badRequest(`priority must be one of: ${PRIORITIES.join(', ')}`);
     }
-    if (due !== undefined && due !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(String(due))) {
+    if (due !== undefined && due !== '' && !DUE_RE.test(String(due))) {
       throw badRequest('due must be YYYY-MM-DD, or "" to clear it');
     }
 
+    // Database work first: nothing may be awaited once the task file is read.
+    let contact = null;
+    if (clientId) contact = await contactFor(clientId);
+    else if (type !== 'Internal') contact = await contactNamed(who);
+
     const state = readState();
-    const nextId = state.nextId || state.tasks.length + 1;
-    const created = {
-      id: `T${String(nextId).padStart(4, '0')}`,
-      created: new Date().toISOString(),
-      task: String(task).trim().slice(0, 500),
-      who: String(who || '').trim().slice(0, 120),
-      type: TYPES.includes(type) ? type : 'Client',
-      priority: PRIORITIES.includes(priority) ? priority : 'Medium',
-      due: due || tomorrow(),
-      dueSource: due ? 'user' : 'default',
-      status: 'Open',
-      notes: String(notes || '').slice(0, 500),
-      origin: 'manual',
-      source: null,
-    };
-    state.nextId = nextId + 1;
-    state.tasks.push(created);
+    const created = addTask(state, {
+      task,
+      who: who || (contact ? displayName(contact) : ''),
+      type,
+      priority,
+      due,
+      notes,
+      clientId: contact?.id,
+    });
     writeState(state);
     res.status(201).json(created);
   })
 );
 
 /**
- * PATCH /api/tasks/:id — status and notes only.
- * Everything else (task text, who, priority, due, source) is regenerated from the
- * mail each cycle, so accepting edits to those would silently lose them.
+ * PATCH /api/tasks/:id — status, due date, notes, and the CRM link.
+ * `clientId: null` unlinks a task from its contact.
  */
 router.patch(
   '/:id',
   asyncHandler(async (req, res) => {
-    const { status, notes, due, addNote } = req.body || {};
+    const { status, notes, due, addNote, clientId } = req.body || {};
     if (status !== undefined && !STATUSES.includes(status)) {
       throw badRequest(`status must be one of: ${STATUSES.join(', ')}`);
     }
@@ -228,9 +129,10 @@ router.patch(
       throw badRequest('addNote must be a non-empty string');
     }
     // Empty string clears the date; anything else must be a plain ISO day.
-    if (due !== undefined && due !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(String(due))) {
+    if (due !== undefined && due !== '' && !DUE_RE.test(String(due))) {
       throw badRequest('due must be YYYY-MM-DD, or "" to clear it');
     }
+    const contact = clientId ? await contactFor(clientId) : null;
 
     const state = readState();
     const task = state.tasks.find((t) => t.id === req.params.id);
@@ -245,25 +147,21 @@ router.patch(
       );
     }
 
-    if (status !== undefined) {
-      task.status = status;
-      if (status === 'Done' || status === 'Cancelled') {
-        task.completedAt = new Date().toISOString();
-      } else {
-        delete task.completedAt;
-      }
-    }
+    if (status !== undefined) applyStatus(task, status);
     // `notes` replaces the field outright; `addNote` appends a dated entry and is
-    // what the UI uses, so the scanner's log is never overwritten by hand.
+    // what the UI uses, so the existing log is never overwritten by hand.
     if (notes !== undefined) task.notes = notes.slice(0, 500);
     if (addNote !== undefined) {
       task.notes = appendNote(task.notes, `${noteStamp()}: ${addNote.trim()}`);
     }
     if (due !== undefined) {
       task.due = String(due);
-      // Marks the date as the human's. extract-tasks will not overwrite it on a
-      // later scan, which it otherwise would every time a chaser arrives.
+      // Marks the date as the adviser's own rather than an assumed turnaround.
       task.dueSource = 'user';
+    }
+    if (clientId !== undefined) {
+      if (contact) task.clientId = contact.id;
+      else delete task.clientId;
     }
 
     writeState(state);

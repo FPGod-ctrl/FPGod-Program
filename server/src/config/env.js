@@ -96,6 +96,12 @@ export const env = {
     maxContextChars: num(process.env.LIBRARY_MAX_CONTEXT_CHARS, 420000),
   },
 
+  // The Task Tracker's list is a JSON file, not a table. Overridable so the test
+  // suite writes its fixtures somewhere other than the adviser's real task list.
+  tasks: {
+    stateDir: process.env.TASK_STATE_DIR || path.resolve(__dirname, '../../data/task-state'),
+  },
+
   storage: {
     driver: process.env.STORAGE_DRIVER || 'local',
     uploadDir: process.env.UPLOAD_DIR || './uploads',

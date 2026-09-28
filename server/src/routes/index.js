@@ -15,6 +15,7 @@ import financials from './financials.js';
 import family from './family.js';
 import tasks from './tasks.js';
 import library from './library.js';
+import crm from './crm.js';
 
 const router = Router();
 
@@ -44,6 +45,8 @@ router.use('/chat', chat);
 router.use('/family', family);
 // Client Library: ask a question, read the client's own files (read-only).
 router.use('/library', library);
+// CRM: contacts, logged communication, pipeline stage; tasks shared with /tasks.
+router.use('/crm', crm);
 // Financial breakdown: /api/assets, /liabilities, /income, /expenses, /insurance, /goals
 router.use('/', financials);
 

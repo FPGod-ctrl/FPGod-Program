@@ -1,75 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../api/client.js';
 import PageHeader from '../components/PageHeader.jsx';
 import { Loading } from '../components/ui/Loading.jsx';
-
-const STATUSES = ['Open', 'In Progress', 'Waiting', 'Done', 'Cancelled'];
-const isOpen = (t) => t.status !== 'Done' && t.status !== 'Cancelled';
-const today = () => new Date().toISOString().slice(0, 10);
-
-/** Overdue and due-today are the only date states worth colouring. */
-function dueTone(due, status) {
-  if (!due || !isOpen({ status })) return '';
-  if (due < today()) return 'overdue';
-  if (due === today()) return 'today';
-  return '';
-}
-
-/**
- * Split the notes field into dated entries.
- *
- * Notes are stored as one pipe-delimited string so the spreadsheet's Notes column
- * stays a single editable cell. Entries the app writes carry a date and time; the
- * scanner's carry a date only, and anything without a leading stamp at all (a note
- * typed straight into Excel) is kept as an undated entry rather than dropped.
- */
-function parseNotes(notes) {
-  if (!notes) return [];
-  return notes
-    .split(' | ')
-    .map((chunk) => chunk.trim())
-    .filter(Boolean)
-    .map((chunk) => {
-      const m = chunk.match(/^(\d{4}-\d{2}-\d{2})(?:\s+(\d{2}:\d{2}))?:\s*([\s\S]*)$/);
-      if (!m) return { date: '', time: '', text: chunk };
-      return { date: m[1], time: m[2] || '', text: m[3] };
-    });
-}
-
-/** 2026-09-09 -> "Tue 9 Sep", which is what a person actually reads. */
-function prettyDate(iso) {
-  if (!iso) return '';
-  const d = new Date(`${iso}T00:00:00`);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
-}
-
-/** Where the date came from, so an assumed turnaround is not mistaken for a deadline. */
-const DUE_ORIGIN = {
-  email: 'Deadline stated in the email',
-  user: 'You set this date',
-  default: 'Assumed 24-hour turnaround — no deadline was given',
-};
-
-/**
- * Editable due date. A native date input keeps the keyboard and picker behaviour
- * without a dependency, and the tone class carries the overdue/today colouring
- * that the read-only badge used to.
- */
-function DueCell({ task, disabled, onChange }) {
-  const tone = dueTone(task.due, task.status);
-  return (
-    <input
-      type="date"
-      className={`task-date ${tone} ${task.dueSource === 'default' ? 'assumed' : ''}`}
-      value={task.due || ''}
-      disabled={disabled}
-      title={DUE_ORIGIN[task.dueSource] || 'No due date'}
-      aria-label={`Due date for ${task.task}`}
-      onChange={(e) => onChange(e.target.value)}
-    />
-  );
-}
+import { parseNotes, prettyDate, TASK_STATUSES as STATUSES, isOpenTask as isOpen } from '../lib/taskNotes.js';
+import { todayLocal as today } from '../lib/crm.js';
+import DueCell from '../components/TaskDueCell.jsx';
 
 const FILTERS = [
   { key: 'open', label: 'To do', blurb: 'Everything still open', match: (t) => isOpen(t) },
@@ -357,7 +293,14 @@ export default function Tasks() {
                         title={`${t.priority || 'No'} priority`}
                       />
                       <div className="task-main">
-                        <div className="task-name">{t.task}</div>
+                        <div className="task-name">
+                          {t.task}
+                          {t.clientId && (
+                            <Link className="task-crm" to={`/crm/${t.clientId}`} title="Open this client in the CRM">
+                              CRM ↗
+                            </Link>
+                          )}
+                        </div>
                         {t.source?.subject && (
                           <div className="faint small">
                             {t.source.from} — {t.source.subject}

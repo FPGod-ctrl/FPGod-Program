@@ -34,6 +34,10 @@ const xmlEscape = (s) => String(s ?? '')
 const paraText = (p) => (p.match(/<w:t(?:\s[^>]*)?>([\s\S]*?)<\/w:t>/g) || [])
   .map((m) => m.replace(/<[^>]+>/g, '')).join('').trim();
 
+/** A run of text; outstanding items (TBC) are highlighted yellow, per house style. */
+const textRun = (text) => `<w:r>${text === 'TBC' ? '<w:rPr><w:highlight w:val="yellow"/></w:rPr>' : ''}`
+  + `<w:t xml:space="preserve">${xmlEscape(text)}</w:t></w:r>`;
+
 /** Build content paragraphs that inherit the label paragraph's run styling. */
 function contentParas(labelXml, value) {
   // Reuse pPr but NOT rPr — labels are bold in this template and the answer
@@ -41,7 +45,7 @@ function contentParas(labelXml, value) {
   const pPr = (labelXml.match(/<w:pPr>[\s\S]*?<\/w:pPr>/) || [''])[0];
   return String(value ?? '')
     .split('\n')
-    .map((line) => `<w:p>${pPr}<w:r><w:t xml:space="preserve">${xmlEscape(line)}</w:t></w:r></w:p>`)
+    .map((line) => `<w:p>${pPr}${line.split(/\b(TBC)\b/).filter(Boolean).map(textRun).join('') || textRun('')}</w:p>`)
     .join('');
 }
 

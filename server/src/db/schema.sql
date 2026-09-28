@@ -670,3 +670,58 @@ CREATE TABLE IF NOT EXISTS library_file_text (
   error       TEXT,
   extracted_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- =====================================================================
+-- CRM
+--
+-- A CRM contact IS a client row: one record per person or household, shared
+-- with the Clients page, so the practice never keeps two lists of people.
+-- These columns add where the file is up to and who looks after it.
+--
+-- crm_stage is validated by the API against services/crm/stages.js rather than
+-- a CHECK here, so the stage list can be renamed without a migration.
+-- =====================================================================
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS crm_stage            TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS crm_stage_changed_at TIMESTAMPTZ;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS adviser              TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS referral_source      TEXT;
+-- Folder name under the SharePoint library's Clients\ ("Borsky, David and
+-- Shira"). A pointer only — the library is read-only and nothing here writes it.
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS sharepoint_folder    TEXT;
+-- Legacy's own classifications (see data/legacy-practice.json): premium tier
+-- (platinum/gold/silver/bronze — decides who makes contact at renewal), the
+-- XPLAN thread the current work runs under, and the next review date, which
+-- Legacy sets to the policy anniversary.
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS client_tier          TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS crm_thread           TEXT;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS next_review_date     DATE;
+CREATE INDEX IF NOT EXISTS idx_clients_crm_stage ON clients(crm_stage);
+
+-- Every logged contact with a client: calls, emails, meetings, texts, letters
+-- and file notes, plus the stage changes the server records on its own.
+-- Entered by hand. Nothing here is read from a mailbox.
+CREATE TABLE IF NOT EXISTS crm_activities (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id    UUID NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  kind         TEXT NOT NULL
+                 CHECK (kind IN ('call', 'email', 'meeting', 'sms', 'letter', 'note', 'stage')),
+  direction    TEXT CHECK (direction IS NULL OR direction IN ('outbound', 'inbound')),
+  subject      TEXT,
+  body         TEXT,
+  outcome      TEXT,                 -- calls: Spoke / Left voicemail / No answer …
+  with_whom    TEXT,                 -- when it was not the client: an insurer, a VA, a referrer
+  duration_min INTEGER CHECK (duration_min IS NULL OR duration_min >= 0),
+  occurred_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_crm_activities_client ON crm_activities(client_id, occurred_at DESC);
+CREATE INDEX IF NOT EXISTS idx_crm_activities_when   ON crm_activities(occurred_at DESC);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'trg_crm_activities_updated_at') THEN
+    CREATE TRIGGER trg_crm_activities_updated_at BEFORE UPDATE ON crm_activities
+      FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+  END IF;
+END$$;

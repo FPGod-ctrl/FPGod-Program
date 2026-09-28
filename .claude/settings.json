@@ -7,7 +7,14 @@
       "Bash(unzip -o -q tmpl.zip -d tmpl)",
       "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -in 3000,3001,4000,5173,5432,8080 } | Select-Object LocalAddress,LocalPort,OwningProcess | Sort-Object LocalPort -Unique)",
       "Bash(git -C c:/FPGod-Program status --short)",
-      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -in 3000,3001,4000,5000,5173,5174,8080 } | Select-Object LocalAddress,LocalPort,OwningProcess | Format-Table -AutoSize)"
+      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -in 3000,3001,4000,5000,5173,5174,8080 } | Select-Object LocalAddress,LocalPort,OwningProcess | Format-Table -AutoSize)",
+      "Read(//c/Users/TristanBiro/Legacy Risk Advice/Legacy - Documents/**)",
+      "Read(//c/Users/TristanBiro/Legacy Risk Advice/Legacy - Documents/Clients/**)",
+      "Bash(find . -iname \"*hii*\" -maxdepth 6)",
+      "Read(//c/Users/TristanBiro/Legacy Risk Advice/Legacy - Documents/Clients/Hii, Belinda/**)",
+      "Bash(find . -type f)",
+      "Bash(find . -iname \"*john*\" -maxdepth 3)",
+      "Bash(ls \"/c/Users/TristanBiro/Legacy Risk Advice/Legacy - Documents\" 2>/dev/null | head -50)"
     ],
     "deny": [
       "Bash(outlook*)",

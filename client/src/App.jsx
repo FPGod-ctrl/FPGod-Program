@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard.jsx';
 import Tasks from './pages/Tasks.jsx';
 import Clients from './pages/Clients.jsx';
 import ClientDetail from './pages/ClientDetail.jsx';
+import Crm from './pages/Crm.jsx';
+import CrmContact from './pages/CrmContact.jsx';
 import PlanGenerator from './pages/PlanGenerator.jsx';
 import Meetings from './pages/Meetings.jsx';
 import GenerateClientProfile from './pages/generate/ClientProfile.jsx';
@@ -21,6 +23,9 @@ export default function App() {
         <Route element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="tasks" element={<Tasks />} />
+          {/* CRM: contacts, logged communication, pipeline; tasks shared with the tracker. */}
+          <Route path="crm" element={<Crm />} />
+          <Route path="crm/:id" element={<CrmContact />} />
           <Route path="clients" element={<Clients />} />
           <Route path="clients/:id" element={<ClientDetail />} />
           <Route path="generate/client-profile" element={<GenerateClientProfile />} />

@@ -6,6 +6,7 @@ const NAV = [
   { section: 'Overview' },
   { to: '/', label: 'Dashboard', icon: '◈', end: true },
   { to: '/tasks', label: 'Task Tracker', icon: '✅' },
+  { to: '/crm', label: 'CRM', icon: '🤝' },
   { to: '/clients', label: 'Clients', icon: '👥' },
   { section: 'Advice' },
   { to: '/generate/soa', label: 'Insurance & Risk Planning', icon: '📄' },

@@ -26,6 +26,9 @@ export default defineConfig({
       // the storage driver. Left at the default they accumulate in
       // server/uploads alongside genuine client paperwork.
       UPLOAD_DIR: './uploads-test',
+      // The Task Tracker list is a JSON file. Left at the default, task tests
+      // would add and link tasks in the adviser's real list.
+      TASK_STATE_DIR: './data-test/task-state',
     },
   },
 });

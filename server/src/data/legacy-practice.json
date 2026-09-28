@@ -1,0 +1,48 @@
+{
+  "note": "How Legacy Risk Advice runs its book, for the CRM. Firm-level only, no client detail. Edit this file when the team, referral partners or insurers change; the CRM reads it on start-up.",
+  "sources": [
+    "Renewal & Review Process (issued 4 Sep 2026): Appendix A role holders, Section 7 client contact protocol, Section 8 threads, 14-day pre-anniversary window",
+    "Client classification in XP: premium tiers",
+    "Referral Partner Disclosure: referral arrangements that must be disclosed in the SOA",
+    "Documents & Templates\\Insurer Forms: insurers the firm places with",
+    "Threads broken down.xlsx: XPLAN thread names"
+  ],
+  "team": [
+    { "name": "Josh Davidson", "initials": "JD", "roles": ["Managing Director", "Adviser"] },
+    { "name": "Gary Douglas", "roles": ["Adviser"] },
+    { "name": "Tristan Biro", "roles": ["Adviser"] },
+    { "name": "Rubi Carao", "roles": ["Reporting Administrator"] },
+    { "name": "Josh Arellano", "initials": "JA", "roles": ["Renewals Administrator"] },
+    { "name": "Enis Vural", "roles": ["Head of Operations"] },
+    { "name": "Howard Cortes", "roles": ["VA (SOA drafting)"] }
+  ],
+  "tiers": [
+    { "key": "platinum", "label": "Platinum", "premium": "over $25k", "minPremium": 25000,
+      "initialContact": "Adviser", "followUpEmail": "N/A", "phoneCall": "Adviser", "meeting": "Ideally",
+      "rule": "Adviser-first. Admin does not make initial contact; flag it to the adviser with the schedule attached." },
+    { "key": "gold", "label": "Gold", "premium": "$15k–$25k", "minPremium": 15000,
+      "initialContact": "Admin Assistant", "followUpEmail": "Adviser", "phoneCall": "Adviser", "meeting": "If required" },
+    { "key": "silver", "label": "Silver", "premium": "$5k–$15k", "minPremium": 5000,
+      "initialContact": "Admin Assistant", "followUpEmail": "No", "phoneCall": "No", "meeting": "If required" },
+    { "key": "bronze", "label": "Bronze", "premium": "under $5k", "minPremium": 0,
+      "initialContact": "Admin Assistant", "followUpEmail": "No", "phoneCall": "No", "meeting": "If required" }
+  ],
+  "renewalWindowDays": 14,
+  "referralPartners": [
+    { "name": "PPA (Performance Property)", "legalName": "Performance Property Pty Ltd",
+      "fee": "25% of the initial and ongoing remuneration, including GST" },
+    { "name": "The HOPE Fund", "legalName": "The Hepatobiliary Oesophagogastric Pancreatic Fund Ltd",
+      "fee": "10% of the initial and ongoing remuneration, excluding GST (the Fund cannot accept GST)" },
+    { "name": "Tony Chen",
+      "fee": "10% of the initial remuneration as a one-off fee, including GST" }
+  ],
+  "otherReferralSources": ["Allfin", "Existing client", "Accountant", "Website enquiry", "Conference"],
+  "insurers": [
+    "Acenda", "AIA", "Asteron", "BT", "ClearView", "Encompass", "Futura", "MetLife",
+    "NEOS", "OnePath", "PPS", "Resolution Life", "TAL", "Zurich"
+  ],
+  "threads": [
+    "New Prospect", "Review", "Partner Cover", "Increase", "Reduction", "Policy Cancellation",
+    "Declined CPI", "Servicing Rights", "Dishonour", "Claim"
+  ]
+}
