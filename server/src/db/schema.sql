@@ -278,6 +278,13 @@ CREATE TABLE IF NOT EXISTS chat_messages (
 );
 CREATE INDEX IF NOT EXISTS idx_chat_target ON chat_messages(target_type, target_id);
 
+-- The Client Library keeps its per-client ask history here too ('library').
+-- Re-stated so existing databases pick it up (CREATE TABLE IF NOT EXISTS above
+-- won't alter an already-created table).
+ALTER TABLE chat_messages DROP CONSTRAINT IF EXISTS chat_messages_target_type_check;
+ALTER TABLE chat_messages ADD CONSTRAINT chat_messages_target_type_check
+  CHECK (target_type IN ('plan', 'email', 'library'));
+
 -- =====================================================================
 -- Assets — itemized assets (cash, property, etc.). Investment holdings are
 -- tracked separately in current_investments and folded in by the UI.

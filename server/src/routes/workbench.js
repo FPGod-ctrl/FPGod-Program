@@ -17,7 +17,7 @@ import {
 import { sharepointFiles, caseFiles, belongsToCase, sharepointText } from '../services/workbench/sources.js';
 import { writeMeetingNotes, writeFactFind, writeSoaNotes, soaInstructions } from '../services/workbench/writers.js';
 import { writeDataFile, buildMeetingNotes, buildFactFind, buildSoaNotes, exportPdfs, reveal } from '../services/workbench/run.js';
-import { packCandidates, buildPack } from '../services/workbench/pack.js';
+import { packCandidates, buildPack, isAdviserFile, isDownloadsPdsName, SLOTS } from '../services/workbench/pack.js';
 import { lookupClient, clientStatusLine } from '../services/workbench/lookup.js';
 
 // Reading client information out of SharePoint into the meeting notes and fact
@@ -474,16 +474,29 @@ router.post(
     const client = await clientOf(wb);
     const d = await ensureCaseDirs(wb);
     const out = assertWritable(path.join(d.compliance, `${stampOf()} - ${wb.short_name} - Statement of Advice (DRAFT).docx`));
+    // One title block: renderPlanHtml prints the title and the en-AU date, so it
+    // gets the body without the generator's own "# Statement of Advice" header.
     const html = renderPlanHtml({
-      plan: { title: `Statement of Advice — ${displayName(client)}`, content: gen.text },
-      client, accent: '#1f6f9f', firmName: env.firm.name, tagline: 'Insurance & Risk Advice',
+      plan: { title: `Statement of Advice — ${displayName(client)}`, content: gen.body ?? gen.text },
+      client, accent: '#1f6f9f', firmName: env.firm.name, tagline: 'Insurance & Risk Advice', date: gen.date,
     });
     const docx = await HTMLtoDOCX(html, null, { orientation: 'portrait', margins: { top: 720, right: 720, bottom: 720, left: 720 } });
     await fs.writeFile(out, Buffer.isBuffer(docx) ? docx : Buffer.from(await docx.arrayBuffer()));
     s.step('Exporting the PDF with Word');
-    const { pdfs, warnings } = await exportPdfs([out]);
+    const { pdfs, warnings: pdfWarnings } = await exportPdfs([out]);
+    const failedSections = gen.failedSections || [];
+    const warnings = [
+      ...(failedSections.length
+        ? [`${failedSections.length} SOA section(s) could not be generated and hold an [ADVISER TO CONFIRM] stub: ${failedSections.join(', ')}. Redraft or write them by hand.`]
+        : []),
+      ...(gen.ai ? [] : ['Offline stub mode: no Anthropic key is configured, so the SOA holds placeholders only.']),
+      ...(pdfWarnings || []),
+    ];
     await advance(wb, 'soa');
-    s.done({ markdown: gen.text, ai: gen.ai, sourcesRead: used, files: [out, ...pdfs].map(relRepo), warnings });
+    s.done({
+      markdown: gen.text, ai: gen.ai, failedSections, sourcesRead: used,
+      files: [out, ...pdfs].map(relRepo), warnings,
+    });
   })
 );
 
@@ -503,11 +516,21 @@ router.post(
     // Re-check every source against the case: the list came over HTTP.
     for (const it of items) {
       if (it.source === 'sharepoint' && !belongsToCase(wb, 'sharepoint', it.relPath)
-        && !/^compliance[\\/]/i.test(String(it.relPath))) {
+        // The firm's Compliance folder (fallback FSGs), normalised so "Compliance\..\" cannot reach another client.
+        && !/^compliance[\\/]/i.test(path.normalize(String(it.relPath)))) {
         throw new Error(`${it.name} is not in this client's SharePoint folder`);
       }
-      if (it.source === 'repo' && !belongsToCase(wb, 'repo', it.relPath)) throw new Error(`${it.name} is not in this case`);
+      // Repo: this case's folder, or the pack adviser's own folder (their FSG). Never another adviser's.
+      if (it.source === 'repo' && !belongsToCase(wb, 'repo', it.relPath) && !isAdviserFile(it.relPath)) {
+        throw new Error(`${it.name} is not in this case or the adviser's folder`);
+      }
+      // Downloads: only the PDS PDFs the candidate list offers, straight in Downloads.
+      if (it.source === 'downloads'
+        && (path.basename(String(it.relPath)) !== String(it.relPath) || !isDownloadsPdsName(String(it.relPath)))) {
+        throw new Error(`${it.name} is not a PDS in Downloads`);
+      }
       if (!['sharepoint', 'repo', 'downloads'].includes(it.source)) throw new Error('Unknown source');
+      if (it.slot != null && !SLOTS.some((x) => x.key === it.slot)) throw new Error(`Unknown slot for ${it.name}`);
     }
     const result = await buildPack(wb, await clientOf(wb), {
       items, makePdfs: req.body?.makePdfs !== false, onStep: (l) => s.step(l),

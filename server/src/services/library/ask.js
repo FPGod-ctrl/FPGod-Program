@@ -32,27 +32,54 @@ Respond with JSON ONLY, in this shape:
   "openItems": ["anything outstanding, in progress, or awaiting the client"],
   "flags": ["inconsistencies between files, missing compliance documents, stale data"],
   "answer": "Markdown answering exactly what the adviser asked. Reference file names inline where a fact comes from one.",
-  "sources": [{"name": "2025 Statement of Advice - Lau, Sally.docx", "why": "cover levels and premiums"}]
+  "sources": [{"name": "2025 Statement of Advice - Citizen, Jane.docx", "why": "cover levels and premiums"}]
 }
 
 Leave "cover" as an empty array if the files show no insurance. Keep "identity" to the handful of facts that matter (age, occupation, income, household, health/smoker status). Omit nothing you found, invent nothing you didn't.`;
 
+/** How many prior library turns are replayed into a follow-up. */
+export const HISTORY_TURNS = 12;
+
+/** The most recent N turns for a client, returned in chronological order. */
+export const HISTORY_SQL = `SELECT role, content FROM (
+    SELECT role, content, created_at FROM chat_messages
+     WHERE target_type = 'library' AND target_id = $1
+     ORDER BY created_at DESC LIMIT $2
+  ) latest
+  ORDER BY created_at ASC`;
+
+/** Lower-case name tokens of more than two letters, as dbFacts searches on. */
+export function nameTokens(displayName) {
+  return String(displayName || '').toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter((t) => t.length > 2);
+}
+
+/**
+ * Pick the DB client row for a library client. A row only counts when BOTH its
+ * first name and surname are in the library name (the client's own pair, or
+ * the partner's pair) — a surname alone would match every client sharing it,
+ * and attaching the wrong person's record is worse than attaching none.
+ */
+export function pickClientRecord(tokens, rows) {
+  const has = (v) => v != null && String(v).trim() !== '' && tokens.includes(String(v).trim().toLowerCase());
+  return (rows || []).find((c) => has(c.first_name) && has(c.last_name))
+    || (rows || []).find((c) => has(c.partner_first_name) && has(c.partner_last_name))
+    || null;
+}
+
 /** Facts the app already holds, so the summary reflects the system too. */
 async function dbFacts(displayName) {
-  const tokens = displayName.toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter((t) => t.length > 2);
+  const tokens = nameTokens(displayName);
   if (!tokens.length) return null;
   const { rows: clients } = await query(
     `SELECT * FROM clients
-      WHERE LOWER(last_name) = ANY($1) OR LOWER(first_name) = ANY($1)
-         OR LOWER(partner_last_name) = ANY($1) OR LOWER(partner_first_name) = ANY($1)
+      WHERE (LOWER(first_name) = ANY($1) AND LOWER(last_name) = ANY($1))
+         OR (LOWER(partner_first_name) = ANY($1) AND LOWER(partner_last_name) = ANY($1))
+      ORDER BY updated_at DESC NULLS LAST
       LIMIT 5`,
     [tokens]
   );
-  if (!clients.length) return null;
-  // Both names present beats one — "Lau" alone would match every Lau.
-  const best =
-    clients.find((c) => tokens.includes(String(c.last_name).toLowerCase()) && tokens.includes(String(c.first_name).toLowerCase())) ||
-    clients[0];
+  const best = pickClientRecord(tokens, clients);
+  if (!best) return null;
 
   const [{ rows: policies }, { rows: plans }] = await Promise.all([
     query('SELECT * FROM insurance_policies WHERE client_id = $1', [best.id]),
@@ -116,12 +143,8 @@ export async function ask({ question, clientId, onProgress }) {
   ]);
 
   // 4. Prior turns, so follow-ups ("why didn't we change hers?") have context.
-  const { rows: history } = await query(
-    `SELECT role, content FROM chat_messages
-      WHERE target_type = 'library' AND target_id = $1
-      ORDER BY created_at ASC LIMIT 12`,
-    [client.id]
-  );
+  //    The LATEST 12, replayed oldest-first.
+  const { rows: history } = await query(HISTORY_SQL, [client.id, HISTORY_TURNS]);
 
   onProgress?.({ step: 'thinking', files: files.filter((f) => f.chars).length });
 

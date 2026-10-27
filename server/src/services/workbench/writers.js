@@ -101,10 +101,14 @@ export async function writeMeetingNotes({ wb, client, notesName, known }) {
 
 const FACT_FIND_RULES = `Rules, from the firm's Fact Find Process:
 - "why", "story", goals and scope are written in the SECOND PERSON ("Jane and John, you wish to review...").
+- The fact find is the client's record of what they asked for and must never pre-empt the advice. In "why", "story", goals, "scope" and "scope_items" never name a recommended product, insurer, sum insured or action: no "top up", "replace", "switch", "cancel" or "implement new [insurer] cover".
+- "why" is the client's motivation only (e.g. "You would like to explore alternative options given the cost of your income protection policy.").
+- Goals: one broad goal per client, e.g. ["Jane", "Review your income protection cover and implement a cost-effective strategy in line with 70% of your income.", "Short Term", "$6,000 per month", "High"]. Timeframe Short Term / Medium Term / Long Term; priority High / Medium / Low; no insurer names, no exclusion acknowledgements.
+- "scope_items" list the advice AREAS agreed, not the outcome. Right: "Review of your income protection insurance." / "Implement a new cost-effective income protection strategy." Wrong: "Implementation of new [insurer] cover of $6,000 per month" / "Cancellation of your [insurer] policy".
 - Health status defaults to "Good" unless a condition was disclosed.
 - A fact that should be known but wasn't said is "TBC" (it gets highlighted). A whole section the meeting never touched goes in not_disclosed, or "Not disclosed" in cells.
-- Dates of birth are written "5 June 1982 (44)". Addresses are STREET on one line, then SUBURB STATE POSTCODE, uppercase.
-- Money is "$270,000". Income, expense, asset and liability totals are added for you; do not add Total rows.
+- Dates of birth are written "5 June 1982 (44)", the age as at the meeting date. Addresses are STREET on one line, then SUBURB STATE POSTCODE, uppercase.
+- Money is "$270,000". Income and expenses are annual amounts; convert to yearly where you can, otherwise keep the frequency the client gave ("$2,500 per month"). Income, expense, asset and liability totals are added for you; do not add Total rows.
 - For a single client give one name in "clients"; the partner column is dropped.
 - Per-client tables are [label, client1, client2] for a couple and [label, client1] for a single client.`;
 
@@ -115,7 +119,8 @@ export async function writeFactFind({ wb, client, known }) {
   const system = `${GENERAL}\n\nYou fill the firm's 2026 Fact Find from an initial meeting. `
     + `The document builder reads this JSON:\n${schema}\n\n${FACT_FIND_RULES}`;
   const user = `Client: ${who(client)}. Preferred names for the column headers: ${JSON.stringify(firstNamesOf(client))}. `
-    + `full_names: ${JSON.stringify(fullNamesOf(client))}. date_completed: "${longDate(wb.meeting_date)}".`
+    + `full_names: ${JSON.stringify(fullNamesOf(client))}. date_completed: "${longDate(wb.meeting_date)}". `
+    + `adviser: ${JSON.stringify(env.adviser.name)}.`
     + (wb.cds_json ? `\n\nINITIAL MEETING NOTES ALREADY WRITTEN:\n${JSON.stringify(wb.cds_json)}` : '')
     + `${extras(wb, known)}\n\nTRANSCRIPT:\n${wb.transcript}`;
   const text = await complete({
@@ -130,7 +135,8 @@ const SOA_NOTES_RULES = `The shape is the firm's own SOA Notes:
 - to_obtain: existing policy schedules, super statements, quotes, Risk Researcher run, pre-assessments for any disclosed condition.
 - outstanding: every TBC in the fact find, in plain words.
 - circumstances: short shorthand list (incomes, property and debt, savings, super, estate).
-- sections, in this order: Goals; Reasons for Seeking Advice; Insurance Review and Cover Discussion; Cover Funding; Health Disclosure; Advice and Recommendations. Write what the meeting actually established. Anything not yet decided is [ADVISER TO CONFIRM].`;
+- sections, in this order: Goals; Reasons for Seeking Advice; Insurance Review and Cover Discussion; Cover Funding; Health Disclosure; Advice and Recommendations. Write what the meeting actually established. Anything not yet decided is [ADVISER TO CONFIRM].
+- Advice and Recommendations must start with one line on the needs analysis: "Insurance Needs Analysis: not done (client-directed amounts)", "Insurance Needs Analysis: done", or "Insurance Needs Analysis: [ADVISER TO CONFIRM]" when the meeting did not settle it. The SOA uses this line to choose its needs-analysis wording.`;
 
 /** Stage 3: SOA Notes, the paraplanner brief. */
 export async function writeSoaNotes({ wb, client }) {

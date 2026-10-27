@@ -110,11 +110,15 @@ function normalise(raw) {
 
   let feePct = num(r.adviser_fee_pct);
   let feeAmt = num(r.adviser_fee_amount);
+  let notes = null;
   if (feeAmt != null) feeAmt = Math.abs(feeAmt);   // statements print fees as debits
   if (feePct != null && feePct > 0 && feeAmt == null && balance > 0) {
+    // A stated percentage is a yearly rate, so the yearly amount follows.
     feeAmt = Number(((balance * feePct) / 100).toFixed(2));
-  } else if (feeAmt != null && feeAmt > 0 && feePct == null && balance > 0) {
-    feePct = Number(((feeAmt / balance) * 100).toFixed(4));
+  } else if (feeAmt != null && feeAmt > 0 && feePct == null) {
+    // The amount is for the statement's period, which this read doesn't
+    // capture — so it can't be turned into a % p.a. without guessing.
+    notes = `Adviser fee $${feeAmt.toFixed(2)} is for the statement period (period not read) — not annualised; fee % left blank.`;
   }
 
   const product = text(r.product);
@@ -136,7 +140,8 @@ function normalise(raw) {
     fee_status: feeAmt && feeAmt > 0 ? 'paying' : 'unknown',
     fee_basis: null,
     as_at_date: asDate(r.as_at_date),
-    notes: null,
+    fee_annualised: feePct != null && feePct > 0,
+    notes,
     holdings,
     allocations: [],
   };

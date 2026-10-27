@@ -64,6 +64,48 @@ export function cfsDate(s) {
   return `${m[3]}-${String(month).padStart(2, '0')}-${String(m[1]).padStart(2, '0')}`;
 }
 
+/** Days in a report period, counting both ends; null when either date is missing or the range is backwards. */
+export function periodDays(start, end) {
+  if (!start || !end) return null;
+  const a = Date.parse(`${String(start).slice(0, 10)}T00:00:00Z`);
+  const b = Date.parse(`${String(end).slice(0, 10)}T00:00:00Z`);
+  if (Number.isNaN(a) || Number.isNaN(b) || b < a) return null;
+  return Math.round((b - a) / 86400000) + 1;
+}
+
+/**
+ * A statement's adviser fee is what was charged over the REPORT PERIOD, but
+ * cfs_accounts stores the fee as $ p.a. and % p.a. Scale the period amount to
+ * a year (× 365 / period days) and take the rate from that. When the period is
+ * unknown nothing is guessed: the amount stays as printed, the rate is left
+ * blank, and `annualised: false` + a note say so.
+ *
+ * @returns {{amount:number|null, pct:number|null, annualised:boolean, periodDays:number|null, note:string|null}}
+ */
+export function annualiseFee(periodAmount, balance, start, end) {
+  if (periodAmount == null || !(periodAmount > 0)) {
+    return { amount: periodAmount ?? null, pct: null, annualised: false, periodDays: periodDays(start, end), note: null };
+  }
+  const days = periodDays(start, end);
+  if (!days) {
+    return {
+      amount: periodAmount,
+      pct: null,
+      annualised: false,
+      periodDays: null,
+      note: `Adviser fee $${periodAmount.toFixed(2)} is for an unknown report period — not annualised; fee % left blank.`,
+    };
+  }
+  // A full financial year (364-366 days, leap years included) is already a year.
+  const fullYear = days >= 364 && days <= 366;
+  const amount = fullYear ? periodAmount : Number(((periodAmount * 365) / days).toFixed(2));
+  const pct = balance > 0 ? Number(((amount / balance) * 100).toFixed(4)) : null;
+  const note = fullYear
+    ? null
+    : `Adviser fee $${periodAmount.toFixed(2)} over a ${days}-day report period, annualised to $${amount.toFixed(2)} p.a.`;
+  return { amount, pct, annualised: true, periodDays: days, note };
+}
+
 const money = (s) => {
   if (s == null) return null;
   const n = Number(String(s).replace(/[$,\s]/g, ''));
@@ -175,9 +217,8 @@ function parseAccountChunk(chunk, ctx) {
     .filter((a) => a.bucket === 'growth')
     .reduce((s, a) => s + (a.pct || 0), 0);
 
-  const feePct = feeAmount && balance > 0
-    ? Number(((feeAmount / balance) * 100).toFixed(4))
-    : null;
+  // The fee line is for the report period; stored figures are per annum.
+  const fee = annualiseFee(feeAmount, balance, ctx.periodStart, ctx.periodEnd);
 
   return {
     account_number: accountNumber,
@@ -186,8 +227,11 @@ function parseAccountChunk(chunk, ctx) {
     account_type: classifyAccount(product, null),
     balance,
     opening_balance: opening,
-    adviser_fee_amount: feeAmount ?? 0,
-    adviser_fee_pct: feePct,
+    adviser_fee_amount: fee.amount ?? 0,
+    adviser_fee_pct: fee.pct,
+    adviser_fee_period_amount: feeAmount ?? 0,
+    fee_annualised: fee.annualised,
+    report_period_days: fee.periodDays,
     // The whole point of the exercise: an account with no adviser service fee
     // line is being administered for free.
     fee_status: feeAmount && feeAmount > 0 ? 'paying' : 'not_paying',
@@ -199,7 +243,7 @@ function parseAccountChunk(chunk, ctx) {
     email: firstCapture(details, /^Email address:\s*(.+)$/),
     date_of_birth: cfsDate(firstCapture(details, /^Date of birth:\s*(.+)$/)),
     growth_pct: allocations.length ? Number(growth.toFixed(2)) : null,
-    notes: null,
+    notes: fee.note,
     holdings,
     allocations,
   };
@@ -280,4 +324,4 @@ const indexOrEnd = (lines, re) => {
   return i === -1 ? lines.length : i;
 };
 
-export default { parseStatementText, deligature, cfsDate };
+export default { parseStatementText, deligature, cfsDate, periodDays, annualiseFee };

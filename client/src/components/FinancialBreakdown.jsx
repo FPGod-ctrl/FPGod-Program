@@ -136,7 +136,7 @@ const SECTIONS = [
       { key: 'action', header: 'Action', render: (r) => (r.action ? <Badge tone="amber" value={r.action} /> : '—') },
     ],
     // These map one-to-one onto the house SOA's portfolio table and per-policy
-    // write-ups. Anything left blank becomes [ADVISOR TO CONFIRM] in the SOA
+    // write-ups. Anything left blank becomes [ADVISER TO CONFIRM] in the SOA
     // rather than being guessed, so it is worth filling what you know.
     fields: [
       { key: 'policy_type', label: 'Policy type *', type: 'select',

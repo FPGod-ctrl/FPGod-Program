@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseStatementText, deligature, cfsDate } from '../services/cfsStatementText.js';
+import {
+  parseStatementText, deligature, cfsDate, periodDays, annualiseFee,
+} from '../services/cfsStatementText.js';
 
 /**
  * Fixtures reproduce the real CFS "Statement Report" layout — including the
@@ -297,5 +299,60 @@ describe('parseStatementText — unusable input', () => {
   it('handles empty input safely', () => {
     expect(parseStatementText('').accounts).toEqual([]);
     expect(parseStatementText(null).accounts).toEqual([]);
+  });
+});
+
+describe('adviser fee annualisation', () => {
+  it('counts report period days inclusively', () => {
+    expect(periodDays('2025-07-01', '2026-06-30')).toBe(365);
+    expect(periodDays('2026-01-01', '2026-06-30')).toBe(181);
+    expect(periodDays(null, '2026-06-30')).toBeNull();
+    expect(periodDays('2026-06-30', '2026-01-01')).toBeNull();
+  });
+
+  it('leaves a full-year fee as printed', () => {
+    const f = annualiseFee(550, 10112, '2025-07-01', '2026-06-30');
+    expect(f).toMatchObject({ amount: 550, annualised: true, periodDays: 365, note: null });
+    expect(f.pct).toBeCloseTo((550 / 10112) * 100, 4);
+    // Leap-year financial year is still one year.
+    expect(annualiseFee(550, 10112, '2023-07-01', '2024-06-30').amount).toBe(550);
+  });
+
+  it('scales a part-year fee to a year before taking the rate', () => {
+    const f = annualiseFee(250, 100000, '2026-01-01', '2026-06-30');   // 181 days
+    expect(f.annualised).toBe(true);
+    expect(f.amount).toBeCloseTo((250 * 365) / 181, 2);
+    expect(f.pct).toBeCloseTo(((250 * 365) / 181 / 100000) * 100, 4);
+    expect(f.note).toMatch(/181-day/);
+  });
+
+  it('does not guess when the period is unknown', () => {
+    const f = annualiseFee(250, 100000, null, null);
+    expect(f).toMatchObject({ amount: 250, pct: null, annualised: false, periodDays: null });
+    expect(f.note).toMatch(/unknown report period/i);
+  });
+
+  it('a half-year statement stores the fee per annum', () => {
+    const half = FEE_PAYING_STATEMENT.replace(
+      'Report period: 01 Jul. 2025 - 30 Jun. 2026',
+      'Report period: 01 Jan. 2026 - 30 Jun. 2026'
+    );
+    const [a] = parseStatementText(half).accounts;
+    expect(a.fee_status).toBe('paying');
+    expect(a.adviser_fee_period_amount).toBe(550);
+    expect(a.report_period_days).toBe(181);
+    expect(a.adviser_fee_amount).toBeCloseTo((550 * 365) / 181, 2);
+    expect(a.adviser_fee_pct).toBeCloseTo(((550 * 365) / 181 / 10112) * 100, 3);
+    expect(a.notes).toMatch(/annualised/);
+  });
+
+  it('a statement with no report period flags the fee instead of rating it', () => {
+    const noPeriod = FEE_PAYING_STATEMENT.replace('Report period: 01 Jul. 2025 - 30 Jun. 2026\n', '');
+    const [a] = parseStatementText(noPeriod).accounts;
+    expect(a.fee_status).toBe('paying');
+    expect(a.adviser_fee_amount).toBe(550);
+    expect(a.adviser_fee_pct).toBeNull();
+    expect(a.fee_annualised).toBe(false);
+    expect(a.notes).toMatch(/not annualised/);
   });
 });

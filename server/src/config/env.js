@@ -54,7 +54,7 @@ export const env = {
   },
 
   // The individual adviser the document goes out under. Their own AR number is
-  // pending, so it is left blank and rendered as [ADVISOR TO CONFIRM] rather
+  // pending, so it is left blank and rendered as [ADVISER TO CONFIRM] rather
   // than falling back to another adviser's.
   adviser: {
     name: process.env.ADVISER_NAME || 'Tristan Biro',

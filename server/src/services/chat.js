@@ -13,11 +13,13 @@ export async function refine({ targetType, targetId, message }) {
   const target = await loadTarget(targetType, targetId);
   if (!target) throw new Error(`${targetType} not found`);
 
-  // Prior conversation for context.
+  // Prior conversation for context: the latest 20 turns, oldest first.
   const { rows: history } = await query(
-    `SELECT role, content FROM chat_messages
-     WHERE target_type = $1 AND target_id = $2
-     ORDER BY created_at ASC LIMIT 20`,
+    `SELECT role, content FROM (
+       SELECT role, content, created_at FROM chat_messages
+        WHERE target_type = $1 AND target_id = $2
+        ORDER BY created_at DESC LIMIT 20
+     ) recent ORDER BY created_at ASC`,
     [targetType, targetId]
   );
 
@@ -30,7 +32,7 @@ export async function refine({ targetType, targetId, message }) {
         + '{"reply": "a brief, friendly 1-2 sentence summary of exactly what you changed, for the chat", '
         + '"content": "the COMPLETE revised plan in Markdown (the whole document, not a diff)"}. '
         + 'In "content" keep everything that was already good, apply the requested change, preserve '
-        + '[ADVISOR TO CONFIRM] markers, and keep the Australian SOA style and AUD. If the adviser is only '
+        + '[ADVISER TO CONFIRM] markers, and keep the Australian SOA style and AUD. If the adviser is only '
         + 'asking a question (not requesting an edit), answer it in "reply" and return the document unchanged in "content".\n\n'
         + CALC_GUARDRAILS
       : 'You are refining a follow-up email with the adviser. Respond with JSON ONLY: '

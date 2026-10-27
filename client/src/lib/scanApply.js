@@ -43,9 +43,13 @@ export function sanitize(obj) {
     if (DATE_FIELDS.includes(k)) {
       out[k] = isValidDate(s) ? s.slice(0, 10) : null;
     } else if (NUMERIC_FIELDS.includes(k)) {
+      // "$1.2m" and "$80k" are scaled, not saved as 1.2 and 80.
+      const scale = /\d\s*(m|mn|mil|million)\b/i.test(s) ? 1e6
+        : /\d\s*(bn|billion)\b/i.test(s) ? 1e9
+          : /\d\s*k\b/i.test(s) ? 1e3 : 1;
       const digits = s.replace(/[^0-9.-]/g, '');
       const n = Number(digits);
-      out[k] = digits !== '' && Number.isFinite(n) ? n : null;
+      out[k] = digits !== '' && Number.isFinite(n) ? Math.round(n * scale * 100) / 100 : null;
     } else if (BOOLEAN_FIELDS.includes(k)) {
       out[k] = TRUEISH.test(s) ? true : FALSEISH.test(s) ? false : null;
     }

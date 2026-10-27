@@ -7,6 +7,26 @@ const FONTS = {
   minimal: { heading: 'Arial, Helvetica, sans-serif', body: 'Arial, Helvetica, sans-serif' },
 };
 
+/**
+ * The practice is Australian: every date in a generated document is en-AU
+ * ("27 October 2026"), never US order. One formatter so the Word header and the
+ * document body cannot disagree.
+ */
+export function formatAuDate(d = new Date()) {
+  return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+/**
+ * Drop a leading Markdown H1 that repeats the header title exactly. Saved risk
+ * SOAs carry their own "# Statement of Advice — …" line; the header prints the
+ * same title, so without this the Word document shows it twice.
+ */
+function dropDuplicateTitle(md, title) {
+  if (!title) return md;
+  const m = /^\s*#[ \t]+(.+?)[ \t]*(?:\r?\n|$)/.exec(md);
+  return m && m[1].trim() === String(title).trim() ? md.slice(m[0].length) : md;
+}
+
 const esc = (s = '') =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -29,12 +49,17 @@ function styleHeadings(html, accent, fonts) {
  * @param {string} [args.accent]   hex colour
  * @param {string} [args.firmName]
  * @param {string} [args.tagline]
+ * @param {string} [args.date]     preparation date to print; defaults to today (en-AU)
+ *
+ * This header is the document's ONLY title block: pass content that does not
+ * open with its own title (e.g. riskSoaGenerator's `body`), or the title prints twice.
  */
-export function renderPlanHtml({ plan, client, theme = 'modern', accent = '#0ea5a4', firmName = '', tagline = '' }) {
+export function renderPlanHtml({ plan, client, theme = 'modern', accent = '#0ea5a4', firmName = '', tagline = '', date }) {
   const fonts = FONTS[theme] || FONTS.modern;
-  const body = styleHeadings(marked.parse(plan.content || '_No content._'), accent, fonts);
+  const content = dropDuplicateTitle(plan.content || '', plan.title);
+  const body = styleHeadings(marked.parse(content.trim() ? content : '_No content._'), accent, fonts);
   const clientName = client ? `${client.first_name} ${client.last_name}` : '';
-  const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const dateStr = date || formatAuDate();
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
 <body style="font-family:${fonts.body};color:#1a1a1a;font-size:12px;line-height:1.5;">
@@ -48,4 +73,4 @@ export function renderPlanHtml({ plan, client, theme = 'modern', accent = '#0ea5
 </body></html>`;
 }
 
-export default { renderPlanHtml };
+export default { renderPlanHtml, formatAuDate };

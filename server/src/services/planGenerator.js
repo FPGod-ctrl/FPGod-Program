@@ -119,7 +119,7 @@ function financialsToLines(L, p) {
   section(L, 'Income', p.income, (r) => `${r.name} (${r.income_type}) ${money(r.amount)}/${r.frequency} = ${money(toAnnual(r.amount, r.frequency))}/yr`);
   section(L, 'Expenses', p.expenses, (r) => `${r.name} (${r.category}) ${money(r.amount)}/${r.frequency} = ${money(toAnnual(r.amount, r.frequency))}/yr`);
   // Rendered in full: the house SOA's portfolio table needs every one of these,
-  // and anything missing here becomes [ADVISOR TO CONFIRM] in the document.
+  // and anything missing here becomes [ADVISER TO CONFIRM] in the document.
   section(L, 'Insurance', p.insurance, (r) => {
     const bits = [
       `${r.policy_type}${r.product ? ` - ${r.product}` : ''}${r.provider ? ` (${r.provider})` : ''}`,
@@ -335,7 +335,7 @@ export const CALC_GUARDRAILS =
   + '4. Super death benefits tax — taxed element of the taxable component paid to a non-dependant: 15% + 2% Medicare = 17% if paid directly from the fund, or 15% (no Medicare) if paid via the deceased estate. The tax-free component is always nil-taxed. State which payment path you assume.\n'
   + '5. Non-concessional contributions (NCC) cap & bring-forward — use the cap for the financial year the contribution falls in: 2024-25 and 2025-26 = $120,000/yr (3-year bring-forward $360,000); from 1 July 2026 = $130,000/yr (3-year bring-forward $390,000). Bring-forward also needs age < 75 on 1 July of the trigger year and a Total Super Balance under the threshold. Flag any figure that changes at a 1 July boundary near the advice date.\n'
   + '6. CGT main residence exemption: covers the dwelling plus adjacent land up to 2 hectares TOTAL including the land under the dwelling (ITAA 1997 s118-120). For land over 2 ha, you select which 2 ha is exempt and apportion the remainder by relative VALUE where parts can be separately valued (otherwise by area), and the split must be reasonable (TD 1999/67). Individuals get the 50% CGT discount on assets held > 12 months.\n'
-  + '7. Every tax, CGT, super or projection figure is ILLUSTRATIVE: state the assumptions it rests on, mark it [ADVISOR TO CONFIRM], and never present it as a guaranteed outcome.';
+  + '7. Every tax, CGT, super or projection figure is ILLUSTRATIVE: state the assumptions it rests on, mark it [ADVISER TO CONFIRM], and never present it as a guaranteed outcome.';
 
 const SYSTEM_PROMPT =
   'You are a senior Australian financial planner writing a Statement of Advice (SOA). ' +
@@ -346,13 +346,13 @@ const SYSTEM_PROMPT =
   'investment structures, surplus funds, insurance, Centrelink, estate planning) — but NEVER invent ' +
   'figures that are not supported by the client data. Write in Markdown, be comprehensive and specific, ' +
   'and show calculations/projections where the template does. Where genuine adviser judgement or a figure ' +
-  'you cannot derive is needed, insert a clearly-marked [ADVISOR TO CONFIRM] placeholder. Use Australian ' +
+  'you cannot derive is needed, insert a clearly-marked [ADVISER TO CONFIRM] placeholder. Use Australian ' +
   'terminology and AUD. Do NOT use US concepts (401k, IRA, Roth, HSA). '
   + 'CRITICAL: never fabricate the client\'s personal details. If a client address, date of birth, contact '
-  + 'detail, account number, or similar is not provided in the client data above, write [ADVISOR TO CONFIRM] '
+  + 'detail, account number, or similar is not provided in the client data above, write [ADVISER TO CONFIRM] '
   + 'rather than inventing one. You MAY reproduce the adviser/firm letterhead and disclaimers from the master '
   + 'template (that is the advising firm\'s own branding), but all CLIENT-specific facts must come only from the '
-  + 'supplied client data or be marked [ADVISOR TO CONFIRM]. For the document\'s preparation date, use the '
+  + 'supplied client data or be marked [ADVISER TO CONFIRM]. For the document\'s preparation date, use the '
   + 'supplied "Date of advice" — never copy a date from the template.\n\n'
   + CALC_GUARDRAILS;
 
@@ -514,7 +514,7 @@ const sectionSystemPrompt = (tplTitle) =>
   + 'Write ONLY the requested section, in Markdown. Mirror the template section\'s structure, sub-headings, tables and depth, but populate everything with THIS client/household\'s real data and figures. '
   + 'Apply and explain the strategies the template section demonstrates wherever they suit the client; if a strategy or sub-section genuinely does not apply, say so in one line rather than dropping it. '
   + 'Show the same kind of worked numbers, tables and legislative references the template uses, adapted to the client. '
-  + 'NEVER fabricate the client\'s personal facts — write [ADVISOR TO CONFIRM] for anything not supplied. Use Australian terminology, AUD and current FY thresholds; do NOT use US concepts. Do NOT wrap the output in code fences.\n\n'
+  + 'NEVER fabricate the client\'s personal facts — write [ADVISER TO CONFIRM] for anything not supplied. Use Australian terminology, AUD and current FY thresholds; do NOT use US concepts. Do NOT wrap the output in code fences.\n\n'
   + CALC_GUARDRAILS;
 
 async function generateSection(sec, contextText, instructions, today, tplTitle) {
@@ -572,7 +572,7 @@ function buildStubPlan(ctx) {
 This plan outlines a ${c.risk_profile || 'balanced'} strategy for ${c.first_name} ${c.last_name}, with assets of approximately ${money(totalBalance)}.
 
 ## Goals & Objectives
-- [ADVISOR TO CONFIRM] Primary financial goals and target retirement age.
+- [ADVISER TO CONFIRM] Primary financial goals and target retirement age.
 
 ## Current Position
 ${(self.assets || []).map((a) => `- ${a.name}: ${money(a.value)}`).join('\n') || '- No assets on file yet.'}
@@ -582,7 +582,7 @@ ${(self.assets || []).map((a) => `- ${a.name}: ${money(a.value)}`).join('\n') ||
 2. Optimise asset allocation to the stated risk profile.
 
 ## Next Steps
-- [ADVISOR TO CONFIRM] Schedule implementation meeting.
+- [ADVISER TO CONFIRM] Schedule implementation meeting.
 `;
 }
 

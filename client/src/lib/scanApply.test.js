@@ -16,6 +16,12 @@ describe('sanitize', () => {
     expect(sanitize({ balance: 'about ten grand' }).balance).toBeNull();
   });
 
+  it('scales k, m and bn suffixes instead of dropping them', () => {
+    expect(sanitize({ balance: '$1.2m' }).balance).toBe(1200000);
+    expect(sanitize({ cover_amount: '$800k' }).cover_amount).toBe(800000);
+    expect(sanitize({ balance: '2.5 million' }).balance).toBe(2500000);
+  });
+
   it('rejects dates that are not real dates', () => {
     expect(sanitize({ date_of_birth: '1974-03-02T00:00:00Z' }).date_of_birth).toBe('1974-03-02');
     expect(sanitize({ date_of_birth: 'March 1974' }).date_of_birth).toBeNull();

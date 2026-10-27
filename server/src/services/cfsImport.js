@@ -25,11 +25,27 @@ export function num(v) {
   if (BLANK.test(s)) return null;
   const negative = /^\(.*\)$/.test(s);          // accounting-style negatives
   s = s.replace(/[()]/g, '');
+  // "$1.2m" / "120k" / "1.5bn" — scale by the unit rather than dropping it.
+  const unit = s.match(/^[$\s-]*[\d,]*\.?\d+\s*(k|m|mn|bn)$/i);
+  const scale = unit ? { k: 1e3, m: 1e6, mn: 1e6, bn: 1e9 }[unit[1].toLowerCase()] : 1;
   s = s.replace(/[^0-9.-]/g, '');               // drop $ , % and spaces
   if (s === '' || s === '-' || s === '.') return null;
   const n = Number(s);
   if (!Number.isFinite(n)) return null;
-  return negative ? -n : n;
+  const scaled = scale === 1 ? n : Number((n * scale).toFixed(2));
+  return negative ? -scaled : scaled;
+}
+
+/**
+ * Two-digit year → four digits. Years after the current one roll back a
+ * century, so a birth date "23/02/65" is 1965, not 2065, while "30/06/26"
+ * stays 2026.
+ */
+export function expandYear(yy, now = new Date()) {
+  const n = Number(yy);
+  const current = now.getFullYear();
+  const century = Math.floor(current / 100) * 100;
+  return century + n > current ? century - 100 + n : century + n;
 }
 
 export function text(v) {
@@ -56,7 +72,7 @@ export function asDate(v) {
   const dmy = s.match(/^(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})$/);
   if (dmy) {
     let [, d, m, y] = dmy;
-    if (y.length === 2) y = `20${y}`;
+    if (y.length === 2) y = String(expandYear(y));
     const iso = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     return Number.isNaN(Date.parse(iso)) ? null : iso;
   }
@@ -304,6 +320,13 @@ export function buildAccounts(rows, columnMap, headerRow = 0) {
 /** Derive balance / allocations / fees that the export left implicit. */
 function finalizeAccount(acc) {
   const holdings = acc.holdings || [];
+  // Some exports give units + price but no value. Fill those in FIRST, so they
+  // count towards the holdings total and get a real allocation %.
+  for (const h of holdings) {
+    if (!h.balance && h.units != null && h.unit_price != null) {
+      h.balance = Number((h.units * h.unit_price).toFixed(2));
+    }
+  }
   const holdingTotal = holdings.reduce((s, h) => s + (h.balance || 0), 0);
 
   // When the sheet only itemises options, the account balance is their sum.
@@ -319,10 +342,6 @@ function finalizeAccount(acc) {
   for (const h of holdings) {
     if (h.allocation_pct == null && balance > 0) {
       h.allocation_pct = Number(((h.balance / balance) * 100).toFixed(3));
-    }
-    // Some exports give units + price but no value.
-    if (!h.balance && h.units != null && h.unit_price != null) {
-      h.balance = Number((h.units * h.unit_price).toFixed(2));
     }
   }
 
@@ -443,4 +462,4 @@ export function summarise(accounts) {
   };
 }
 
-export default { parseWorkbook, buildAccounts, detectHeader, summarise, num, text, asDate, classifyAccount };
+export default { parseWorkbook, buildAccounts, detectHeader, summarise, num, text, asDate, expandYear, classifyAccount };

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  num, asDate, detectHeader, buildAccounts, summarise, classifyAccount,
+  num, asDate, expandYear, detectHeader, buildAccounts, summarise, classifyAccount,
 } from '../services/cfsImport.js';
 import { matchAccounts, nameCandidates, isEntity } from '../services/cfsMatch.js';
 
@@ -238,5 +238,49 @@ describe('matchAccounts', () => {
     const [a] = matchAccounts([{ account_name: 'Nobody, Random' }], clients);
     expect(a.client_id).toBeNull();
     expect(a.match_status).toBe('unmatched');
+  });
+});
+
+describe('num — unit suffixes', () => {
+  it('scales k / m / bn rather than dropping them', () => {
+    expect(num('$1.2m')).toBe(1200000);
+    expect(num('120k')).toBe(120000);
+    expect(num('$1.5 bn')).toBe(1500000000);
+    expect(num('(2.5k)')).toBe(-2500);
+    expect(num('$1,234.56')).toBe(1234.56);
+  });
+});
+
+describe('asDate — two-digit years', () => {
+  const now = new Date(2026, 9, 27);
+  it('rolls years after the current one back to the 1900s', () => {
+    expect(expandYear('65', now)).toBe(1965);
+    expect(expandYear('27', now)).toBe(1927);
+    expect(expandYear('26', now)).toBe(2026);
+    expect(expandYear('05', now)).toBe(2005);
+  });
+
+  it('reads a two-digit birth year as last century', () => {
+    expect(asDate('23/02/65')).toBe('1965-02-23');
+  });
+});
+
+describe('buildAccounts — units × price holdings', () => {
+  const SHEET = [
+    ['Account No.', 'Investor Name', 'Investment Option', 'Units', 'Unit Price', 'Option Value'],
+    ['099900001', 'Sample, Alex', 'Example Growth Fund', 1000, 2, 3000],
+    ['', '', 'Example Cash Fund', 1000, 1, ''],
+  ];
+  const header = detectHeader(SHEET);
+  const [acc] = buildAccounts(SHEET, header.map, header.index).accounts;
+
+  it('counts derived holding values in the account balance', () => {
+    expect(acc.holdings.find((h) => h.option_name === 'Example Cash Fund').balance).toBe(1000);
+    expect(acc.balance).toBe(4000);
+  });
+
+  it('gives derived holdings a real allocation, not 0%', () => {
+    expect(acc.holdings.find((h) => h.option_name === 'Example Cash Fund').allocation_pct).toBe(25);
+    expect(acc.holdings.find((h) => h.option_name === 'Example Growth Fund').allocation_pct).toBe(75);
   });
 });

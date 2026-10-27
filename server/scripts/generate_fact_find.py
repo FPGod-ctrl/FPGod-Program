@@ -18,11 +18,22 @@ JSON shape (every key optional; omitted text boxes are left empty):
                   [[label, client1, client2], ...]
   dependants      [[name, relationship, age, living at home, dependent], ...]
   income, expenses, assets, liabilities   [[description, owner, amount], ...]
-                  a Total row is added from the amounts unless one is given
+                  amounts like "$95,000"; a Total row is added unless one is given.
+                  Income and expenses are annual: write yearly amounts. A row given
+                  another way may say so ("$2,500 per month", "$400 pw", or
+                  "(monthly)" in the description); the Total is then annualised and
+                  marked "(annualised)". Unknown amounts are "TBC"; the Total adds
+                  the known rows and says "(excl. TBC items)". Cents are kept.
   super           [[plan, policy #, owner, balance, life, tpd, ip, beneficiaries], ...]
   insurance       [[description, owner, life insured, type, cover, premium], ...]
   scope           text for "Scope of advice" (defaults to `why`)
-  scope_items     ["Life.", "TPD.", ...] for "Agreed scope of advice"
+  scope_items     ["Review of your life and TPD insurance.", ...] advice areas, not
+                  outcomes, for "Agreed scope of advice". Written after the firm's
+                  lead-in and its fixed bullet "Review of your personal risk
+                  insurance needs:"; set scope_fixed_bullet false to leave that
+                  bullet out (e.g. when the items are the SOA "Included" bullets).
+  adviser         "Tristan Biro" (default) on the cover's Adviser Name and the
+                  adviser signatory, over any older adviser name in the master
   incomplete_info "None"   expertise "Yes"
   not_applicable / not_disclosed   ["dependants", "super", ...] ticks the box
   changes / additional   {"dependants": "text", ...} the "Any changes" and
@@ -72,19 +83,103 @@ SUBSECTIONS = {
 # Text boxes under "About our advice" left as the firm's standard wording.
 KEEP_TEXT = {'Advice limitations'}
 LIST_WITH_TOTAL = {'income', 'expenses', 'assets', 'liabilities'}
+ANNUAL_TOTAL = {'income', 'expenses'}  # totalled per year; assets/liabilities are balances
+# Adviser names the master (or an older master) may carry on the adviser signatory.
+OLD_ADVISERS = ('Joshua Davidson',)
+DEFAULT_ADVISER = 'Tristan Biro'
+SCOPE_LEAD = 'As a result of the agreed subject matter of advice, we have identified the scope of advice to be:'
+SCOPE_FIXED_BULLET = 'Review of your personal risk insurance needs: '  # trailing no-break space, as before
 # Label | client 1 | client 2 tables, whose header row carries the names.
 RPR_AFTER_HIGHLIGHT = {'u', 'effect', 'bdr', 'shd', 'fitText', 'vertAlign', 'rtl', 'cs', 'em',
                        'lang', 'eastAsianLayout', 'specVanish', 'oMath'}
 PER_CLIENT = {'personal', 'contact', 'employment', 'health', 'other_cashflow', 'estate'}
 
 
+# Frequency markers -> times per year. Income and expense tables are annual
+# (the master's header reads "Amount (p.a.)", and Q-FF-4's default is annual).
+FREQUENCIES = [
+    (r'p\.?\s?w\.?|per\s+week|a\s+week|/\s?w(?:ee)?k?|weekly|wkly', 52),
+    (r'fortnight(?:ly)?|per\s+fortnight|p\.?\s?f\.?|/\s?f(?:n|ortnight)?', 26),
+    (r'p\.?\s?c\.?\s?m\.?|p\.?\s?m\.?|per\s+(?:calendar\s+)?month|a\s+month|/\s?m(?:th|o|onth)?|monthly|mthly', 12),
+    (r'quarterly|per\s+quarter|p\.?\s?q\.?|/\s?q(?:tr)?', 4),
+    (r'p\.?\s?a\.?|per\s+(?:annum|year)|a\s+year|/\s?y(?:r|ear)?|annual(?:ly)?|yearly', 1),
+]
+FREQ_RES = [(re.compile(r'(?<![a-z])(?:' + pat + r')(?![a-z])', re.I), n) for pat, n in FREQUENCIES]
+NUMBER = re.compile(r'(-|−)?\s*\$?\s*(\d[\d,]*(?:\.\d+)?)\s*(k|m(?:il(?:lion)?)?\b)?', re.I)
+NIL = re.compile(r'\s*(?:nil|none|\$?\s*-|–|—)\s*', re.I)
+
+
+def frequency(text):
+    """Times per year named in `text`, or None if it names no frequency."""
+    for rx, n in FREQ_RES:
+        if rx.search(str(text)):
+            return n
+    return None
+
+
 def money(v):
-    m = re.fullmatch(r'\s*\$?\s*([\d,]+(?:\.\d+)?)\s*', str(v))
-    return float(m.group(1).replace(',', '')) if m else None
+    """Parse an amount cell. Returns (value, has_cents) or None if unknown.
+
+    Accepts "$1,234", "1234.50", "-$500", "($500)", "$80k", "$1.2m", "Nil",
+    and text around a single figure ("$5,000 p.m.", "approx $300 per week").
+    Two figures (a range) or none ("TBC", "Not disclosed") is unknown.
+    """
+    s = str(v if v is not None else '').strip()
+    if NIL.fullmatch(s):
+        return 0.0, False
+    # A frequency marker "/m" is not a millions suffix, so read the figure with the marker cut out.
+    body = s
+    for rx, _ in FREQ_RES:
+        body = rx.sub(' ', body)
+    nums = list(NUMBER.finditer(body))
+    if len(nums) != 1:
+        return None
+    m = nums[0]
+    x = float(m.group(2).replace(',', ''))
+    suffix = (m.group(3) or '').lower()
+    if suffix == 'k':
+        x *= 1_000
+    elif suffix.startswith('m'):
+        x *= 1_000_000
+    neg = bool(m.group(1)) or re.fullmatch(r'\(.*\)', s) is not None
+    cents = '.' in m.group(2) and not suffix
+    return (-x if neg else x), cents
 
 
-def fmt_money(x):
-    return f'${x:,.0f}'
+def fmt_money(x, cents=False):
+    s = f'{abs(x):,.2f}' if cents else f'{abs(round(x)):,.0f}'
+    return f'-${s}' if x < 0 else f'${s}'
+
+
+def total_cell(rows, annualise):
+    """The Total row's amount for [description, ..., amount] rows.
+
+    Income/expenses (annualise=True): each amount is converted to a yearly
+    figure from a frequency marker in the amount cell, else in the description;
+    no marker means annual. "(annualised)" is added when any row was converted.
+    Rows with no readable amount (TBC, Not disclosed) are left out and the
+    total says "(excl. TBC items)". No readable amount at all gives "TBC".
+    """
+    known, cents, converted, missing = [], False, False, False
+    for r in rows:
+        parsed = money(r[-1])
+        if parsed is None:
+            missing = True
+            continue
+        x, c = parsed
+        if annualise:
+            n = frequency(r[-1]) or frequency(' '.join(str(v) for v in r[:-1])) or 1
+            if n != 1:
+                converted = True
+                x *= n
+        known.append(x)
+        cents = cents or c
+    if not known:
+        return 'TBC'
+    total = sum(known)
+    cents = cents or round(total, 2) != round(total)
+    notes = (['annualised'] if converted else []) + (['excl. TBC items'] if missing else [])
+    return fmt_money(total, cents) + (f' ({", ".join(notes)})' if notes else '')
 
 
 def drop_last_cols(t, n):
@@ -230,9 +325,8 @@ class FactFind:
             # formatting prototype when this file is used as a master.
             rows = [[''] * ncols] + ([['Total'] + [''] * (ncols - 1)] if last_is_total else [])
         if total and rows and not any(str(r[0]).strip() == 'Total' for r in rows):
-            amounts = [money(r[-1]) for r in rows]
-            if all(a is not None for a in amounts):
-                rows.append(['Total'] + [''] * (len(rows[0]) - 2) + [fmt_money(sum(amounts))])
+            width = max(len(r) for r in rows)
+            rows.append(['Total'] + [''] * (width - 2) + [total_cell(rows, annualise=total == 'annual')])
         anchor = header
         for row in rows:
             src = proto_total if (str(row[0]).strip() == 'Total' and proto_total is not None) else proto
@@ -264,6 +358,7 @@ class FactFind:
         full = d.get('full_names', clients)
         na, nd = set(d.get('not_applicable', [])), set(d.get('not_disclosed', []))
         changes, additional = d.get('changes', {}), d.get('additional', {})
+        adviser = str(d.get('adviser') or '').strip() or DEFAULT_ADVISER
 
         # Bullet and plain paragraph formats, from the standard limitations box.
         std_t = self.find('About our advice', 'Advice limitations', 'text')
@@ -283,6 +378,8 @@ class FactFind:
                 self.set_cell(row.cells[1], ' & '.join(full))
             elif label == 'Date Completed':
                 self.set_cell(row.cells[1], d.get('date_completed', ''))
+            elif label == 'Adviser Name':
+                self.set_cell(row.cells[1], adviser)
 
         for b in self.blocks:
             h1, h2, kind, t = b['h1'], b['h2'], b['kind'], b['table']
@@ -291,7 +388,8 @@ class FactFind:
                 if kind == 'text' and h2 not in KEEP_TEXT:
                     val = {
                         'Scope of advice': d.get('scope', d.get('why', '')),
-                        'Agreed scope of advice': self._agreed_scope(d.get('scope_items')),
+                        'Agreed scope of advice': self._agreed_scope(
+                            d.get('scope_items'), d.get('scope_fixed_bullet', True) is not False),
                         'Incomplete or inaccurate information': d.get('incomplete_info', 'None'),
                         'Adviser expertise': d.get('expertise', 'Yes'),
                     }.get(h2, '')
@@ -311,10 +409,11 @@ class FactFind:
             elif kind == 'table':
                 if key in PER_CLIENT:
                     self.set_header_cols(t, clients)
-                self.set_rows(t, d.get(key, []), total=key in LIST_WITH_TOTAL)
+                total = ('annual' if key in ANNUAL_TOTAL else True) if key in LIST_WITH_TOTAL else False
+                self.set_rows(t, d.get(key, []), total=total)
 
         for t in self.doc.tables:
-            self._fill_signatories(t, full)
+            self._fill_signatories(t, full, adviser)
         if len(clients) == 1:
             for b in self.blocks:
                 key = SUBSECTIONS.get(b['h2']) or SECTIONS.get(b['h1'])
@@ -326,18 +425,68 @@ class FactFind:
         self._scrub_opex_block()
 
     @staticmethod
-    def _agreed_scope(items):
+    def _agreed_scope(items, fixed_bullet=True):
+        """Lead-in, then the fixed bullet (Q-FF-2 default A: keep it), then one bullet per item.
+
+        fixed_bullet=False (JSON "scope_fixed_bullet": false) leaves it out, for
+        when scope_items are the SOA "Included" bullets copied word for word.
+        The fixed bullet is also dropped if an item already says the same thing.
+        """
         if not items:
             return ''
-        return '\n'.join(['As a result of the agreed subject matter of advice, we have identified '
-                          'the scope of advice to be:', '- Review of your personal risk insurance needs: ']
-                         + ['- ' + i for i in items])
+        items = [str(i).strip() for i in items if str(i).strip()]
+        norm = lambda s: re.sub(r'[\s:.]+$', '', s).strip().lower()
+        lines = [SCOPE_LEAD]
+        if fixed_bullet and norm(SCOPE_FIXED_BULLET) not in {norm(i) for i in items}:
+            lines.append('- ' + SCOPE_FIXED_BULLET)
+        return '\n'.join(lines + ['- ' + i for i in items])
 
-    def _fill_signatories(self, t, full):
+    @staticmethod
+    def _replace_name(cell, old, new):
+        """Replace `old` with `new` in a cell, keeping each run's format.
+
+        A name split across runs is rewritten into the run where it starts.
+        """
+        hit = False
+        for p in cell.paragraphs:
+            ts = list(p._p.iter(qn('w:t')))
+            while old in ''.join(t.text or '' for t in ts):
+                hit = True
+                start = ''.join(t.text or '' for t in ts).index(old)
+                end, pos, first = start + len(old), 0, True
+                for t in ts:
+                    s = pos
+                    pos += len(t.text or '')
+                    if pos <= start or s >= end:
+                        continue
+                    a, b = max(start, s) - s, min(end, pos) - s
+                    t.text = t.text[:a] + (new if first else '') + t.text[b:]
+                    t.set(qn('xml:space'), 'preserve')
+                    first = False
+        return hit
+
+    @staticmethod
+    def _is_adviser_table(t):
+        text = ' '.join(c.text for c in t.rows[2].cells)
+        return 'Authorised Representative' in text or any(n in text for n in OLD_ADVISERS)
+
+    def _fill_adviser(self, t, adviser):
+        """Write `adviser` over the old adviser name on the adviser signatory."""
+        olds = [n for n in OLD_ADVISERS + (DEFAULT_ADVISER,) if n != adviser]
+        seen = set()
+        for row in t.rows:
+            for c in row.cells:
+                if id(c._tc) not in seen:
+                    seen.add(id(c._tc))
+                    for old in olds:
+                        self._replace_name(c, old, adviser)
+
+    def _fill_signatories(self, t, full, adviser=DEFAULT_ADVISER):
         if t.rows[0].cells[0].text.strip() != 'Signatory' or len(t.rows) < 3:
             return
         cells = t.rows[2].cells
-        if 'Joshua Davidson' in t.rows[2].cells[1].text:
+        if self._is_adviser_table(t):
+            self._fill_adviser(t, adviser)
             return
         # Couple form: name cells at 1 and 4. Single form: 1.
         uniq, seen = [], set()

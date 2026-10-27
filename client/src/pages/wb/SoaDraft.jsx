@@ -31,7 +31,7 @@ export default function SoaDraft({ wb, outputs, onChanged }) {
         <p className="panel-blurb">
           Run this once Howard has filed the quotes, Risk Researcher, Risk Checklist and cover summary in the SharePoint
           folder. Claude reads them with the SOA Notes and fact find and writes a risk-only SOA draft, section by section.
-          Anything the file does not settle is left as <span className="hl">[ADVISOR TO CONFIRM]</span>.
+          Anything the file does not settle is left as <span className="hl">[ADVISER TO CONFIRM]</span>.
           For the final version, the house method is still to clone a same-adviser SOA in Word: ask Claude
           to “build the SOA for {wb.display_name}”.
         </p>
@@ -41,7 +41,7 @@ export default function SoaDraft({ wb, outputs, onChanged }) {
           </div>
         )}
         <textarea
-          placeholder="Anything else for this SOA: recommended insurer, structure, what to replace, referral fee to disclose…"
+          placeholder="Anything else for this SOA: was a full needs analysis done (yes / no, client-directed)?, recommended insurer, structure, what to replace, referral fee to disclose…"
           value={instructions}
           onChange={(e) => setInstructions(e.target.value)}
           style={{ minHeight: 90, marginBottom: 12 }}

@@ -49,8 +49,12 @@ export default function PackTab({ wb, onChanged }) {
         <p className="panel-blurb">
           Order: SOA, FSG, Fact Find, application summaries, letters, PDS, FINAL Insurance Summaries, Risk Checklist. No quotes.
           Firm documents are copied byte-for-byte and hash-checked. Files are numbered 01, 02… and date-stamped so they sort in order.
-          Output: <code>{cand.downloads}\{cand.packFolder}</code>
+          Output: <code>{cand.downloads}\{cand.packFolder}</code>. A rebuild replaces only the files the last build wrote;
+          letters, a CvC or anything added or edited by hand stay in the folder and are listed for review.
         </p>
+        {cand.adviser && !cand.adviser.fsgs && (
+          <div className="alert amber small">No FSG found in <code>{cand.adviser.folder}</code> for {cand.adviser.name}. A SharePoint FSG is only a fallback and will be flagged.</div>
+        )}
         {!cand.sharepoint.linked && <div className="alert amber small">No SharePoint folder linked. Only the case folder and Downloads are listed.</div>}
         {cand.sharepoint.missing && <div className="alert red small">The linked SharePoint folder was not found.</div>}
 
@@ -79,8 +83,9 @@ export default function PackTab({ wb, onChanged }) {
                   <td><input type="checkbox" checked={x.include} onChange={(e) => set(i, { include: e.target.checked })} style={{ width: 'auto' }} /></td>
                   <td>
                     {fileIcon(x.name)}{' '}
-                    {x.source === 'downloads' || /^compliance[\\/]/i.test(x.relPath) ? x.name : <a href={fileUrl(wb.id, x)} target="_blank" rel="noreferrer">{x.name}</a>}
-                    <div className="src">{x.source === 'sharepoint' ? 'SharePoint' : x.source === 'repo' ? 'Case folder' : 'Downloads'} · {x.within}</div>
+                    {x.source === 'downloads' || x.adviserFile || /^compliance[\\/]/i.test(x.relPath) ? x.name : <a href={fileUrl(wb.id, x)} target="_blank" rel="noreferrer">{x.name}</a>}
+                    <div className="src">{x.source === 'sharepoint' ? 'SharePoint' : x.adviserFile ? 'Adviser folder' : x.source === 'repo' ? 'Case folder' : 'Downloads'} · {x.within}</div>
+                    {x.note && <div className="alert amber small" style={{ marginTop: 4, padding: '2px 6px' }}>{x.note}</div>}
                   </td>
                   <td>
                     <select value={x.slot || ''} onChange={(e) => set(i, { slot: e.target.value || null })}>
@@ -111,7 +116,9 @@ export default function PackTab({ wb, onChanged }) {
       {result && (
         <div className="card card-pad">
           <h3>Built: {result.outDir}</h3>
-          <ul className="small" style={{ paddingLeft: 18 }}>{result.files.map((f) => <li key={f}>{f}</li>)}</ul>
+          <ul className="small" style={{ paddingLeft: 18 }}>
+            {result.files.map((f) => <li key={f}>{f}{result.extras?.includes(f) ? ' (already in the folder, left as is)' : ''}</li>)}
+          </ul>
           <h3 style={{ marginTop: 12 }}>Review list</h3>
           <ul className="small" style={{ paddingLeft: 18 }}>{result.review.map((r, i) => <li key={i}>{r}</li>)}</ul>
         </div>
