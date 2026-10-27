@@ -19,6 +19,58 @@ The parts below describe the repo as it was read. Afterwards, at Tristan's reque
 - `automation/xplan/README.md` and `automation/xplan-api/README.md` now name Synchron Advice Pty Ltd (AFSL 243313) as licensee instead of Pareto Group.
 - `README.md` and `archive/lakeside/README.md` were updated to match.
 
+## Changes made after this survey (27 Oct 2026, skills and fixes)
+
+Status at the end of 27 Oct 2026, commit `ce13f9f` on `claude/financial-planning-app-8GWYC`, pushed to GitHub. Where a part below says something is broken or missing and it is listed here, this list wins.
+
+**Skills.** The three project skills described in Parts 1–4 (`meeting-notes`, `build-soa`, `build-pack`) were replaced by the 1.0.0 skill pack in `.claude/skills/`:
+
+| Skill | Covers | Part |
+|---|---|---|
+| `case-folder-intake` | Copy a SharePoint client folder out read-only, read every document, list inconsistencies | 5 |
+| `meeting-notes` | Initial Meeting Notes; then runs `fact-find` and `soa-notes` | 1 |
+| `fact-find` | The 2026 Fact Find | 2 |
+| `soa-notes` | SOA Notes, the brief for Howard | 3 |
+| `build-soa` | The Statement of Advice, only on Tristan's command | 3 |
+| `application-details` | Application details sheet and check-before-lodging list | 4 |
+| `cvc-summary` | CvC / FINAL Insurance Summary | 4 |
+| `build-pack` | The DocuSign SOA pack, only on Tristan's command | 4 |
+
+Shared facts and rules live in `.claude/skills/_shared/firm-settings.md` and `firm-rules.md`. Every open point runs on its default answer, tagged `(default, Q-xx-n)`. The 155 questions are in `skills-draft/QUESTIONS.md`. Answered so far: Q-SH-1, AR 1313019 (also set as `ADVISER_AR` in `server/.env`). No default, so the skill stops and asks: Q-PK-1 (DocuSign countersigner) and Q-CVC-2 (Yearly Saving across billing frequencies).
+
+**Fixes to findings in the parts below:**
+
+| Part | Finding | Now |
+|---|---|---|
+| 2 | Totals dropped when a row held text; monthly and annual added together; cents lost | Amounts parsed robustly; income and expenses annualised and marked "(annualised)"; unknown rows left out with "(excl. TBC items)"; cents kept |
+| 2 | Adviser signatory and cover "Adviser Name" still Joshua Davidson | Written from the data, default Tristan Biro |
+| 2 | Fixed "Review of your personal risk insurance needs:" scope bullet always added | Still the default; `scope_fixed_bullet: false` drops it |
+| 2 | In-app prompt lacked the 26 Oct no-recommendation rules | Added |
+| 3 | Two title blocks; US date in the Word header | One title; en-AU date throughout |
+| 3 | Replacement warnings sent for new cover with "do not omit" | Only where cover is replaced, cancelled or reduced; clawback lead-in moved to Fees, Alternatives lead-in to Alternatives |
+| 3 | Guardrail forbade "declined" INA wording | Branches on the adviser notes: not done → client-directed wording + Incomplete INA warning; done → reasons in prose; silent → `[ADVISER TO CONFIRM]`. SOA Notes now record the INA status |
+| 3 | A failed section showed as stub text with `ai: true` | `failedSections` returned and shown as a warning |
+| 3, 8 | Four placeholder spellings | `[ADVISER TO CONFIRM]` across the app; `TBC` kept for missing client facts in meeting notes and fact finds |
+| 4 | Rebuild deleted the whole pack folder | Only files the builder wrote are replaced; hand-added or edited files are kept and listed |
+| 4 | Same-surname couple's application named after the first person | Matched on first names; unclear cases keep their name and are flagged |
+| 4 | FSG picked from SharePoint, could be another adviser's | From `legacy/advisers/<adviser>/` (Combined FSG first); SharePoint only as a flagged fallback; another adviser's FSG refused |
+| 4 | .docx/.pdf numbering depended on sort order | Twins share a number |
+| 5 | "$1.2m" saved as 1.2 | k/m/bn scaled, in both the CFS import and the client scan review |
+| 5 | CFS adviser fee % for the report period treated as yearly | Annualised from the statement period; unknown period → % left blank with a note |
+| 5 | Two-digit birth years became 20yy; units × price holdings got 0% | Year pivot; holdings valued before allocation |
+| 6 | `chat_messages` rejected `'library'`, so every ask failed after the AI call | Constraint widened |
+| 6 | History loaded the oldest turns | Latest turns, in order (also in the plan chat) |
+| 6 | A one-name match attached another person's record | Needs first name and surname |
+| 7 | Weekly GitHub checkpoint aborting since 23 Oct | Logo harvest folder ignored; firm tooling and logos under `legacy/` allowed; all work committed and pushed |
+
+**Still open, not changed:**
+- `automation/xplan-api/IRESS-API-REQUEST-email.md` still names Pareto Group, AFSL 418700 and AR 001313019, and two demo follow-up emails in `seed-demo-client.js` still sign off as Lakeside. Editing them would be drafting email, which the standing rule forbids. Tristan to change by hand.
+- Lakeside reference rows in `training_data` (`source: 'lakeside'`): not checked or deleted; needs Tristan's say-so.
+- AI-read CFS statements can't be annualised (the prompt does not ask for the report period).
+- Cancellation letter date and "please cancel" fix is done by the `build-pack` skill, not yet by the app's pack screen.
+- The Stage 1 prompt still uses two real clients' meeting notes as its few-shot examples (Q-MN on the questions list).
+- Client Library page (`Library.jsx`) not built.
+
 ## Skills and jobs covered
 
 | Skill, job or screen | How it is started | Part |
