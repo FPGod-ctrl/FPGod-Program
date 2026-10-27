@@ -3,19 +3,11 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { api } from '../api/client.js';
 
 const NAV = [
-  { section: 'Overview' },
-  { to: '/', label: 'Dashboard', icon: '◈', end: true },
-  { to: '/tasks', label: 'Task Tracker', icon: '✅' },
-  { to: '/crm', label: 'CRM', icon: '🤝' },
-  { to: '/clients', label: 'Clients', icon: '👥' },
-  { section: 'Advice' },
-  { to: '/generate/soa', label: 'Insurance & Risk Planning', icon: '📄' },
-  { to: '/generate/client-profile', label: 'Client Profile', icon: '🧾' },
-  { to: '/generate/insurance-report', label: 'Insurance Report', icon: '🛡️' },
-  { section: 'Practice' },
-  { to: '/plans', label: 'Advice Documents', icon: '📁' },
-  { to: '/meetings', label: 'Meetings', icon: '💬' },
-  { section: 'System' },
+  { section: 'Workbench' },
+  { to: '/', label: 'Clients', icon: '👥', end: true },
+  { to: '/?new=1', label: 'New client', icon: '＋', plain: true },
+  { section: 'More' },
+  { to: '/archive', label: 'Archive', icon: '🗄️' },
   { to: '/settings', label: 'Settings', icon: '⚙️' },
 ];
 
@@ -26,7 +18,7 @@ function Sidebar({ meta, theme, onToggleTheme }) {
         <div className="brand-logo">L</div>
         <div>
           <div className="brand-name">Legacy Risk Advice</div>
-          <div className="brand-sub">Insurance &amp; Risk Planning</div>
+          <div className="brand-sub">SOA Workbench</div>
         </div>
       </div>
       <nav className="nav">
@@ -38,7 +30,7 @@ function Sidebar({ meta, theme, onToggleTheme }) {
               key={item.to}
               to={item.to}
               end={item.end}
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              className={({ isActive }) => `nav-link ${isActive && !item.plain ? 'active' : ''}`}
             >
               <span className="nav-ico">{item.icon}</span>
               {item.label}

@@ -15,9 +15,9 @@ issued document is the real specification.
 
 | Example | Shape | Status |
 |---|---|---|
-| `client-details-summary/examples/Brett-Montgomery-SEP14-EDITED-BY-TRISTAN.md` | Couple; first-contact referral call, no cover details known | **Current — follow this** (2026-09-14) |
-| `client-details-summary/examples/Jayesh-Varghese-SEP10-EDITED-BY-TRISTAN.md` | Couple; adviser already held the client's details | Superseded where it disagrees with SEP14 |
-| `client-details-summary/examples/Verinder-Rai-SEP02-EDITED-BY-TRISTAN.md` | Single client, first-contact enquiry, most basics unknown | Superseded where the others disagree |
+| `client-details-summary/examples/[couple-A]-SEP14-EDITED-BY-TRISTAN.md` | Couple; first-contact referral call, no cover details known | **Current — follow this** (2026-09-14) |
+| `client-details-summary/examples/[couple-B]-SEP10-EDITED-BY-TRISTAN.md` | Couple; adviser already held the client's details | Superseded where it disagrees with SEP14 |
+| `client-details-summary/examples/[single-C]-SEP02-EDITED-BY-TRISTAN.md` | Single client, first-contact enquiry, most basics unknown | Superseded where the others disagree |
 
 The SEP10 and SEP14 files each carry a full annotated diff. Rules below are the SEP10 set;
 **read the SEP14 rules further down first — they take precedence where they overlap.**
@@ -100,7 +100,7 @@ shorter and more declarative, keep the reasoning out, and stop at the client's c
 
 ### SEP14 edit — these override the above where they overlap
 
-From `client-details-summary/examples/Brett-Montgomery-SEP14-EDITED-BY-TRISTAN.md`
+From `client-details-summary/examples/[couple-A]-SEP14-EDITED-BY-TRISTAN.md`
 (2026-09-14). The draft was close — his words were "not many changes" — so these are the
 residue, and they are the sharpest signal available.
 
@@ -163,7 +163,7 @@ SEP10 document needs, so they are hand-finished:
 |--------|-----------------|--------|
 | `client-details-summary/templates/` | The **blank** Client Details Summary template. | Waiting |
 | `client-details-summary/examples/` | **Completed** Client Details Summaries from real meetings. | **Two, both edited by Tristan — SEP10 is current** |
-| `fact-find/templates/` | The **blank** fact find form. | **Incoming — use this** |
+| `fact-find/templates/` | `Fact Find - master.docx`: a blanked real 2026 couple fact find (the firm's "Fact Find Template.docx" is a 2023 Rasel Ahmed one on the older, shorter form). Filled by `server/scripts/generate_fact_find.py`; the whole pipeline is the `/meeting-notes` skill. | **In use (2026-10-22)** |
 | `fact-find/examples/` | **Completed** fact finds for real clients. | Coming later |
 | `source-transcripts/` | The meeting transcripts / raw notes both documents were written **from**. | **None matching — do not chase** |
 

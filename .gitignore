@@ -72,3 +72,11 @@ legacy/templates/*
 
 # Task tracker state: carries client names and (historically) email subjects.
 server/data/task-state/
+
+# Adviser documents (FSGs, AR certificates, profiles) stay local, out of git
+legacy/advisers/**/*
+!legacy/advisers/**/
+!legacy/advisers/README.md
+
+# Logo harvest workings: page images taken from client folders.
+legacy/drop/**/.logo-harvest/

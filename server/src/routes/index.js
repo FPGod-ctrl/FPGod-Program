@@ -16,6 +16,7 @@ import family from './family.js';
 import tasks from './tasks.js';
 import library from './library.js';
 import crm from './crm.js';
+import workbench from './workbench.js';
 
 const router = Router();
 
@@ -47,6 +48,8 @@ router.use('/family', family);
 router.use('/library', library);
 // CRM: contacts, logged communication, pipeline stage; tasks shared with /tasks.
 router.use('/crm', crm);
+// Workbench: the client list and the SOA pipeline (notes, fact find, SOA, pack).
+router.use('/workbench', workbench);
 // Financial breakdown: /api/assets, /liabilities, /income, /expenses, /insurance, /goals
 router.use('/', financials);
 

@@ -66,6 +66,10 @@ function Test-ClientMaterial {
 
   if ($p -like 'legacy/*') {
     if ($leaf -eq 'README.md' -or $leaf -eq '.gitkeep') { return $false }
+    # Firm tooling and insurer logos that hold no client data (27 Oct 2026).
+    if ($p -like 'legacy/packs/*.py') { return $false }
+    if ($p -like 'legacy/docusign/*.mjs') { return $false }
+    if ($p -like 'legacy/drop/soa-build/templates/insurer-logos/*.png' -or $p -like 'legacy/drop/soa-build/templates/insurer-logos/*/*.png') { return $false }
     return $true
   }
   if ($p -like 'automation/tasks/state/*') { return $true }

@@ -626,10 +626,10 @@ CREATE TABLE IF NOT EXISTS library_clients (
   -- 'sharepoint' = the synced firm library; 'repo' = legacy/ working folders,
   -- which is where a new prospect lives before they have a client folder.
   source        TEXT NOT NULL CHECK (source IN ('sharepoint', 'repo')),
-  folder_name   TEXT NOT NULL,   -- as filed, e.g. "Lau, Pauline"
-  display_name  TEXT NOT NULL,   -- as spoken, e.g. "Pauline Lau"
+  folder_name   TEXT NOT NULL,   -- as filed, e.g. "Citizen, Jane"
+  display_name  TEXT NOT NULL,   -- as spoken, e.g. "Jane Citizen"
   -- Normalised, order-independent name tokens used for matching a question
-  -- against the index ("lau pauline"). See services/library/match.js.
+  -- against the index ("citizen jane"). See services/library/match.js.
   search_key    TEXT NOT NULL,
   rel_path      TEXT NOT NULL,   -- relative to its root; never absolute
   file_count    INT  NOT NULL DEFAULT 0,
@@ -685,8 +685,8 @@ ALTER TABLE clients ADD COLUMN IF NOT EXISTS crm_stage            TEXT;
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS crm_stage_changed_at TIMESTAMPTZ;
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS adviser              TEXT;
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS referral_source      TEXT;
--- Folder name under the SharePoint library's Clients\ ("Borsky, David and
--- Shira"). A pointer only — the library is read-only and nothing here writes it.
+-- Folder name under the SharePoint library's Clients\ ("Citizen, Jane and
+-- John"). A pointer only — the library is read-only and nothing here writes it.
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS sharepoint_folder    TEXT;
 -- Legacy's own classifications (see data/legacy-practice.json): premium tier
 -- (platinum/gold/silver/bronze — decides who makes contact at renewal), the
@@ -725,3 +725,40 @@ BEGIN
       FOR EACH ROW EXECUTE FUNCTION set_updated_at();
   END IF;
 END$$;
+
+-- ---------------------------------------------------------------------------
+-- Workbench: the SOA pipeline per client (initial meeting notes, fact find,
+-- SOA Notes brief, draft SOA, SOA pack). One case per client row. Generated
+-- documents live on disk in legacy/soa/<case_name>/ (gitignored), never in
+-- SharePoint; this table holds the transcript, the generated JSON and status.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS workbench_cases (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id         UUID NOT NULL UNIQUE REFERENCES clients(id) ON DELETE CASCADE,
+  case_name         TEXT NOT NULL,          -- "Surname, First & Second", as the SharePoint folder
+  short_name        TEXT NOT NULL,          -- "Surname F&S", as in the firm's file names
+  stage             TEXT NOT NULL DEFAULT 'meeting',
+  meeting_date      DATE,
+  transcript        TEXT,
+  adviser_notes     TEXT,
+  cds_json          JSONB,
+  ff_json           JSONB,
+  soa_notes_json    JSONB,
+  soa_markdown      TEXT,
+  pack_dir          TEXT,
+  archived          BOOLEAN NOT NULL DEFAULT false,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'trg_workbench_cases_updated_at') THEN
+    CREATE TRIGGER trg_workbench_cases_updated_at BEFORE UPDATE ON workbench_cases
+      FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+  END IF;
+END$$;
+
+-- 'existing' when the client has a SharePoint client folder or a matching
+-- record in the program; 'new' otherwise. Set by the workbench's lookup.
+ALTER TABLE workbench_cases ADD COLUMN IF NOT EXISTS client_kind TEXT;

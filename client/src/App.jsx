@@ -15,13 +15,21 @@ import GenerateSOA from './pages/generate/SOA.jsx';
 import Settings from './pages/Settings.jsx';
 import PlanPresent from './pages/PlanPresent.jsx';
 import NotFound from './pages/NotFound.jsx';
+import Workbench from './pages/wb/Workbench.jsx';
+import CaseView from './pages/wb/CaseView.jsx';
+import Archive from './pages/Archive.jsx';
 
 export default function App() {
   return (
     <ToastProvider>
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={<Dashboard />} />
+          {/* Workbench: the client list and the SOA pipeline per client. */}
+          <Route index element={<Workbench />} />
+          <Route path="case/:id" element={<CaseView />} />
+          {/* Everything before the workbench: off the menu, still reachable. */}
+          <Route path="archive" element={<Archive />} />
+          <Route path="archive/dashboard" element={<Dashboard />} />
           <Route path="tasks" element={<Tasks />} />
           {/* CRM: contacts, logged communication, pipeline; tasks shared with the tracker. */}
           <Route path="crm" element={<Crm />} />
