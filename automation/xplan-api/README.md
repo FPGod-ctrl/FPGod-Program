@@ -6,7 +6,7 @@ and Risk Researcher quotes/comparisons. Quote results feed the insurance-report
 generator in `server/scripts/generate-insurance-report.mjs`.
 
 > ⚠️ Needs an Iress **API Agreement** + a **Custom Integration app key** (issued by
-> Iress) under Pareto Group Pty Ltd (AFSL 418700). See `IRESS-API-REQUEST-email.md`.
+> Iress) under Synchron Advice Pty Ltd (AFSL 243313), for Legacy Risk Advice (AR 1296611). See `IRESS-API-REQUEST-email.md`.
 
 ## Setup (once credentials arrive)
 1. `cp .env.example .env` and fill in the values from Iress

@@ -105,7 +105,7 @@ Open http://localhost:5173.
 | Script | Purpose |
 |--------|---------|
 | `server/scripts/reset-for-legacy.mjs` | Snapshots every table to `archive/lakeside/db-snapshot/`, then purges demo clients and synthetic training rows. Dry run by default; `--confirm` to execute. |
-| `server/scripts/import-reference-material.mjs` | Imports archived emails and plans into `training_data` as AI reference. Dry run by default; `--confirm` to write, `--emails-only` to refresh just the style examples. |
+| `archive/lakeside/scripts/import-reference-material.mjs` | Archived 27 Oct 2026 (Legacy only). It imported Lakeside emails and plans into `training_data` as AI reference. Not for use. |
 | `server/scripts/generate-client-profile.mjs` | Clone-and-fill the client profile Word template. |
 | `server/scripts/generate-insurance-report.mjs` | Clone-and-fill the insurance report Word template. |
 

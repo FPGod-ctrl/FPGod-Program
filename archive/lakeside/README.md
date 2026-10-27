@@ -23,6 +23,7 @@ investment-plan structure leaking into a Legacy Risk Advice document unnoticed.
 | `follow-ups/` | 41 meeting and phone-call follow-up emails in the adviser's own voice |
 | `retired-app/` | App code removed from the program: CFS Book, CFS Campaign, Investments, Financial Plan generator |
 | `db-snapshot/` | Full database snapshot taken before the Legacy reset — every table, as JSON |
+| `scripts/` | Lakeside-era scripts moved out of `server/scripts/` on 27 Oct 2026 (Legacy only): the per-client SOA and export builders, the guide and markdown exporters with Lakeside/Pareto branding, and `import-reference-material.mjs`. Not for use; paths inside them assume their old location. |
 
 ## What was imported into the running app
 

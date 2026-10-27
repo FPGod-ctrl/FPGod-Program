@@ -26,7 +26,7 @@ const DEMO_DOCS = [
     doc_type: 'client_profile',
     scan_status: 'done',
     body: `CLIENT FACT FIND — TEST HOUSEHOLD
-Prepared: 8 July 2026 | Adviser: Tristan Biro, Lakeside Financial
+Prepared: 8 July 2026 | Adviser: Tristan Biro, Legacy Risk Advice
 
 PERSONAL
 Client 1: John Michael Test, DOB 14/03/1978, married, non-smoker
@@ -429,7 +429,7 @@ async function seedDemoClient() {
         `# Test Household — Wealth & Protection Strategy
 
 **Prepared for:** John & Mary Test
-**Prepared by:** Tristan Biro, Lakeside Financial
+**Prepared by:** Tristan Biro, Legacy Risk Advice
 **Date:** 23 July 2026
 **Status:** Draft for client review
 
@@ -528,7 +528,7 @@ personal financial advice.*
 `,
         JSON.stringify({
           demo: true,
-          prepared_by: 'Tristan Biro, Lakeside Financial',
+          prepared_by: 'Tristan Biro, Legacy Risk Advice',
           review_due: '2027-07-23',
           strategies: ['super consolidation', 'salary sacrifice', 'insurance needs analysis',
             'debt recycling review', 'offset optimisation', 'testamentary trust referral'],

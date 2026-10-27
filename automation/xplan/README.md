@@ -10,7 +10,7 @@ Two things live here:
   pending a recorded flow (`npm run record`).
 
 > ⚠️ **Before using on real client data:** confirm this is within your XPLAN/Iress
-> terms of use and get your licensee's (Pareto Group, AFSL 418700) sign-off.
+> terms of use and get your licensee's (Synchron Advice Pty Ltd, AFSL 243313) sign-off.
 > This drives the XPLAN UI; the sanctioned long-term path is the XPLAN Custom API
 > (see `../xplan-api`).
 
